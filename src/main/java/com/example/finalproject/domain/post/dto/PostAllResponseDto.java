@@ -4,7 +4,7 @@ package com.example.finalproject.domain.post.dto;
 import com.example.finalproject.domain.post.entity.Posts;
 import lombok.Getter;
 
-import java.util.List;
+
 
 @Getter
 public class PostAllResponseDto {
