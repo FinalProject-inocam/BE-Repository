@@ -8,7 +8,6 @@ import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,6 +40,7 @@ public class PurchasesService {
 
 
     // 차량 신청 내역 수정
+
     public PurchasesResponseDto updatePurchases(Long purchaseId, PurchasesRequestDto purchasesRequestDto) {
         Purchases purchases = findPurchases(purchaseId);
         purchases.update(purchasesRequestDto);
