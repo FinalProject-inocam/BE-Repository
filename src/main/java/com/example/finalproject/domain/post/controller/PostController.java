@@ -13,10 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-import static com.example.finalproject.global.enums.SuccessCode.*;
-
 @RestController
-@RequestMapping("/api/post")
+@RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {
     private final PostsService postsService;

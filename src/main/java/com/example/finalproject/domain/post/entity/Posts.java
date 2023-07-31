@@ -1,15 +1,11 @@
 package com.example.finalproject.domain.post.entity;
 
 import com.example.finalproject.domain.post.dto.PostRequestDto;
+import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Posts{
+public class Posts extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,20 +28,8 @@ public class Posts{
     @Column(nullable = false)
     private String nickname;
 
-//    @Column(updatable = false)
-//    @CreatedDate
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private LocalDateTime createdDate;
-//
-//    @LastModifiedDate
-//    @Temporal(TemporalType.TIMESTAMP)
-//    private LocalDateTime modifiedDate;
-
-//    @OneToMany
-//    @JoinColumn(name = "post_id", nullable = false)
-//    private List<Comments> commentsList=new ArrayList<>();
-
-    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OneToMany
+    @JoinColumn(name = "post_id") // users 테이블에 food_id 컬럼
     private List<Comments> commentList;
 
     @OneToMany

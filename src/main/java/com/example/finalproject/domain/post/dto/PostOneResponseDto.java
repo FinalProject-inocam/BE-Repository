@@ -14,12 +14,12 @@ public class PostOneResponseDto {
     private String title;
     private String content;
     private List<String> imageUrls; // Image URL 목록을 저장
-    private List<Comments> commentsList;
-    public PostOneResponseDto(Posts post) {
+    private List<CommentResponseDto> commentsList;
+    public PostOneResponseDto(Posts post,List<CommentResponseDto> commentResponseDtoList) {
         this.post_id= post.getId();
         this.title= post.getTitle();
         this.content= post.getContent();
-        this.commentsList=post.getCommentList();
+        this.commentsList=commentResponseDtoList;
         this.imageUrls = post.getImageList().stream() // 이미지 URL만 추출
                 .map(Image::getImage)
                 .collect(Collectors.toList());

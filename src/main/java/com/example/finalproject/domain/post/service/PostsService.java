@@ -1,9 +1,10 @@
 package com.example.finalproject.domain.post.service;
 
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.example.finalproject.domain.post.dto.CommentResponseDto;
 import com.example.finalproject.domain.post.dto.PostAllResponseDto;
 import com.example.finalproject.domain.post.dto.PostOneResponseDto;
 import com.example.finalproject.domain.post.dto.PostRequestDto;
+import com.example.finalproject.domain.post.entity.Comments;
 import com.example.finalproject.domain.post.entity.Image;
 import com.example.finalproject.domain.post.entity.Posts;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
@@ -12,7 +13,6 @@ import com.example.finalproject.domain.post.repository.PostsRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -49,7 +49,13 @@ public class PostsService {
         Posts post =postsRepository.findById(postid).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
-        PostOneResponseDto postOneResponseDto=new PostOneResponseDto(post);
+        List<CommentResponseDto> commentResponseDtoList=new ArrayList<>();
+        List<Comments> commentList=post.getCommentList();
+        for (Comments cmt : commentList){
+            CommentResponseDto commentResponseDto=new CommentResponseDto(cmt);
+            commentResponseDtoList.add(commentResponseDto);
+        }
+        PostOneResponseDto postOneResponseDto=new PostOneResponseDto(post,commentResponseDtoList);
         return postOneResponseDto;
     }
 

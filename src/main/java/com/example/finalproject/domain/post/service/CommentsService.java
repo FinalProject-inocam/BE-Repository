@@ -9,6 +9,7 @@ import com.example.finalproject.domain.post.repository.PostsRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,12 +20,36 @@ import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_DATA;
 public class CommentsService {
     private final PostCommentsRepository postCommentsRepository;
     private final PostsRepository postsRepository;
-    public SuccessCode createService(Long postid,CommentRequestDto commentRequestDto,String nickname) {
-        Posts post =postsRepository.findById(postid).orElseThrow(
+    @Transactional
+    public SuccessCode createService(Long postId,CommentRequestDto commentRequestDto,String nickName) {
+        Posts post =postsRepository.findById(postId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
         List<Comments> commentsList=post.getCommentList();
+//        User user = userRepository.findByNickname(nickname).orElseThrow(
+//                () -> new UserException(USER_NOT_FOUND)
+//        );
+        Comments comment = new Comments(nickName,post,commentRequestDto.getComment());
+        commentsList.add(comment);
+        postCommentsRepository.save(comment);
 
         return SuccessCode.COMMENT_CREATE_SUCCESS;
+    }
+    @Transactional
+    public SuccessCode updateComment(Long postId, Long commentId, CommentRequestDto commentRequestDto){
+        Comments comments =postCommentsRepository.findById(commentId).orElseThrow(
+                () -> new PostsNotFoundException(NOT_FOUND_DATA)// 나중에 예외 추가해서 고치기
+        );
+        comments.setComment(commentRequestDto.getComment());
+        return SuccessCode.COMMENT_UPDATE_SUCCESS;
+    }
+
+
+    public SuccessCode deleteComments(Long postId, Long commentId) {
+        Comments comments =postCommentsRepository.findById(commentId).orElseThrow(
+                () -> new PostsNotFoundException(NOT_FOUND_DATA)// 나중에 예외 추가해서 고치기
+        );
+        postCommentsRepository.delete(comments);
+        return SuccessCode.COMMENT_DELETE_SUCCESS;
     }
 }
