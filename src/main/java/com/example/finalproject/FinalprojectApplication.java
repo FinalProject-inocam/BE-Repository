@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication(exclude = SecurityAutoConfiguration.class)
+@EnableJpaAuditing
 public class FinalprojectApplication {
     public static void main(String[] args) {
         SpringApplication.run(FinalprojectApplication.class, args);
