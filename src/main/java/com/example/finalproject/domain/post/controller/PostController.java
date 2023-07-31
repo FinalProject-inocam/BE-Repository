@@ -16,25 +16,25 @@ import java.util.List;
 import static com.example.finalproject.global.enums.SuccessCode.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/post")
 @RequiredArgsConstructor
 public class PostController {
     private final PostsService postsService;
 
     private String nickname="zin";
-    @GetMapping("/post")
+    @GetMapping
     public ApiResponse<?> getPost(){
         List<PostAllResponseDto> postResponseDtoList=postsService.getPost();
         return ResponseUtils.ok(postResponseDtoList);
     }
 
-    @GetMapping("/post/{postid}")
-    public ApiResponse<?> getOnePost(@PathVariable(name="postid") Long postid){
+    @GetMapping("/{postId}")
+    public ApiResponse<?> getOnePost(@PathVariable(name="postId") Long postid){
         PostOneResponseDto postOneResponseDto =postsService.getOnePost(postid);
         return ResponseUtils.ok(postOneResponseDto);
     }
 
-    @PostMapping("/post")
+    @PostMapping
     public ApiResponse<?> createPost(@RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
                                      @RequestPart(value = "data") PostRequestDto postRequestDto )//@AuthenticationPrincipal UserDetailsImpl userDetails
     {
@@ -42,16 +42,16 @@ public class PostController {
         return ResponseUtils.ok(successCode);
     }
 
-        @PatchMapping("/post/{postid}")
+        @PatchMapping("/{postId}")
         public ApiResponse<?> updatePost(@RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
                                          @RequestPart(value = "data") PostRequestDto postRequestDto,
-                                         @PathVariable(name="postid") Long postid){
+                                         @PathVariable(name="postId") Long postid){
             SuccessCode successCode= postsService.updatePost(multipartFile,postRequestDto,postid);
             return ResponseUtils.ok(successCode);
         }
 
-        @DeleteMapping("/post/{postid}")
-        public ApiResponse<?> deletePost(@PathVariable(name="postid") Long postid){
+        @DeleteMapping("/{postId}")
+        public ApiResponse<?> deletePost(@PathVariable(name="postId") Long postid){
         SuccessCode successCode =postsService.deletePost(postid);
         return ResponseUtils.ok(successCode);
         }
