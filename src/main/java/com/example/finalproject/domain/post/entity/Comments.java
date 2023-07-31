@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.post.entity;
 
+import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Comments extends Timestamped{
+public class Comments extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

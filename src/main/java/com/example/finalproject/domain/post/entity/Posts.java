@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.post.entity;
 
 import com.example.finalproject.domain.post.dto.PostRequestDto;
+import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Posts extends Timestamped{
+public class Posts extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
