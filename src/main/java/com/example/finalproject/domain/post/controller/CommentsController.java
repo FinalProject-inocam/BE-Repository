@@ -10,18 +10,18 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/posts/{postId}/comments")
 public class CommentsController {
     private final CommentsService commentsService;
     String nickname="zin";
-    @PostMapping("/posts/{postId}/comments")
+    @PostMapping
     public ApiResponse<?> createComments(
             @PathVariable(name="postId") Long postId,
             @RequestBody CommentRequestDto commentRequestDto){
         SuccessCode successCode=commentsService.createService(postId,commentRequestDto,this.nickname);
         return ResponseUtils.ok(successCode);
     }
-    @PatchMapping("/posts/{postId}/comments/{commentId}")
+    @PatchMapping("/{commentId}")
     public ApiResponse<?> updateComments(@PathVariable(name="postId")Long postId,
                                         @PathVariable(name="commentId")Long commentId,
                                          @RequestBody CommentRequestDto commentRequestDto
@@ -30,7 +30,7 @@ public class CommentsController {
         return ResponseUtils.ok(successCode);
     }
 
-    @DeleteMapping("/posts/{postId}/comments/{commentId}")
+    @DeleteMapping("/{commentId}")
     public ApiResponse<?> deleteComments(@PathVariable(name="postId")Long postId,
                                          @PathVariable(name="commentId")Long commentId){
         SuccessCode successCode=commentsService.deleteComments(postId,commentId);
