@@ -1,7 +1,6 @@
 package com.example.finalproject.global.enums;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.*;
@@ -18,6 +17,8 @@ public enum ErrorCode {
     UNAUTHORIZED_USER(UNAUTHORIZED, "현재 내 계정 정보가 존재하지 않습니다"),
 
     /* 403 FORBIDDEN : 클라이언트가 콘텐츠에 접근할 권리를 가지고 있지 않다는 의미입니다.*/
+    USER_LOGIN_NEED(FORBIDDEN, "로그인이 필요합니다."),
+    USER_LOGIN_FAIL(FORBIDDEN, "로그인 실패"),
     NO_AUTHORITY_TO_DATA(FORBIDDEN, "해당 게시물에 대한 권한이 없습니다."),
 
     /* 404 NOT_FOUND : 서버는 요청 받은 리소스를 찾을 수 없다는 의미입니다. */
