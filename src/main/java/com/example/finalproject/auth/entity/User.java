@@ -1,6 +1,7 @@
 package com.example.finalproject.auth.entity;
 
 import com.example.finalproject.auth.dto.SignupRequestDto;
+import com.example.finalproject.domain.purchases.dto.MypageRequestDto;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
