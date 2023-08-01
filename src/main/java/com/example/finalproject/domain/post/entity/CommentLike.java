@@ -4,13 +4,11 @@ import com.example.finalproject.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
 @Getter
-@Setter
-public class PostLike {
+@NoArgsConstructor
+public class CommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,10 +19,9 @@ public class PostLike {
 
     @ManyToOne
     @JoinColumn(name = "post_Id", nullable = false)
-    private Posts posts;
-
-    public PostLike(User user,Posts posts){
+    private Comments comments;
+    public CommentLike(User user,Comments comments){
         this.user=user;
-        this.posts=posts;
+        this.comments=comments;
     }
 }
