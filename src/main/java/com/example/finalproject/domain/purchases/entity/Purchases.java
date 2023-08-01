@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.purchases.entity;
 
+import com.example.finalproject.auth.entity.User;
 import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
@@ -42,13 +43,18 @@ public class Purchases extends Timestamped {
 
     private Date delivery_date;
 
-    public Purchases(PurchasesRequestDto purchasesRequestDto) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Purchases(PurchasesRequestDto purchasesRequestDto, User user) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
         this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
         this.address_name = purchasesRequestDto.getAddress_name();
         this.zone_no = purchasesRequestDto.getZone_no();
+        this.user = user;
     }
 
     public void update(PurchasesRequestDto purchasesRequestDto) {
