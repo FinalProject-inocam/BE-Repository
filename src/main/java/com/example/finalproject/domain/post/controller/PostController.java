@@ -21,10 +21,9 @@ import java.util.List;
 public class PostController {
     private final PostsService postsService;
 
-    private String nickname="zin";
     @GetMapping
-    public ApiResponse<?> getPost(){
-        List<PostAllResponseDto> postResponseDtoList=postsService.getPost();
+    public ApiResponse<?> getPost(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        List<PostAllResponseDto> postResponseDtoList=postsService.getPost(userDetails);
         return ResponseUtils.ok(postResponseDtoList);
     }
 

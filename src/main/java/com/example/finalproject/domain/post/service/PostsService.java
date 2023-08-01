@@ -2,6 +2,7 @@ package com.example.finalproject.domain.post.service;
 
 import com.example.finalproject.auth.entity.User;
 import com.example.finalproject.auth.repository.UserRepository;
+import com.example.finalproject.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.post.dto.CommentResponseDto;
 import com.example.finalproject.domain.post.dto.PostAllResponseDto;
 import com.example.finalproject.domain.post.dto.PostOneResponseDto;
@@ -38,14 +39,21 @@ public class PostsService {
     private final PostsRepository postsRepository;
     private final S3Utils s3Utils;
     @Transactional
-    public List<PostAllResponseDto> getPost() {
+    public List<PostAllResponseDto> getPost(UserDetailsImpl userDetails) {
         List<Posts> posts= postsRepository.findAll();
         List<PostAllResponseDto> postsList=new ArrayList<>();
+        Boolean is_like;
+        if(userDetails==null){
+            is_like=false;
+        }
+        else{
+            is_like=postLikeRepository.existsByUserUserId(userDetails.getUser().getUserId());
+        }
         for(Posts post : posts) {
             Long comment_count= Long.valueOf(post.getCommentList().size());
             Long like_count=postLikeRepository.countByPostsId(post.getId());
 
-            PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post,comment_count,like_count);
+            PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post,comment_count,like_count,is_like);
             postsList.add(postAllResponseDto);
         }
         return postsList;
