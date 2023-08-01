@@ -40,4 +40,9 @@ public class User {
         this.role = role;
     }
 
+    public void update(MypageRequestDto mypageRequestDto) {
+        this.password = mypageRequestDto.getNew_password();
+        this.nickname = mypageRequestDto.getNickname();
+        this.phoneNumber = mypageRequestDto.getPhone_number();
+    }
 }
