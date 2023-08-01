@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.post.entity;
 
+import com.example.finalproject.auth.entity.User;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,9 +25,12 @@ public class Comments extends Timestamped {
     @JoinColumn(name = "post_id", insertable = false, updatable = false)
     private Posts post;
 
-    public Comments(String nickname, Posts post, String comment) {
+    @ManyToOne
+    private User user;
+    public Comments(String nickname, Posts post, String comment,User user) {
         this.nickname=nickname;
         this.comment=comment;
         this.post=post;
+        this.user=user;
     }
 }
