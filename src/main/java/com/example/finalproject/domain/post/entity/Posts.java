@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.post.entity;
 
+import com.example.finalproject.auth.entity.User;
 import com.example.finalproject.domain.post.dto.PostRequestDto;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
@@ -36,10 +37,14 @@ public class Posts extends Timestamped {
     @JoinColumn(name = "image_id",nullable = true)
     private List<Image> imageList=new ArrayList<>();
 
-    public Posts(PostRequestDto postRequestDto,String nickname) {
+    @ManyToOne
+    private User user;
+
+    public Posts(PostRequestDto postRequestDto,String nickname,User user) {
         this.content=postRequestDto.getContent();
         this.title=postRequestDto.getTitle();
         this.nickname=nickname;
+        this.user=user;
     }
     // 일단 나중에 추가해야할거 좋아요
 }
