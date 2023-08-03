@@ -40,11 +40,11 @@ public class Posts extends Timestamped {
     @ManyToOne
     private User user;
 
-    public Posts(PostRequestDto postRequestDto,String nickname,User user) {
-        this.content=postRequestDto.getContent();
-        this.title=postRequestDto.getTitle();
-        this.nickname=nickname;
-        this.user=user;
+    public Post(PostRequestDto postRequestDto, User user) {
+        this.content = postRequestDto.getContent();
+        this.title = postRequestDto.getTitle();
+        this.nickname = user.getNickname();
+        this.user = user;
     }
     // 일단 나중에 추가해야할거 좋아요
 }
