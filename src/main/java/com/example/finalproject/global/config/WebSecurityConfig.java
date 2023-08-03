@@ -1,10 +1,10 @@
 package com.example.finalproject.global.config;
 
-import com.example.finalproject.auth.security.AuthExceptionFilter;
-import com.example.finalproject.auth.security.JwtAuthenticationFilter;
-import com.example.finalproject.auth.security.JwtAuthorizationFilter;
-import com.example.finalproject.auth.security.UserDetailsServiceImpl;
-import com.example.finalproject.auth.service.RedisService;
+import com.example.finalproject.domain.auth.security.AuthExceptionFilter;
+import com.example.finalproject.domain.auth.security.JwtAuthenticationFilter;
+import com.example.finalproject.domain.auth.security.JwtAuthorizationFilter;
+import com.example.finalproject.domain.auth.security.UserDetailsServiceImpl;
+import com.example.finalproject.domain.auth.service.RedisService;
 import com.example.finalproject.global.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;

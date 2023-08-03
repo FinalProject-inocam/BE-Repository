@@ -1,7 +1,7 @@
-package com.example.finalproject.auth.security;
+package com.example.finalproject.domain.auth.security;
 
-import com.example.finalproject.auth.entity.RefreshToken;
-import com.example.finalproject.auth.service.RedisService;
+import com.example.finalproject.domain.auth.entity.RefreshToken;
+import com.example.finalproject.domain.auth.service.RedisService;
 import com.example.finalproject.global.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

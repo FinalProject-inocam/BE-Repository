@@ -1,6 +1,6 @@
-package com.example.finalproject.auth.security;
+package com.example.finalproject.domain.auth.security;
 
-import com.example.finalproject.auth.entity.User;
+import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
