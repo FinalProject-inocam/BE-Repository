@@ -1,6 +1,7 @@
 package com.example.finalproject.auth.entity;
 
 import com.example.finalproject.auth.dto.SignupRequestDto;
+import com.example.finalproject.domain.purchases.dto.MypageRequestDto;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -39,4 +40,9 @@ public class User {
         this.role = role;
     }
 
+    public void update(MypageRequestDto mypageRequestDto,String newpassword) {
+        this.password = newpassword;
+        this.nickname = mypageRequestDto.getNickname();
+        this.phoneNumber = mypageRequestDto.getPhone_number();
+    }
 }

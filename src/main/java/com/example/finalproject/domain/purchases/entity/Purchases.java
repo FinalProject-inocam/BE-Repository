@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.purchases.entity;
 
+import com.example.finalproject.auth.entity.User;
 import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
@@ -42,29 +43,20 @@ public class Purchases extends Timestamped {
 
     private Date delivery_date;
 
-    /*
-    private String type;
-    private String color;
-    private Boolean alarm;
-    private String content;
-    private String address_name;
-    private String Zone_no;
-    * */
-    public Purchases(PurchasesRequestDto purchasesRequestDto) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Purchases(PurchasesRequestDto purchasesRequestDto, User user) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
         this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
         this.address_name = purchasesRequestDto.getAddress_name();
         this.zone_no = purchasesRequestDto.getZone_no();
+        this.user = user;
     }
 
-    //  type: string(차량타입),
-    //  color: string
-    //  alarm: boolean,
-    //  content: string
-    //  address_name: string,
-    //  zone_no: string
     public void update(PurchasesRequestDto purchasesRequestDto) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
@@ -72,6 +64,5 @@ public class Purchases extends Timestamped {
         this.content = purchasesRequestDto.getContent();
         this.address_name = purchasesRequestDto.getAddress_name();
         this.zone_no = purchasesRequestDto.getZone_no();
-
     }
 }
