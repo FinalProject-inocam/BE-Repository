@@ -1,7 +1,7 @@
 package com.example.finalproject.global.utils;
 
-import com.example.finalproject.auth.entity.User;
-import com.example.finalproject.auth.repository.UserRepository;
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

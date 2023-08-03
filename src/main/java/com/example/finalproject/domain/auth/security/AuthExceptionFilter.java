@@ -1,4 +1,4 @@
-package com.example.finalproject.auth.security;
+package com.example.finalproject.domain.auth.security;
 
 import com.example.finalproject.global.utils.ResponseUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;

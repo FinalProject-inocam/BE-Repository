@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.purchases.entity;
 
-import com.example.finalproject.auth.entity.User;
+import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Purchases extends Timestamped {
+public class Purchase extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -47,7 +47,7 @@ public class Purchases extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Purchases(PurchasesRequestDto purchasesRequestDto, User user) {
+    public Purchase(PurchasesRequestDto purchasesRequestDto, User user) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
         this.alarm = purchasesRequestDto.getAlarm();

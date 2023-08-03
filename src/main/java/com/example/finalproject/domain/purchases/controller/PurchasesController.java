@@ -1,7 +1,7 @@
 package com.example.finalproject.domain.purchases.controller;
 
 
-import com.example.finalproject.auth.security.UserDetailsImpl;
+import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
 import com.example.finalproject.domain.purchases.service.PurchasesService;
 import com.example.finalproject.global.responsedto.ApiResponse;

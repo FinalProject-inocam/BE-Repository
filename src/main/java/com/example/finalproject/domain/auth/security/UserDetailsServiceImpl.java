@@ -1,7 +1,7 @@
-package com.example.finalproject.auth.security;
+package com.example.finalproject.domain.auth.security;
 
-import com.example.finalproject.auth.entity.User;
-import com.example.finalproject.auth.repository.UserRepository;
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -1,4 +1,4 @@
-package com.example.finalproject.auth.dto;
+package com.example.finalproject.domain.auth.dto;
 
 import lombok.Getter;
 

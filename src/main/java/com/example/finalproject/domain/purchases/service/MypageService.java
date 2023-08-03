@@ -1,7 +1,7 @@
 package com.example.finalproject.domain.purchases.service;
 
-import com.example.finalproject.auth.entity.User;
-import com.example.finalproject.auth.repository.UserRepository;
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.purchases.dto.MypageRequestDto;
 import com.example.finalproject.global.enums.SuccessCode;

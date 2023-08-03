@@ -1,4 +1,4 @@
-package com.example.finalproject.auth.entity;
+package com.example.finalproject.domain.auth.entity;
 
 import jakarta.persistence.Column;
 import lombok.Getter;

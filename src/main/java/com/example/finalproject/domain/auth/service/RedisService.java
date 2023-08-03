@@ -1,6 +1,6 @@
-package com.example.finalproject.auth.service;
+package com.example.finalproject.domain.auth.service;
 
-import com.example.finalproject.auth.entity.RefreshToken;
+import com.example.finalproject.domain.auth.entity.RefreshToken;
 import com.example.finalproject.global.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;

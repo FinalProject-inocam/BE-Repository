@@ -1,6 +1,6 @@
-package com.example.finalproject.auth.controller;
+package com.example.finalproject.domain.auth.controller;
 
-import com.example.finalproject.auth.service.UserService;
+import com.example.finalproject.domain.auth.service.UserService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;

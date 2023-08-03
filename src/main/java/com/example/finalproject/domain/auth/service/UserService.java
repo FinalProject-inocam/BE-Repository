@@ -1,8 +1,8 @@
-package com.example.finalproject.auth.service;
+package com.example.finalproject.domain.auth.service;
 
-import com.example.finalproject.auth.dto.SignupRequestDto;
-import com.example.finalproject.auth.entity.User;
-import com.example.finalproject.auth.repository.UserRepository;
+import com.example.finalproject.domain.auth.dto.SignupRequestDto;
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.utils.JwtUtil;

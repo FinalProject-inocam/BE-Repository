@@ -1,9 +1,9 @@
-package com.example.finalproject.auth.security;
+package com.example.finalproject.domain.auth.security;
 
-import com.example.finalproject.auth.dto.LoginRequestDto;
-import com.example.finalproject.auth.entity.RefreshToken;
-import com.example.finalproject.auth.entity.User;
-import com.example.finalproject.auth.service.RedisService;
+import com.example.finalproject.domain.auth.dto.LoginRequestDto;
+import com.example.finalproject.domain.auth.entity.RefreshToken;
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.service.RedisService;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;

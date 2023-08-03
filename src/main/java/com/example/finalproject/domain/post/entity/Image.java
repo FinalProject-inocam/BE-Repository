@@ -19,6 +19,6 @@ public class Image {
 
 
     public Image(String imageUrl) {
-        this.image=imageUrl;
+        this.image = imageUrl;
     }
 }
