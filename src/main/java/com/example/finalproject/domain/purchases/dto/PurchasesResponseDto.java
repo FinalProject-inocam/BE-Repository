@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.purchases.dto;
 
-import com.example.finalproject.domain.purchases.entity.Purchases;
+import com.example.finalproject.domain.purchases.entity.Purchase;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,20 +24,20 @@ public class PurchasesResponseDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
-    public PurchasesResponseDto(Purchases purchases) {
-        this.id = purchases.getId();
-        this.type = purchases.getType();
-        this.price = purchases.getPrice();
-        this.color = purchases.getColor();
-        this.alarm = purchases.getAlarm();
-        this.content = purchases.getContent();
-        this.address_name = purchases.getAddress_name();
-        this.zone_no = purchases.getZone_no();
-        this.approve = purchases.getApprove();
-        this.deny_message = purchases.getDeny_message();
-        this.delivery_date = purchases.getDelivery_date();
-        this.createdAt = purchases.getCreatedAt();
-        this.modifiedAt = purchases.getModifiedAt();
+    public PurchasesResponseDto(Purchase purchase) {
+        this.id = purchase.getId();
+        this.type = purchase.getType();
+        this.price = purchase.getPrice();
+        this.color = purchase.getColor();
+        this.alarm = purchase.getAlarm();
+        this.content = purchase.getContent();
+        this.address_name = purchase.getAddress_name();
+        this.zone_no = purchase.getZone_no();
+        this.approve = purchase.getApprove();
+        this.deny_message = purchase.getDeny_message();
+        this.delivery_date = purchase.getDelivery_date();
+        this.createdAt = purchase.getCreatedAt();
+        this.modifiedAt = purchase.getModifiedAt();
     }
 
 }

@@ -1,12 +1,13 @@
 package com.example.finalproject.domain.post.entity;
 
-import com.example.finalproject.auth.entity.User;
+import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.post.dto.PostRequestDto;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Posts extends Timestamped {
+public class Post extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +35,8 @@ public class Posts extends Timestamped {
     private List<Comments> commentList;
 
     @OneToMany
-    @JoinColumn(name = "image_id",nullable = true)
-    private List<Image> imageList=new ArrayList<>();
+    @JoinColumn(name = "image_id")
+    private List<Image> imageList = new ArrayList<>();
 
     @ManyToOne
     private User user;

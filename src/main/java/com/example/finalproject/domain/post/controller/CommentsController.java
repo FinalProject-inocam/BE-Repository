@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.post.controller;
 
-import com.example.finalproject.auth.security.UserDetailsImpl;
+import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.post.dto.CommentRequestDto;
 import com.example.finalproject.domain.post.service.CommentsService;
 import com.example.finalproject.global.enums.SuccessCode;

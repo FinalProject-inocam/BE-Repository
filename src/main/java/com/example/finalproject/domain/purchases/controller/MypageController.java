@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.purchases.controller;
 
-import com.example.finalproject.auth.security.UserDetailsImpl;
+import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.purchases.dto.MypageRequestDto;
 import com.example.finalproject.domain.purchases.service.MypageService;
 import com.example.finalproject.global.enums.SuccessCode;

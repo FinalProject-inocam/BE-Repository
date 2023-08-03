@@ -1,16 +1,15 @@
 package com.example.finalproject.domain.post.service;
 
-import com.example.finalproject.auth.entity.User;
-import com.example.finalproject.auth.repository.UserRepository;
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.post.dto.CommentRequestDto;
 import com.example.finalproject.domain.post.entity.CommentLike;
 import com.example.finalproject.domain.post.entity.Comments;
-import com.example.finalproject.domain.post.entity.PostLike;
-import com.example.finalproject.domain.post.entity.Posts;
+import com.example.finalproject.domain.post.entity.Post;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.post.repository.CommentLikeRepository;
 import com.example.finalproject.domain.post.repository.PostCommentsRepository;
-import com.example.finalproject.domain.post.repository.PostsRepository;
+import com.example.finalproject.domain.post.repository.PostRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
@@ -28,12 +27,12 @@ import static com.example.finalproject.global.enums.SuccessCode.LIKE_SUCCESS;
 @RequiredArgsConstructor
 public class CommentsService {
     private final PostCommentsRepository postCommentsRepository;
-    private final PostsRepository postsRepository;
+    private final PostRepository postRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final UserRepository userRepository;
     @Transactional
     public SuccessCode createService(Long postId,CommentRequestDto commentRequestDto,String nickname) {
-        Posts post =postsRepository.findById(postId).orElseThrow(
+        Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
         List<Comments> commentsList=post.getCommentList();

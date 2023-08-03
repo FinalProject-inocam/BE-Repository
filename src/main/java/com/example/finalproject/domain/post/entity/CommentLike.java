@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.post.entity;
 
-import com.example.finalproject.auth.entity.User;
+import com.example.finalproject.domain.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,8 +20,9 @@ public class CommentLike {
     @ManyToOne
     @JoinColumn(name = "post_Id", nullable = false)
     private Comments comments;
-    public CommentLike(User user,Comments comments){
-        this.user=user;
-        this.comments=comments;
+
+    public CommentLike(User user, Comments comments) {
+        this.user = user;
+        this.comments = comments;
     }
 }
