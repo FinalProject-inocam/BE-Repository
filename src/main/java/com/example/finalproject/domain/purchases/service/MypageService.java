@@ -24,7 +24,10 @@ public class MypageService {
             User newuser = userRepository.findById(user.getUserId()).orElseThrow(
                     () -> new PostsNotFoundException(NOT_FOUND_DATA)
             );
-            newuser.update(mypageRequestDto);
+
+            String newpassword = passwordEncoder.encode(mypageRequestDto.getNew_password());
+            mypageRequestDto.setPasswordToNewPassword(passwordEncoder.encode(mypageRequestDto.getNew_password()));
+            newuser.update(mypageRequestDto, newpassword);
         } else {
             throw new PostsNotFoundException(NO_AUTHORITY_TO_DATA);// 좀 있다 다른 파일 합치고 새로운 예외 추가해서 하는게 좋을듯?합니다
         }
