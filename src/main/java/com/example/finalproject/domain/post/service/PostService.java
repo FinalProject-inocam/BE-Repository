@@ -2,6 +2,7 @@ package com.example.finalproject.domain.post.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
+import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.post.dto.CommentResponseDto;
 import com.example.finalproject.domain.post.dto.PostAllResponseDto;
 import com.example.finalproject.domain.post.dto.PostOneResponseDto;
@@ -39,25 +40,24 @@ public class PostService {
     private final S3Utils s3Utils;
 
     @Transactional
-    public List<PostAllResponseDto> getPost(User user) {
+    public List<PostAllResponseDto> getPost(UserDetailsImpl userDetails) {
         List<Post> posts = postRepository.findAll();
         List<PostAllResponseDto> postsList = new ArrayList<>();
         Boolean is_like;
-        if (user == null) {
+        if (userDetails == null) {
             is_like = false;
         } else {
-            is_like = postLikeRepository.existsByUserUserId(user.getUserId());
+            is_like = postLikeRepository.existsByUserUserId(userDetails.getUser().getUserId());
         }
         for (Post post : posts) {
             Long comment_count = Long.valueOf(post.getCommentList().size());
-            Long like_count = postLikeRepository.countByPostsId(post.getId());
+            Long like_count = postLikeRepository.countByPostId(post.getId());
 
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
             postsList.add(postAllResponseDto);
         }
         return postsList;
     }
-
 
     @Transactional
     public PostOneResponseDto getOnePost(Long postid) {
@@ -137,7 +137,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
-        Optional<PostLike> postLike = postLikeRepository.findByPostsIdAndUserUserId(postId, userId);
+        Optional<PostLike> postLike = postLikeRepository.findByPostIdAndUserUserId(postId, userId);
         if (postLike.isPresent()) {
             postLikeRepository.delete(postLike.get());
             return LIKE_CANCEL;

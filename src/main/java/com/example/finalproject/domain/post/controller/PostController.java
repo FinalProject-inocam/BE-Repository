@@ -23,7 +23,7 @@ public class PostController {
 
     @GetMapping
     public ApiResponse<?> getPosts(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        List<PostAllResponseDto> postResponseDtoList = postService.getPost(userDetails.getUser());
+        List<PostAllResponseDto> postResponseDtoList = postService.getPost(userDetails);
         return ResponseUtils.ok(postResponseDtoList);
     }
 

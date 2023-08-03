@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PostLikeRepository extends JpaRepository<PostLike,Long> {
-    Optional<PostLike> findByPostsIdAndUserUserId(Long postId, Long userId);
+public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
+    Optional<PostLike> findByPostIdAndUserUserId(Long postId, Long userId);
 
-    Long countByPostsId(Long id);
+    Long countByPostId(Long id);
 
     Boolean existsByUserUserId(Long userId);
 }
