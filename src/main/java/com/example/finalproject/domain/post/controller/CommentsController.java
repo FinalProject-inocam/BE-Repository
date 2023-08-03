@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/posts/{postId}/comments")
 public class CommentsController {
     private final CommentsService commentsService;
-    String nickname = "zin";
-
     @PostMapping
     public ApiResponse<?> createComments(
             @PathVariable(name = "postId") Long postId,
