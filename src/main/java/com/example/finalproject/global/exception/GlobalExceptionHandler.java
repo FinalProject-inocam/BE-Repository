@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 import java.nio.file.AccessDeniedException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,16 +26,16 @@ import java.util.Map;
 @Slf4j(topic = "global exception handler")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-  
+
     // 일반적인 클라이언트의 잘못된 요청 시
     @ExceptionHandler(IllegalArgumentException.class)
-    public ApiResponse<?> handleException(IllegalArgumentException e){
+    public ApiResponse<?> handleException(IllegalArgumentException e) {
         return ResponseUtils.error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     // 사용자가 제출한 데이터로 해당 객체를 찾을 수 없을 때
     @ExceptionHandler(NullPointerException.class)
-    public ApiResponse<?> handleException(NullPointerException e){
+    public ApiResponse<?> handleException(NullPointerException e) {
         return ResponseUtils.error(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
@@ -51,18 +52,15 @@ public class GlobalExceptionHandler {
 
     // 권한 요청이 잘못들어왔을 경우(게시글의 생성은 host만)
     @ExceptionHandler(AccessDeniedException.class)
-    public ApiResponse<?> handleException(AccessDeniedException e){
+    public ApiResponse<?> handleException(AccessDeniedException e) {
         return ResponseUtils.error(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
-
-
 
     @ExceptionHandler(PostsNotFoundException.class)
     public ApiResponse<?> handleNewsNotFoundException(PostsNotFoundException e) {
         log.info(e.getMessage());
         return ResponseUtils.error(e.getErrorCode());
     }
-
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
