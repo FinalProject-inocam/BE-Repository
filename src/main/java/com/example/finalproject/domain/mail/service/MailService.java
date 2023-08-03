@@ -1,31 +1,18 @@
 package com.example.finalproject.domain.mail.service;
 
-import com.example.finalproject.auth.repository.UserRepository;
-import com.example.finalproject.domain.mail.dto.MailDto;
+
 import com.example.finalproject.global.enums.SuccessCode;
-import com.sun.mail.util.logging.MailHandler;
-import jakarta.mail.MessagingException;
+
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-
-import javax.swing.text.html.HTML;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.security.SecureRandom;
-import java.util.HashMap;
-
-import static org.springframework.http.HttpStatus.OK;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +20,6 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender mailSender;
-    private final UserRepository userRepository;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     String code = randomcode();
     private static final String FROM_ADDRESS = "inomotorservice@gmail.com";
