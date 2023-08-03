@@ -15,35 +15,37 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/posts/{postId}/comments")
 public class CommentsController {
     private final CommentsService commentsService;
-    String nickname="zin";
+    String nickname = "zin";
+
     @PostMapping
     public ApiResponse<?> createComments(
-            @PathVariable(name="postId") Long postId,
+            @PathVariable(name = "postId") Long postId,
             @RequestBody CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails){
-        SuccessCode successCode=commentsService.createService(postId,commentRequestDto, userDetails.getNickname());
+            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        SuccessCode successCode = commentsService.createService(postId, commentRequestDto, userDetails.getNickname());
         return ResponseUtils.ok(successCode);
     }
+
     @PatchMapping("/{commentId}")
-    public ApiResponse<?> updateComments(@PathVariable(name="postId")Long postId,
-                                        @PathVariable(name="commentId")Long commentId,
+    public ApiResponse<?> updateComments(@PathVariable(name = "postId") Long postId,
+                                         @PathVariable(name = "commentId") Long commentId,
                                          @RequestBody CommentRequestDto commentRequestDto,
-                                        @AuthenticationPrincipal UserDetailsImpl userDetails){
-        SuccessCode successCode=commentsService.updateComment(postId,commentId,commentRequestDto, userDetails.getNickname());
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        SuccessCode successCode = commentsService.updateComment(postId, commentId, commentRequestDto, userDetails.getNickname());
         return ResponseUtils.ok(successCode);
     }
 
     @DeleteMapping("/{commentId}")
-    public ApiResponse<?> deleteComments(@PathVariable(name="postId")Long postId,
-                                         @PathVariable(name="commentId")Long commentId,
-                                         @AuthenticationPrincipal UserDetailsImpl userDetails){
-        SuccessCode successCode=commentsService.deleteComments(postId,commentId,userDetails.getNickname());
+    public ApiResponse<?> deleteComments(@PathVariable(name = "postId") Long postId,
+                                         @PathVariable(name = "commentId") Long commentId,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        SuccessCode successCode = commentsService.deleteComments(postId, commentId, userDetails.getNickname());
         return ResponseUtils.ok((successCode));
     }
 
     @PostMapping("/{commentId}/like")
-    public ApiResponse<?> likeComment(@PathVariable("commentId") Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        SuccessCode successCode = commentsService.likePost(commentId,userDetails.getUser().getUserId());
+    public ApiResponse<?> likeComment(@PathVariable("commentId") Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        SuccessCode successCode = commentsService.likePost(commentId, userDetails.getUser().getUserId());
         return ResponseUtils.ok(successCode);
     }
 }

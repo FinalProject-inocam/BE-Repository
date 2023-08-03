@@ -39,8 +39,8 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
 
     // accessToken 만료시간
-//    private final long TOKEN_TIME = 60 * 60 * 1000L; // 한시간
-    private final long TOKEN_TIME = 30 * 1000L; // 1분
+    private final long TOKEN_TIME = 60 * 60 * 1000L; // 한시간
+//    private final long TOKEN_TIME = 30 * 1000L; // 1분
 
     // refreshToken 만료시간
     private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; //2주

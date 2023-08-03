@@ -2,6 +2,7 @@ package com.example.finalproject.domain.post.dto;
 
 import com.example.finalproject.domain.post.entity.Comments;
 import lombok.Getter;
+
 import java.time.LocalDateTime;
 
 @Getter
@@ -11,13 +12,12 @@ public class CommentResponseDto {
     private String nickname;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
-//    private Posts posts;
 
     public CommentResponseDto(Comments cmt) {
-        this.id= cmt.getId();
-        this.comment=cmt.getComment();
-        this.createAt=cmt.getCreatedAt();
-        this.modifiedAt=cmt.getModifiedAt();
-        this.nickname=cmt.getNickname();
+        this.id = cmt.getId();
+        this.comment = cmt.getComment();
+        this.createAt = cmt.getCreatedAt();
+        this.modifiedAt = cmt.getModifiedAt();
+        this.nickname = cmt.getNickname();
     }
 }

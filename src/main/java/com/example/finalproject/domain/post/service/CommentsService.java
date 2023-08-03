@@ -30,29 +30,31 @@ public class CommentsService {
     private final PostRepository postRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final UserRepository userRepository;
+
     @Transactional
-    public SuccessCode createService(Long postId,CommentRequestDto commentRequestDto,String nickname) {
+    public SuccessCode createService(Long postId, CommentRequestDto commentRequestDto, String nickname) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
-        List<Comments> commentsList=post.getCommentList();
+        List<Comments> commentsList = post.getCommentList();
         User user = userRepository.findByNickname(nickname);
-        Comments comment = new Comments(nickname,post,commentRequestDto.getComment(),user);
+        Comments comment = new Comments(nickname, post, commentRequestDto.getComment(), user);
         commentsList.add(comment);
         postCommentsRepository.save(comment);
 
         return SuccessCode.COMMENT_CREATE_SUCCESS;
     }
+
     @Transactional
-    public SuccessCode updateComment(Long postId, Long commentId, CommentRequestDto commentRequestDto,String nickname){
-        Comments comments =validateAuthority(commentId,nickname);
+    public SuccessCode updateComment(Long postId, Long commentId, CommentRequestDto commentRequestDto, String nickname) {
+        Comments comments = validateAuthority(commentId, nickname);
         comments.setComment(commentRequestDto.getComment());
         return SuccessCode.COMMENT_UPDATE_SUCCESS;
     }
 
 
-    public SuccessCode deleteComments(Long postId, Long commentId,String nickname) {
-        Comments comments =validateAuthority(commentId,nickname);
+    public SuccessCode deleteComments(Long postId, Long commentId, String nickname) {
+        Comments comments = validateAuthority(commentId, nickname);
         postCommentsRepository.delete(comments);
         return SuccessCode.COMMENT_DELETE_SUCCESS;
     }
@@ -61,15 +63,15 @@ public class CommentsService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_CLIENT)
         );
-        Comments comments=postCommentsRepository.findById(commentId).orElseThrow(
+        Comments comments = postCommentsRepository.findById(commentId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
 
-        Optional<CommentLike> commentLike = commentLikeRepository.findByCommentsIdAndUserUserId(commentId,userId);
-        if(commentLike.isPresent()){
+        Optional<CommentLike> commentLike = commentLikeRepository.findByCommentsIdAndUserUserId(commentId, userId);
+        if (commentLike.isPresent()) {
             commentLikeRepository.delete(commentLike.get());
             return LIKE_CANCEL;
-        }else{
+        } else {
             commentLikeRepository.save(new CommentLike(user, comments));
             return LIKE_SUCCESS;
         }
