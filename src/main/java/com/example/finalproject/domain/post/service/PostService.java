@@ -69,7 +69,12 @@ public class PostService {
             commentResponseDtoList.add(commentResponseDto);
         }
         Long like_count = postLikeRepository.countByPostId(post.getId());
-        Boolean is_like=postLikeRepository.existsByUserUserId(userDetails.getUser().getUserId());
+        Boolean is_like;
+        if (userDetails == null) {
+            is_like = false;
+        } else {
+            is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(),userDetails.getUser().getUserId());
+        }
 
         PostOneResponseDto postOneResponseDto = new PostOneResponseDto(post, commentResponseDtoList,like_count,is_like);
         return postOneResponseDto;
