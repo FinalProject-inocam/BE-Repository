@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.auth.entity;
 
+import com.example.finalproject.domain.auth.dto.KakaoUserInfoDto;
 import com.example.finalproject.domain.auth.dto.SignupRequestDto;
 import com.example.finalproject.domain.purchases.dto.MypageRequestDto;
 import com.example.finalproject.global.enums.UserRoleEnum;
@@ -38,6 +39,9 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private UserRoleEnum role;
 
+    @Column
+    private Long kakaoId;
+
     public User(SignupRequestDto requestDto, String password, UserRoleEnum role) {
         this.email = requestDto.getEmail();
         this.password = password;
@@ -48,9 +52,22 @@ public class User {
         this.role = role;
     }
 
-    public void update(MypageRequestDto mypageRequestDto,String newpassword) {
+    public void update(MypageRequestDto mypageRequestDto, String newpassword) {
         this.password = newpassword;
         this.nickname = mypageRequestDto.getNickname();
         this.phoneNumber = mypageRequestDto.getPhoneNumber();
+    }
+
+    public User(KakaoUserInfoDto kakaoUserInfo, String password, UserRoleEnum role) {
+        this.email = kakaoUserInfo.getEmail();
+        this.password = password;
+        this.nickname = kakaoUserInfo.getNickname();
+        this.gender = kakaoUserInfo.getGender();
+        this.role = role;
+    }
+
+    public User kakaoIdUpdate(Long kakaoId) {
+        this.kakaoId = kakaoId;
+        return this;
     }
 }

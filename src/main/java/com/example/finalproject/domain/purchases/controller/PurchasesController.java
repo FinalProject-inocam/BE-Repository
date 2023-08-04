@@ -42,7 +42,7 @@ public class PurchasesController {
     // 차량 신청 취소
     @DeleteMapping("/{purchaseId}")
     public ApiResponse<?> deletePurchases(@PathVariable Long purchaseId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseUtils.ok(purchasesService.deletePurchases(purchaseId, userDetails.getUser()));
+        return purchasesService.deletePurchases(purchaseId, userDetails.getUser());
     }
 
 }
