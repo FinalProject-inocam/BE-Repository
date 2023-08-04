@@ -3,10 +3,12 @@ package com.example.finalproject.global.utils;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
+@Slf4j
 public class ResponseUtils {
 
     public static <T> ApiResponse<T> ok(T response) {

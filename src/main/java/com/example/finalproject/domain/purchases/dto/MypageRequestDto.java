@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MypageRequestDto {
     String nickname;
-    String phone_number;
+    String phoneNumber;
     String password;
-    String new_password;
+    String newPassword;
 
     public void setPasswordToNewPassword(String encode) { // 기본 setter와 같은 이름
-        this.new_password = encode;
+        this.newPassword = encode;
     }
 }

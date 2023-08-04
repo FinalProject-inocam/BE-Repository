@@ -21,17 +21,17 @@ public class UserController {
         return ResponseUtils.ok(userService.signup(requestDto));
     }
 
-    @PostMapping("/email")
+    @GetMapping("/email")
     public ApiResponse<?> checkEmail(@RequestParam String email) {
-        return ResponseUtils.ok(userService.checkEmail(email));
+        return ResponseUtils.ok(!userService.checkEmail(email));
     }
 
-    @PostMapping("/nickname")
+    @GetMapping("/nickname")
     public ApiResponse<?> checkNickname(@RequestParam String nickname) {
-        return ResponseUtils.ok(userService.checkNickname(nickname));
+        return ResponseUtils.ok(!userService.checkNickname(nickname));
     }
 
-    @PostMapping("/logout")
+    @GetMapping("/logout")
     public ApiResponse<?> logout(HttpServletRequest request) {
         return ResponseUtils.ok(userService.logout(request));
     }
