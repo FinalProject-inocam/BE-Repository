@@ -2,6 +2,7 @@ package com.example.finalproject.domain.post.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.post.dto.PostAllResponseDto;
+import com.example.finalproject.domain.post.dto.PostLikeRequestDto;
 import com.example.finalproject.domain.post.dto.PostOneResponseDto;
 import com.example.finalproject.domain.post.dto.PostRequestDto;
 import com.example.finalproject.domain.post.service.PostService;
@@ -28,13 +29,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ApiResponse<?> getOnePost(@PathVariable(name = "postId") Long postId) {
-        PostOneResponseDto postOneResponseDto = postService.getOnePost(postId);
+    public ApiResponse<?> getOnePost(@PathVariable(name = "postId") Long postId,
+                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        PostOneResponseDto postOneResponseDto = postService.getOnePost(postId,userDetails);
         return ResponseUtils.ok(postOneResponseDto);
     }
 
     @PostMapping
-    public ApiResponse<?> createPost(@RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
+    public ApiResponse<?> createPost(@RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                      @RequestPart(value = "data") PostRequestDto postRequestDto,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = postService.createPost(postRequestDto, userDetails.getUser(), multipartFile);
@@ -42,7 +44,7 @@ public class PostController {
     }
 
     @PatchMapping("/{postId}")
-    public ApiResponse<?> updatePost(@RequestPart(value = "file", required = false) List<MultipartFile> multipartFile,
+    public ApiResponse<?> updatePost(@RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                      @RequestPart(value = "data") PostRequestDto postRequestDto,
                                      @PathVariable Long postId,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -58,8 +60,8 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public ApiResponse<?> likeNews(@PathVariable("postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = postService.likePost(postId, userDetails.getUser().getUserId());
+    public ApiResponse<?> likeNews(@PathVariable("postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PostLikeRequestDto postLikeRequestDto) {
+        SuccessCode successCode = postService.likePost(postId, userDetails.getUser().getUserId(),postLikeRequestDto);
         return ResponseUtils.ok(successCode);
     }
 }

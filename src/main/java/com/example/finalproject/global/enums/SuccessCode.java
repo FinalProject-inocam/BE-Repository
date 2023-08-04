@@ -17,7 +17,7 @@ public enum SuccessCode {
     COMMENT_DELETE_SUCCESS(OK, "댓글 삭제 성공"),
     LIKE_CANCEL(OK, "좋아요 취소"),
     DISLIKE_CANCEL(OK, "싫어요 취소"),
-
+    MAIL_SUCCESS(OK,"메일 발송 완료"),
     /* 201 CREATED : 요청이 성공적이었으며 그 결과로 새로운 리소스가 생성 되었다는 의미입니다. */
     USER_SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
     POST_CREATE_SUCCESS(CREATED, "게시글 작성 성공"),
