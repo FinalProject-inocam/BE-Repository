@@ -75,8 +75,8 @@ public class KakaoService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "7cab9619415bc29c93aa8272c1a4f028");
-        body.add("redirect_uri", "http://localhost:3000/auth/kakao");
+        body.add("client_id", "0e983f9b2df2971e5bd1ad75032d0e80");
+        body.add("redirect_uri", "http://inocamfinal.s3-website.ap-northeast-2.amazonaws.com/kakao/auto");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
