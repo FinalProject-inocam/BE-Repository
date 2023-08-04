@@ -15,9 +15,13 @@ public enum SuccessCode {
     POST_DELETE_SUCCESS(OK, "게시글 삭제 성공"),
     COMMENT_UPDATE_SUCCESS(OK, "댓글 수정 완료"),
     COMMENT_DELETE_SUCCESS(OK, "댓글 삭제 성공"),
+    PURCHASES_DELETE_SUCCESS(OK, "신청 취소 성공"),
+    PURCHASES_UPDATE_SUCCESS(OK, "신청 수정 성공"),
+    MYPAGE_UPDATE_SUCCESS(OK, "마이페이지 수정"),
+
     LIKE_CANCEL(OK, "좋아요 취소"),
     DISLIKE_CANCEL(OK, "싫어요 취소"),
-    MAIL_SUCCESS(OK,"메일 발송 완료"),
+    MAIL_SUCCESS(OK, "메일 발송 완료"),
     USER_CHECK_EMAIL_TRUE(OK, "사용가능한 이메일입니다."),
     USER_CHECK_EMAIL_FALSE(OK, "이미 존재하는 이메일입니다."),
     USER_CHECK_NICKNAME_TRUE(OK, "사용 가능한 닉네임입니다."),
@@ -26,6 +30,7 @@ public enum SuccessCode {
     USER_SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
     POST_CREATE_SUCCESS(CREATED, "게시글 작성 성공"),
     COMMENT_CREATE_SUCCESS(CREATED, "댓글 작성 완료"),
+    PURCHASES_CREATE_SUCCESS(CREATED, "출고 신청 완료"),
     LIKE_SUCCESS(CREATED, "좋아요 성공"),
     DISLIKE_SUCCESS(CREATED, "싫어요 성공");
 
