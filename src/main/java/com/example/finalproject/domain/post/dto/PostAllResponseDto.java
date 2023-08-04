@@ -9,10 +9,9 @@ public class PostAllResponseDto {
     Long post_id;
     String title;
     String content;
-    Long comment_count;
-    Long like_count;
     Boolean is_like;
-
+    Long like_count;
+    Long comment_count;
     public PostAllResponseDto(Post post, Long comment_count, Long like_count, Boolean is_like) {
         this.content = post.getContent();
         this.title = post.getTitle();

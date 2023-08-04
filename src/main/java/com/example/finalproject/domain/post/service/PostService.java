@@ -3,10 +3,7 @@ package com.example.finalproject.domain.post.service;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.post.dto.CommentResponseDto;
-import com.example.finalproject.domain.post.dto.PostAllResponseDto;
-import com.example.finalproject.domain.post.dto.PostOneResponseDto;
-import com.example.finalproject.domain.post.dto.PostRequestDto;
+import com.example.finalproject.domain.post.dto.*;
 import com.example.finalproject.domain.post.entity.Comments;
 import com.example.finalproject.domain.post.entity.Image;
 import com.example.finalproject.domain.post.entity.Post;
@@ -19,6 +16,7 @@ import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -43,13 +41,13 @@ public class PostService {
     public List<PostAllResponseDto> getPost(UserDetailsImpl userDetails) {
         List<Post> posts = postRepository.findAll();
         List<PostAllResponseDto> postsList = new ArrayList<>();
-        Boolean is_like;
-        if (userDetails == null) {
-            is_like = false;
-        } else {
-            is_like = postLikeRepository.existsByUserUserId(userDetails.getUser().getUserId());
-        }
         for (Post post : posts) {
+            Boolean is_like;
+            if (userDetails == null) {
+                is_like = false;
+            } else {
+                is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(),userDetails.getUser().getUserId());
+            }
             Long comment_count = Long.valueOf(post.getCommentList().size());
             Long like_count = postLikeRepository.countByPostId(post.getId());
 
@@ -60,7 +58,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostOneResponseDto getOnePost(Long postid) {
+    public PostOneResponseDto getOnePost(Long postid,UserDetailsImpl userDetails) {
         Post post = postRepository.findById(postid).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
@@ -70,7 +68,10 @@ public class PostService {
             CommentResponseDto commentResponseDto = new CommentResponseDto(cmt);
             commentResponseDtoList.add(commentResponseDto);
         }
-        PostOneResponseDto postOneResponseDto = new PostOneResponseDto(post, commentResponseDtoList);
+        Long like_count = postLikeRepository.countByPostId(post.getId());
+        Boolean is_like=postLikeRepository.existsByUserUserId(userDetails.getUser().getUserId());
+
+        PostOneResponseDto postOneResponseDto = new PostOneResponseDto(post, commentResponseDtoList,like_count,is_like);
         return postOneResponseDto;
     }
 
@@ -130,7 +131,7 @@ public class PostService {
     }
 
     @Transactional
-    public SuccessCode likePost(Long postId, Long userId) {
+    public SuccessCode likePost(Long postId, Long userId, PostLikeRequestDto postLikeRequestDto) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_CLIENT)
         );

@@ -1,6 +1,10 @@
 package com.example.finalproject.domain.mail.service;
 
 
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.repository.UserRepository;
+import com.example.finalproject.domain.mail.entity.AuthCode;
+import com.example.finalproject.domain.mail.repository.AuthCodeRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 
 import jakarta.mail.internet.InternetAddress;
@@ -20,10 +24,15 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender mailSender;
+    private final AuthCodeRepository authCodeRepository;
+    private final UserRepository userRepository;
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     String code = randomcode();
     private static final String FROM_ADDRESS = "inomotorservice@gmail.com";
     public SuccessCode send(String to) {
+        if (checkEmail(to)) {
+            throw new IllegalArgumentException("중복되는 이메일이 있습니다.");
+        }
         try {
 
             MimeMessage mimeMessage = mailSender.createMimeMessage();
@@ -45,12 +54,15 @@ public class MailService {
 
             //메일 보내기
             javaMailSender.send(mimeMessage);
+            // 인증코드,이메일 저장
+            AuthCode authCode=new AuthCode(to,code);
+            authCodeRepository.save(authCode);
             return SuccessCode.MAIL_SUCCESS;
         }
         catch(Exception e){
             e.printStackTrace();
+            throw new IllegalArgumentException("메일 전송 실패");
         }
-        return SuccessCode.LIKE_SUCCESS;
     }
     public String randomcode() {
         SecureRandom random = new SecureRandom();
@@ -66,4 +78,8 @@ public class MailService {
         context.setVariable("code", code);
         return templateEngine.process(templateName, context);
     }
+    public Boolean checkEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
 }
