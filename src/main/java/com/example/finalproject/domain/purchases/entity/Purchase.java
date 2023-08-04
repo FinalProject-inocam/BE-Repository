@@ -15,7 +15,7 @@ import java.util.Date;
 public class Purchase extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long purchaseId;
 
     @Column(nullable = false)
     private String type;
@@ -32,16 +32,16 @@ public class Purchase extends Timestamped {
     private String content;
 
     @Column(nullable = false)
-    private String address_name;
+    private String addressName;
 
     @Column(nullable = false)
-    private String zone_no;
+    private String zoneNo;
 
     private Boolean approve;
 
-    private String deny_message;
+    private String denyMessage;
 
-    private Date delivery_date;
+    private Date deliveryDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -52,8 +52,8 @@ public class Purchase extends Timestamped {
         this.color = purchasesRequestDto.getColor();
         this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
-        this.address_name = purchasesRequestDto.getAddress_name();
-        this.zone_no = purchasesRequestDto.getZone_no();
+        this.addressName = purchasesRequestDto.getAddressName();
+        this.zoneNo = purchasesRequestDto.getZoneNo();
         this.user = user;
     }
 
@@ -62,7 +62,7 @@ public class Purchase extends Timestamped {
         this.color = purchasesRequestDto.getColor();
         this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
-        this.address_name = purchasesRequestDto.getAddress_name();
-        this.zone_no = purchasesRequestDto.getZone_no();
+        this.addressName = purchasesRequestDto.getAddressName();
+        this.zoneNo = purchasesRequestDto.getZoneNo();
     }
 }

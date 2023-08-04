@@ -26,6 +26,12 @@ public class User {
     private String nickname;
 
     @Column(nullable = false)
+    private String gender;
+
+    @Column(nullable = false)
+    private String birthdate;
+
+    @Column(nullable = false)
     private String phoneNumber;
 
     @Column(nullable = false)
@@ -37,12 +43,14 @@ public class User {
         this.password = password;
         this.nickname = requestDto.getNickname();
         this.phoneNumber = requestDto.getPhoneNumber();
+        this.gender = requestDto.getGender();
+        this.birthdate = requestDto.getBirthdate();
         this.role = role;
     }
 
     public void update(MypageRequestDto mypageRequestDto,String newpassword) {
         this.password = newpassword;
         this.nickname = mypageRequestDto.getNickname();
-        this.phoneNumber = mypageRequestDto.getPhone_number();
+        this.phoneNumber = mypageRequestDto.getPhoneNumber();
     }
 }

@@ -29,8 +29,8 @@ public class MypageService {
                     () -> new PostsNotFoundException(NOT_FOUND_DATA)
             );
 
-            String newpassword = passwordEncoder.encode(mypageRequestDto.getNew_password());
-            mypageRequestDto.setPasswordToNewPassword(passwordEncoder.encode(mypageRequestDto.getNew_password()));
+            String newpassword = passwordEncoder.encode(mypageRequestDto.getNewPassword());
+            mypageRequestDto.setPasswordToNewPassword(passwordEncoder.encode(mypageRequestDto.getNewPassword()));
             newuser.update(mypageRequestDto, newpassword);
         } else {
             throw new PostsNotFoundException(NO_AUTHORITY_TO_DATA);

@@ -10,6 +10,6 @@ public class PurchasesRequestDto {
     private String color;
     private Boolean alarm;
     private String content;
-    private String address_name;
-    private String zone_no;
+    private String addressName;
+    private String zoneNo;
 }
