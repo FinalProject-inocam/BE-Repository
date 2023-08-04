@@ -22,6 +22,10 @@ public enum SuccessCode {
     LIKE_CANCEL(OK, "좋아요 취소"),
     DISLIKE_CANCEL(OK, "싫어요 취소"),
     MAIL_SUCCESS(OK, "메일 발송 완료"),
+    USER_CHECK_EMAIL_TRUE(OK, "사용가능한 이메일입니다."),
+    USER_CHECK_EMAIL_FALSE(OK, "이미 존재하는 이메일입니다."),
+    USER_CHECK_NICKNAME_TRUE(OK, "사용 가능한 닉네임입니다."),
+    USER_CHECK_NICKNAME_FALSE(OK, "이미 존재하는 닉네임입니다."),
     /* 201 CREATED : 요청이 성공적이었으며 그 결과로 새로운 리소스가 생성 되었다는 의미입니다. */
     USER_SIGNUP_SUCCESS(CREATED, "회원가입 성공"),
     POST_CREATE_SUCCESS(CREATED, "게시글 작성 성공"),

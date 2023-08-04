@@ -5,11 +5,13 @@ import com.example.finalproject.domain.auth.service.KakaoService;
 import com.example.finalproject.domain.auth.service.UserService;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
+import com.example.finalproject.global.utils.ValidationSequence;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,18 +30,18 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public ApiResponse<?> signup(@RequestBody @Valid SignupRequestDto requestDto) {
+    public ApiResponse<?> signup(@RequestBody @Validated(ValidationSequence.class) SignupRequestDto requestDto) {
         return ResponseUtils.ok(userService.signup(requestDto));
     }
 
     @GetMapping("/email")
     public ApiResponse<?> checkEmail(@RequestParam String email) {
-        return ResponseUtils.ok(!userService.checkEmail(email));
+        return ResponseUtils.ok(userService.checkEmail(email));
     }
 
     @GetMapping("/nickname")
     public ApiResponse<?> checkNickname(@RequestParam String nickname) {
-        return ResponseUtils.ok(!userService.checkNickname(nickname));
+        return ResponseUtils.ok(userService.checkNickname(nickname));
     }
 
     @GetMapping("/logout")

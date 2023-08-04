@@ -10,13 +10,11 @@ public class ApiResponse<T> {
     private final int statusCode;
     private final String msg;
     private final T data;
-    private final T errors;
 
-    public ApiResponse(boolean success, int statusCode, String msg, T data, T errors) {
+    public ApiResponse(boolean success, int statusCode, String msg, T data) {
         this.success = success;
         this.statusCode = statusCode;
         this.msg = msg;
         this.data = data;
-        this.errors = errors;
     }
 }
