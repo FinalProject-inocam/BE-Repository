@@ -76,13 +76,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<?> validationExceptionHandler(MethodArgumentNotValidException e) {
         log.error("valid를 만족하지 못했을때");
-        Map<String, String> errors = new LinkedHashMap<>();
-        e.getBindingResult().getFieldErrors()
-                .forEach(error -> errors.put(
-                        error.getField(), error.getDefaultMessage()
-                ));
-        String error = e.getBindingResult().getFieldErrors().get(0).getField() + " : " + e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
-        System.out.println("error = " + error);
+//        Map<String, String> errors = new LinkedHashMap<>();
+//        e.getBindingResult().getFieldErrors()
+//                .forEach(error -> errors.put(
+//                        error.getField(), error.getDefaultMessage()
+//                ));
+        String error = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
         return ResponseUtils.error(HttpStatus.BAD_REQUEST, error);
     }
 

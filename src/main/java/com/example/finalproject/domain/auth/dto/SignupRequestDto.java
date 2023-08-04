@@ -8,12 +8,12 @@ import lombok.Getter;
 @Getter
 public class SignupRequestDto {
 
-    @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "이메일 형식에 맞춰주세요", groups = PatternGroup.class)
+    @Pattern(regexp = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$", message = "이메일 형식이 맞는지 확인해 주세요", groups = PatternGroup.class)
     @NotBlank(message = "이메일은 필수입니다.", groups = NotBlankGroup.class)
     private String email;
 
     // 테스트 중에는 꺼두겠습니다...
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#?$%^&*]).{8,15}$", message = "영문자와 숫자, 특수문자를 포함한 8~15자 이내로 작성해주세요", groups = PatternGroup.class)
+    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#?$%^&*]).{8,15}$", message = "비밀번호는 영문자와 숫자, 특수문자를 포함한 8~15자 이내로 작성해주세요", groups = PatternGroup.class)
     @NotBlank(message = "패스워드는 필수입니다.", groups = NotBlankGroup.class)
     private String password;
 
