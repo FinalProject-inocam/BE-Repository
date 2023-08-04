@@ -31,12 +31,12 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
         String nickname = requestDto.getNickname();
         // 이메일 중복확인
-        if (checkEmail(email)) {
+        if (validateEmail(email)) {
             log.error("이메일 중복");
             throw new IllegalArgumentException("중복되는 이메일이 있습니다.");
         }
         // 닉네임 중복확인
-        if (checkEmail(nickname)) {
+        if (validateEmail(nickname)) {
             log.error("닉네임 중복");
             throw new IllegalArgumentException("중복되는 닉네임이 있습니다.");
         }
@@ -59,11 +59,25 @@ public class UserService {
         return SuccessCode.USER_LOGOUT_SUCCESS;
     }
 
-    public Boolean checkEmail(String email) {
+    public SuccessCode checkEmail(String email) {
+        if (validateEmail(email)) {
+            return SuccessCode.USER_CHECK_EMAIL_FALSE;
+        }
+        return SuccessCode.USER_CHECK_EMAIL_TRUE;
+    }
+
+    public SuccessCode checkNickname(String nickname) {
+        if (validateNickname(nickname)) {
+            return SuccessCode.USER_CHECK_NICKNAME_FALSE;
+        }
+        return SuccessCode.USER_CHECK_NICKNAME_TRUE;
+    }
+
+    private Boolean validateEmail(String email) {
         return userRepository.existsByEmail(email);
     }
 
-    public Boolean checkNickname(String nickname) {
+    private Boolean validateNickname(String nickname) {
         return userRepository.existsByNickname(nickname);
     }
 }

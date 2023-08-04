@@ -81,7 +81,9 @@ public class GlobalExceptionHandler {
                 .forEach(error -> errors.put(
                         error.getField(), error.getDefaultMessage()
                 ));
-        return ResponseUtils.error(HttpStatus.BAD_REQUEST, errors);
+        String error = e.getBindingResult().getFieldErrors().get(0).getField() + " : " + e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+        System.out.println("error = " + error);
+        return ResponseUtils.error(HttpStatus.BAD_REQUEST, error);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
