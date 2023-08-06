@@ -25,7 +25,7 @@ import java.util.Date;
 public class JwtProvider {
 
     public static final String ACCESS_HEADER = "Authorization";
-    public static final String REFRESH_HEADER = "refreshtoken";
+    public static final String REFRESH_HEADER = "Refresh";
     public static final String AUTHORIZATION_KEY = "auth";
     public static final String NICKNAME_KEY = "nickname";
     public static final String GENDER_KEY = "gender";
