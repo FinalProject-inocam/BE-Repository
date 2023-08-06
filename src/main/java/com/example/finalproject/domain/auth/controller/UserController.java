@@ -23,7 +23,7 @@ public class UserController {
     private final KakaoService kakaoService;
 
     // 카카오 로그인
-    @GetMapping("/auth/kakao")
+    @GetMapping("/kakao")
     // GET https://kauth.kakao.com/oauth/authorize?client_id=ca694ae46e22b997351afa5a92c6c63a&response_type=code&redirect_uri=http://localhost:3000/api/auth/kakao
     public ApiResponse<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoService.kakaoLogin(code, response);
