@@ -12,6 +12,8 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰이 유효하지 않습니다"),
     MISMATCH_REFRESH_TOKEN(BAD_REQUEST, "리프레시 토큰의 유저 정보가 일치하지 않습니다"),
     PURCHASES_DELETE_FAIL(BAD_REQUEST, "신청 취소 실패"),
+    DUPLICATE_EMAIL(BAD_REQUEST, "이미 등록된 email입니다"),
+    INVALID_CODE(BAD_REQUEST, "유효하지 않은 code입니다"),
 
     /* 401 UNAUTHORIZED : 인증되지 않았다는 의미입니다. */
     INVALID_ADMIN_NUMBER(UNAUTHORIZED, "관리자 번호가 유효하지 않습니다."),
