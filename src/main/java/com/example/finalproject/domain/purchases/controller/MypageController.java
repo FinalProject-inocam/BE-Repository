@@ -6,6 +6,7 @@ import com.example.finalproject.domain.purchases.service.MypageService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -22,8 +23,9 @@ public class MypageController {
     // 마이페이지 수정
     @PatchMapping
     public ApiResponse<?> updateMypage(@RequestBody MypageRequestDto mypageRequestDto,
-                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = mypageService.updateMypage(mypageRequestDto, userDetails.getUser());
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                       HttpServletResponse response) {
+        SuccessCode successCode = mypageService.updateMypage(mypageRequestDto, userDetails.getUser(), response);
         return ResponseUtils.ok(successCode);
     }
 }

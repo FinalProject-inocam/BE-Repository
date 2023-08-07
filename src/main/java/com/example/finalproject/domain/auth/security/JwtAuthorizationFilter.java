@@ -30,7 +30,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         // access 토큰 확인
         String accessTokenValueFromHeader = jwtUtil.getAccessTokenFromHeader(req);
-        if (StringUtils.hasText(accessTokenValueFromHeader)) {
+        String refreshTokenValueFromHeader = jwtUtil.getRefreshTokenFromHeader(req);
+        if (StringUtils.hasText(accessTokenValueFromHeader) || StringUtils.hasText(refreshTokenValueFromHeader)) {
             String accessTokenValue = "";
             if (jwtUtil.validateAccessToken(accessTokenValueFromHeader)) {
                 log.info("가지고 있던 accessToken이 유효함");

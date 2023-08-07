@@ -42,8 +42,8 @@ public class JwtUtil {
     private final long TOKEN_TIME = 60 * 60 * 1000L; // 한시간
 //    private final long TOKEN_TIME = 30 * 1000L; // 1분
 
-    // refreshToken 만료시간
-    private final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; //2주
+    // refreshToken 만료시간 다른 곳에서 쓰려고 public 했는데 이게 맞나...?
+    public final long REFRESH_TOKEN_TIME = 14 * 24 * 60 * 60 * 1000L; //2주
 
     @Value("${jwt.secret.key}") // Base64 Encode 한 SecretKey
     private String secretKey;
