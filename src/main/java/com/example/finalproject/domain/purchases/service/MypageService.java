@@ -34,7 +34,7 @@ public class MypageService {
 
             String newpassword = passwordEncoder.encode(mypageRequestDto.getNewPassword());
             mypageRequestDto.setPasswordToNewPassword(passwordEncoder.encode(mypageRequestDto.getNewPassword()));
-            newuser.update(mypageRequestDto, newpassword);
+            newuser.update(mypageRequestDto, newpassword, profileimg);
 
             // 기존의 로그인 되어있던 모든계정에서 로그아웃 처리
             redisService.deleteAllRefreshToken(user.getNickname());
