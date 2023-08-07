@@ -3,28 +3,26 @@ package com.example.finalproject.domain.mail.service;
 
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.mail.dto.MailDto;
-import com.example.finalproject.domain.mail.entity.AuthCode;
 import com.example.finalproject.domain.mail.exception.MailNotFoundException;
 import com.example.finalproject.domain.mail.repository.AuthCodeRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
-
 import com.example.finalproject.global.utils.RedisUtil;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
+
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -40,6 +38,7 @@ public class MailService {
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final String FROM_ADDRESS = "inomotorservice@gmail.com";
+
     public SuccessCode send(String to) {
         if (checkEmail(to)) {
             throw new MailNotFoundException(ErrorCode.DUPLICATE_EMAIL);
@@ -69,27 +68,26 @@ public class MailService {
             // 인증코드,이메일 저장
             // 인증 코드의 만료 시간 설정 (예: 30분 후)
             return SuccessCode.MAIL_SUCCESS;
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new MailNotFoundException(ErrorCode.DUPLICATE_EMAIL);
         }
     }
 
-    public SuccessCode checkCode(MailDto mailDto){
+    public SuccessCode checkCode(MailDto mailDto) {
         log.info(mailDto.getCode());
-        String key=redisUtil.getData(mailDto.getCode());
-        if(key==null){
+        String key = redisUtil.getData(mailDto.getCode());
+        if (key == null) {
             throw new MailNotFoundException(ErrorCode.INVALID_CODE);
         }
         log.info(key);
-        if(key.equals(mailDto.getEmail())){
+        if (key.equals(mailDto.getEmail())) {
             return SuccessCode.VERIFY_COMPLETE;
-        }
-        else{
+        } else {
             throw new MailNotFoundException(ErrorCode.INVALID_CODE);
         }
     }
+
     public String randomcode() {
         StringBuilder code = new StringBuilder(6);
         int charactersLength = CHARACTERS.length();
@@ -99,11 +97,13 @@ public class MailService {
         }
         return code.toString();
     }
+
     private String setContext(String code, String templateName) {
         Context context = new Context();
         context.setVariable("code", code);
         return templateEngine.process(templateName, context);
     }
+
     public Boolean checkEmail(String email) {
         return userRepository.existsByEmail(email);
     }
