@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.*;
 public class MailController {
     private final MailService mailService;
 
-    @PostMapping("/verify")
+    @GetMapping("/verify")
     public ApiResponse<?> execMail(@RequestParam(name = "email") String email) {
         SuccessCode successCode = mailService.send(email);
         return ResponseUtils.ok(successCode);
     }
 
     @GetMapping("/checkcode")
-    public ApiResponse<?> checkCode(@RequestBody MailDto mailDto) {
-        return ResponseUtils.ok(mailService.checkCode(mailDto));
+    public ApiResponse<?> checkCode(@RequestParam (name = "email") String email,
+                                    @RequestParam (name = "code") String code) {
+        return ResponseUtils.ok(mailService.checkCode(email, code));
     }
 }
