@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class MailController {
     private final MailService mailService;
 
-    @PostMapping("/verify")
+    @GetMapping("/verify")
     public ApiResponse<?> execMail(@RequestParam(name="email") String email) {
         SuccessCode successCode=mailService.send(email);
         return ResponseUtils.ok(successCode);
