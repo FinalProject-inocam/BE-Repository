@@ -18,6 +18,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StopWatch;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
@@ -37,7 +38,7 @@ public class MailService {
     private static final Logger log = LoggerFactory.getLogger(RedisUtil.class);
 
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-    private static final String FROM_ADDRESS = "inomotorservice@gmail.com";
+    private static final String FROM_ADDRESS = "inomotorservice@naver.com";
 
     public SuccessCode send(String to) {
         if (checkEmail(to)) {
@@ -45,10 +46,11 @@ public class MailService {
         }
         try {
             String code = randomcode();
+
             redisUtil.setDataExpire(code, to, 60 * 5L);
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
-            helper.setFrom(new InternetAddress("inomotorservice@gmail.com", "이노모터서비스"));
+            helper.setFrom(new InternetAddress("inomotorservice@naver.com", "이노모터서비스"));
             //메일 제목 설정
             helper.setSubject("[이노모터스] 인증코드입니다");
 
@@ -67,6 +69,7 @@ public class MailService {
             javaMailSender.send(mimeMessage);
             // 인증코드,이메일 저장
             // 인증 코드의 만료 시간 설정 (예: 30분 후)
+
             return SuccessCode.MAIL_SUCCESS;
         } catch (Exception e) {
             e.printStackTrace();
