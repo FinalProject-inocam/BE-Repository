@@ -49,23 +49,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
         log.info("successfulAuthentication");
         User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
-        String email = user.getEmail();
-        String nickname = user.getNickname();
-        UserRoleEnum role = user.getRole();
-
-        String accessToken = jwtUtil.createAccessToken(email, nickname, role);
-        response.addHeader(JwtUtil.ACCESS_TOKEN, accessToken);
-
-        // 중복 로그인 가능한 계정 수를 제한시키기
-        if (redisService.limitAccess(nickname)) {
-            log.info("접속수 제한 초과");
-            redisService.deleteOldRefreshToken(nickname);
-        }
-        String newRefreshToken = jwtUtil.createRefreshToken(email, nickname, role);
-        response.addHeader(JwtUtil.REFRESH_TOKEN, newRefreshToken);
-        // redis에 저장
-        redisService.setRefreshToken(new RefreshToken(newRefreshToken, accessToken));
-
+        // 로그인 절차
+        redisService.newLogin(user, response);
 
         response.setStatus(200);
         response.setContentType("application/json;charset=UTF-8");

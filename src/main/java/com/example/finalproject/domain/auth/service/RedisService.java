@@ -1,28 +1,53 @@
 package com.example.finalproject.domain.auth.service;
 
 import com.example.finalproject.domain.auth.entity.RefreshToken;
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RedisService {
     private final RedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
 
+    public void newLogin(User user, HttpServletResponse response) {
+        String email = user.getEmail();
+        String nickname = user.getNickname();
+        UserRoleEnum role = user.getRole();
+
+        String accessToken = jwtUtil.createAccessToken(email, nickname, role);
+        response.addHeader(JwtUtil.ACCESS_TOKEN, accessToken);
+
+        // 중복 로그인 가능한 계정 수를 제한시키기
+        if (limitAccess(nickname)) {
+            log.info("접속수 제한 초과");
+            deleteOldRefreshToken(nickname);
+        }
+
+        String newRefreshToken = jwtUtil.createRefreshToken(email, nickname, role);
+        response.addHeader(JwtUtil.REFRESH_TOKEN, newRefreshToken);
+        // redis에 저장
+        setRefreshToken(new RefreshToken(newRefreshToken, accessToken));
+    }
+
     @Transactional
     public void setRefreshToken(RefreshToken refreshToken) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        values.set(refreshToken.getRefreshToken(), String.valueOf(refreshToken.getAccessToken()));
-        redisTemplate.expire(String.valueOf(refreshToken.getAccessToken()), (60 * 60 * 24 * 14 + 60), TimeUnit.SECONDS); // 2주 refreshtoken
+        Duration expireDuration = Duration.ofSeconds(jwtUtil.REFRESH_TOKEN_TIME);
+        values.set(refreshToken.getRefreshToken(), String.valueOf(refreshToken.getAccessToken()), expireDuration);
     }
 
     public void deleteOldRefreshToken(String nickname) {
@@ -37,6 +62,19 @@ public class RedisService {
                 return;
             }
 
+        }
+    }
+
+    public void deleteAllRefreshToken(String nickname) {
+        ValueOperations<String, String> values = redisTemplate.opsForValue();
+        Set<String> keys = redisTemplate.keys("*");
+        for (String key : keys) {
+            String refreshToken = key.substring(7);
+            Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
+            String usernameFromRefreshToken = info.get("nickname", String.class);
+            if (usernameFromRefreshToken.equals(nickname)) {
+                redisTemplate.delete(key);
+            }
         }
     }
 
