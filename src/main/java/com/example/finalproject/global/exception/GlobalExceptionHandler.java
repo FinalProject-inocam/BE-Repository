@@ -1,6 +1,7 @@
 package com.example.finalproject.global.exception;
 
 
+import com.example.finalproject.domain.mail.exception.MailNotFoundException;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,11 @@ public class GlobalExceptionHandler {
         return ResponseUtils.error(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
+    @ExceptionHandler(MailNotFoundException.class)
+    public ApiResponse<?> handleNewsNotFoundException(MailNotFoundException e) {
+        log.info(e.getMessage());
+        return ResponseUtils.error(e.getErrorCode());
+    }
 //     // request 입력시 올바르지 않은 값일 경우 (valid 관련)
 //     @ExceptionHandler(MethodArgumentNotValidException.class)
 //     public ApiResponse<?> handleException(MethodArgumentNotValidException e){
