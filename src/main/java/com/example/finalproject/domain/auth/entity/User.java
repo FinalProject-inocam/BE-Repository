@@ -26,7 +26,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column
     private String gender;
 
     @Column
@@ -59,10 +59,11 @@ public class User {
     }
 
     public User(KakaoUserInfoDto kakaoUserInfo, String password, UserRoleEnum role) {
+        this.kakaoId = kakaoUserInfo.getId();
         this.email = kakaoUserInfo.getEmail();
         this.password = password;
         this.nickname = kakaoUserInfo.getNickname();
-        this.gender = kakaoUserInfo.getGender();
+//        this.gender = kakaoUserInfo.getGender();
         this.role = role;
     }
 

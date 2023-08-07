@@ -77,14 +77,14 @@ public class MailService {
         }
     }
 
-    public SuccessCode checkCode(MailDto mailDto) {
-        log.info(mailDto.getCode());
-        String key = redisUtil.getData(mailDto.getCode());
+    public SuccessCode checkCode(String email, String code) {
+        log.info(code);
+        String key = redisUtil.getData(code);
         if (key == null) {
             throw new MailNotFoundException(ErrorCode.INVALID_CODE);
         }
         log.info(key);
-        if (key.equals(mailDto.getEmail())) {
+        if (key.equals(email)) {
             return SuccessCode.VERIFY_COMPLETE;
         } else {
             throw new MailNotFoundException(ErrorCode.INVALID_CODE);
