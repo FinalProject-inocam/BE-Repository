@@ -10,9 +10,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/mypage")
@@ -22,10 +23,11 @@ public class MypageController {
 
     // 마이페이지 수정
     @PatchMapping
-    public ApiResponse<?> updateMypage(@RequestBody MypageRequestDto mypageRequestDto,
+    public ApiResponse<?> updateMypage(@RequestPart(value = "images", required = false) MultipartFile multipartFile,
+                                       @RequestPart(value = "data") MypageRequestDto mypageRequestDto,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
                                        HttpServletResponse response) {
-        SuccessCode successCode = mypageService.updateMypage(mypageRequestDto, userDetails.getUser(), response);
+        SuccessCode successCode = mypageService.updateMypage(multipartFile, mypageRequestDto, userDetails.getUser(), response);
         return ResponseUtils.ok(successCode);
     }
 }

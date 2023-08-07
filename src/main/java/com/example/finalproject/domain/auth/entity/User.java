@@ -58,6 +58,7 @@ public class User {
         this.password = newpassword;
         this.nickname = mypageRequestDto.getNickname();
         this.phoneNumber = mypageRequestDto.getPhoneNumber();
+        this.profileImg = profileImg;
     }
 
     public User(KakaoUserInfoDto kakaoUserInfo, String password, UserRoleEnum role) {
