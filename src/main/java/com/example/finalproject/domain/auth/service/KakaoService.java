@@ -40,6 +40,7 @@ public class KakaoService {
     private final JwtProvider jwtUtil;
 
     public ApiResponse<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+        log.info("test: " + code);
         // code -> token // token -> 사용자정보 // 사용자정보 회원가입, 로그인 -> jwt 토큰 발급
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String kakaoAccessToken = getToken(code);
@@ -60,6 +61,7 @@ public class KakaoService {
     }
 
     private String getToken(String code) throws JsonProcessingException {
+        log.info("토큰가져오기");
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kauth.kakao.com")
@@ -76,7 +78,7 @@ public class KakaoService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "0e983f9b2df2971e5bd1ad75032d0e80");
-        body.add("redirect_uri", "http://inocamfinal.s3-website.ap-northeast-2.amazonaws.com/kakao/auto");
+        body.add("redirect_uri", "http://inocamfinal.s3-website.ap-northeast-2.amazonaws.com/kakao/auth");
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
@@ -96,6 +98,7 @@ public class KakaoService {
     }
 
     private KakaoUserInfoDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+        log.info("토큰에서 유저정보 가져오기");
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
                 .fromUriString("https://kapi.kakao.com")
@@ -103,11 +106,13 @@ public class KakaoService {
                 .encode()
                 .build()
                 .toUri();
+        log.info(accessToken);
 
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        log.info(headers.toString());
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
                 .post(uri)
@@ -119,18 +124,24 @@ public class KakaoService {
                 requestEntity,
                 String.class
         );
-
+        log.info("요청확인전");
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+        log.info("요청확인 후");
         try {
+            log.info(jsonNode.get("kakao_account").toString());
             Long id = jsonNode.get("id").asLong();
             String nickname = jsonNode.get("properties")
                     .get("nickname").asText();
             String email = jsonNode.get("kakao_account")
                     .get("email").asText();
-            String gender = jsonNode.get("kakao_account")
-                    .get("gender").asText();
 
-            String genderEnum = gender.equals("male") ? "MALE" : "FEMALE";
+            String genderEnum = "unknown";
+            if (jsonNode.get("kakao_account").get("has_gender").asBoolean()) {
+                String gender = jsonNode.get("kakao_account")
+                        .get("gender").asText();
+                genderEnum = gender.equals("male") ? "male" : "female";
+            }
+
 
             log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
             return new KakaoUserInfoDto(id, nickname, email, genderEnum);
@@ -140,6 +151,7 @@ public class KakaoService {
     }
 
     private User registerKakaoUserIfNeeded(KakaoUserInfoDto kakaoUserInfo) {
+        log.info("미가입 회원 회원가입처리");
         // DB 에 중복된 Kakao Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
         Long kakaoId = kakaoUserInfo.getId(); // @kakao.com // naver.com
         User kakaoUser = userRepository.findByKakaoId(kakaoId);
