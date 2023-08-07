@@ -120,6 +120,9 @@ public class PostService {
             post.getImageList().remove(image); // 연관관계 끊기
             postImageRepository.delete(image);
         }
+        User user=userRepository.findByNickname(nickname);
+        postLikeRepository.deleteByPostIdAndUserUserId(postId,user.getUserId()).orElseThrow(null);
+
         postRepository.delete(post);
 
         return POST_DELETE_SUCCESS;
