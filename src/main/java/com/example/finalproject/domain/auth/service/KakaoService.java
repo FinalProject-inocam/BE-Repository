@@ -126,25 +126,26 @@ public class KakaoService {
         );
         log.info("요청확인전");
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
+        log.info(jsonNode.toString());
         log.info("요청확인 후");
         try {
             log.info(jsonNode.get("kakao_account").toString());
             Long id = jsonNode.get("id").asLong();
             String nickname = jsonNode.get("properties")
-                    .get("nickname").asText();
+                    .get("nickname").asText() + id;// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
             String email = jsonNode.get("kakao_account")
                     .get("email").asText();
 
-            String genderEnum = "unknown";
-            if (jsonNode.get("kakao_account").get("has_gender").asBoolean()) {
-                String gender = jsonNode.get("kakao_account")
-                        .get("gender").asText();
-                genderEnum = gender.equals("male") ? "male" : "female";
-            }
+//            String genderEnum = "unknown";
+//            if (jsonNode.get("kakao_account").get("has_gender").asBoolean()) {
+//                String gender = jsonNode.get("kakao_account")
+//                        .get("gender").asText();
+//                genderEnum = gender.equals("male") ? "male" : "female";
+//            }
 
 
             log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
-            return new KakaoUserInfoDto(id, nickname, email, genderEnum);
+            return new KakaoUserInfoDto(id, nickname, email);
         } catch (Exception e) {
             throw new ConditionDisagreeException("권한을 허용해 주세요", e);
         }
