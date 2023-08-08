@@ -42,6 +42,9 @@ public class User {
     @Column
     private Long kakaoId;
 
+    @Column
+    private String profileImg;
+
     public User(SignupRequestDto requestDto, String password, UserRoleEnum role) {
         this.email = requestDto.getEmail();
         this.password = password;
@@ -51,11 +54,11 @@ public class User {
         this.birthdate = requestDto.getBirthdate();
         this.role = role;
     }
-
-    public void update(MypageRequestDto mypageRequestDto, String newpassword) {
+    public void update(MypageRequestDto mypageRequestDto, String newpassword, String profileImg) {
         this.password = newpassword;
         this.nickname = mypageRequestDto.getNickname();
         this.phoneNumber = mypageRequestDto.getPhoneNumber();
+        this.profileImg = profileImg;
     }
 
     public User(KakaoUserInfoDto kakaoUserInfo, String password, UserRoleEnum role) {

@@ -1,6 +1,8 @@
 package com.example.finalproject.domain.purchases.service;
 
 import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.car.entity.Car;
+import com.example.finalproject.domain.car.repository.CarRepository;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.purchases.dto.PurchasesPatchResponseDto;
 import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
@@ -23,7 +25,7 @@ import static com.example.finalproject.global.utils.ResponseUtils.ok;
 @RequiredArgsConstructor
 public class PurchasesService {
     private final PurchasesRepository purchasesRepository;
-
+    private final CarRepository carRepository;
     // 차량 신청 내역 조회 (마이페이지)
     public ApiResponse<?> findAllPurchases(User user) {
         List<PurchasesResponseDto> purchasesList = purchasesRepository.findAllByUser(user)
@@ -36,7 +38,8 @@ public class PurchasesService {
 
     // 차량 출고 신청
     public ApiResponse<?> createPurchases(PurchasesRequestDto purchasesRequestDto, User user) {
-        Purchase purchase = new Purchase(purchasesRequestDto, user);
+        Car car=carRepository.findByType(purchasesRequestDto.getType());
+        Purchase purchase = new Purchase(purchasesRequestDto, user,car.getPrice());
         purchasesRepository.save(purchase);
         return ok(PURCHASES_CREATE_SUCCESS);
     }
