@@ -10,14 +10,10 @@ import org.springframework.stereotype.Service;
 public class CarService {
     private final CarRepository carRepository;
     public void create() {
-        String[] color={"black","red","blue"};
-        for (int i=0;i<3;i++) {
-                Car car = new Car("k3",color[i],"300000000");
+
+        Car car = new Car("k3","300000000");
                 carRepository.save(car);
-        }
-        for (int i=0;i<3;i++) {
-            Car car = new Car("k5",color[i],"400000000");
-            carRepository.save(car);
-        }
+                Car car2 = new Car("k5","400000000");
+            carRepository.save(car2);
     }
 }

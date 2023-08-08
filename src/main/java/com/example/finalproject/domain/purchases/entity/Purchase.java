@@ -47,13 +47,14 @@ public class Purchase extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Purchase(PurchasesRequestDto purchasesRequestDto, User user) {
+    public Purchase(PurchasesRequestDto purchasesRequestDto, User user,Long price) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
         this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
         this.addressName = purchasesRequestDto.getAddressName();
         this.zoneNo = purchasesRequestDto.getZoneNo();
+        this.price=price;
         this.user = user;
     }
 
