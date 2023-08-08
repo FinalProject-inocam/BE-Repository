@@ -16,6 +16,7 @@ import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ import java.util.Optional;
 import static com.example.finalproject.global.enums.ErrorCode.*;
 import static com.example.finalproject.global.enums.SuccessCode.*;
 
+@Slf4j(topic = "postService")
 @Service
 @RequiredArgsConstructor
 public class PostService {
