@@ -4,5 +4,11 @@ public class ValidationGroups {
     public interface NotBlankGroup {}
     public interface PatternGroup {}
     public interface SizeGroup {}
+
+    public interface MinGroup {}
+
+    public interface MaxGroup {}
+
+    public interface NotNullGroup {}
 }
 

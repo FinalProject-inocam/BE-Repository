@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
-
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 @Getter
 public enum SuccessCode {
     /* 200 OK : 요청이 성공적으로 완료되었다는 의미입니다. */
@@ -33,7 +33,9 @@ public enum SuccessCode {
     COMMENT_CREATE_SUCCESS(CREATED, "댓글 작성 완료"),
     PURCHASES_CREATE_SUCCESS(CREATED, "출고 신청 완료"),
     LIKE_SUCCESS(CREATED, "좋아요 성공"),
-    DISLIKE_SUCCESS(CREATED, "싫어요 성공");
+    DISLIKE_SUCCESS(CREATED, "싫어요 성공"),
+    /* 204 NO CONTENT : 요청이 성공적이였으나, 그 결과로 출력해줄 값이 없다는 의미입니다. */
+    NO_SHOP_SUCCESS(NO_CONTENT, "조회 가능한 가게가 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String detail;
