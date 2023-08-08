@@ -3,10 +3,12 @@ package com.example.finalproject.domain.purchases.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
+import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.service.PurchasesService;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +22,10 @@ public class PurchasesController {
 
     // 차량 신청 내역 조회 (마이페이지)
     @GetMapping
-    public ApiResponse<?> getPurchases(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return purchasesService.findAllPurchases(userDetails.getUser());
+    public Page<PurchasesResponseDto> getPurchases(@RequestParam("page") int page,
+                                                   @RequestParam("size") int size,
+                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return purchasesService.findAllPurchases(page, size, userDetails.getUser());
     }
 
     // 차량 출고 신청
