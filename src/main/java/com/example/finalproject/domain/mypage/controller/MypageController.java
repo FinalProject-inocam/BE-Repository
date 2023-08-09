@@ -1,8 +1,8 @@
-package com.example.finalproject.domain.purchases.controller;
+package com.example.finalproject.domain.mypage.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.purchases.dto.MypageRequestDto;
-import com.example.finalproject.domain.purchases.service.MypageService;
+import com.example.finalproject.domain.mypage.dto.MypageRequestDto;
+import com.example.finalproject.domain.mypage.service.MypageService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
