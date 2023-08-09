@@ -53,4 +53,37 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
     List<Object[]> findTypeMonthlyCountWithNullApprove(@Param("startDateTime") LocalDateTime startDateTime,
                                                        @Param("endDateTime") LocalDateTime endDateTime,
                                                        @Param("type") String type);
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "y.approve = :approve")
+    Long findAnnualCountBetweenDates(@Param("startDateTime") LocalDateTime startDateTime,
+                                     @Param("endDateTime") LocalDateTime endDateTime,
+                                     @Param("approve") Boolean approve);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "y.approve IS NULL")
+    Long findAnnualCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                       @Param("endDateTime") LocalDateTime endDateTime);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "(y.type = :type) AND " +
+            "y.approve = :approve")
+    Long findTypeAnnualCountBetweenDates(@Param("startDateTime") LocalDateTime startDateTime,
+                                         @Param("endDateTime") LocalDateTime endDateTime,
+                                         @Param("approve") Boolean approve,
+                                         @Param("type") String type);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "(y.type = :type) AND " +
+            "y.approve IS NULL")
+    Long findTypeAnnualCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                           @Param("endDateTime") LocalDateTime endDateTime,
+                                           @Param("type") String type);
 }
