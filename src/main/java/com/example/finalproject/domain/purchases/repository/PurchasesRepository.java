@@ -33,4 +33,24 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
     List<Object[]> findMonthlyCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
                                                   @Param("endDateTime") LocalDateTime endDateTime);
 
+    @Query("SELECT MONTH(y.createdAt) as month, COUNT(y) as count " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "(y.approve = :approve OR :approve IS NULL) AND " +
+            "(y.type = :type OR :type IS NULL) " +
+            "GROUP BY MONTH(y.createdAt)")
+    List<Object[]> findTypeMonthlyCountBetweenDates(@Param("startDateTime") LocalDateTime startDateTime,
+                                                @Param("endDateTime") LocalDateTime endDateTime,
+                                                @Param("approve") Boolean approve,
+                                                @Param("type") String type);
+
+    @Query("SELECT MONTH(y.createdAt) as month, COUNT(y) as count " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "(y.approve IS NULL) AND " +
+            "(y.type = :type OR :type IS NULL) " +
+            "GROUP BY MONTH(y.createdAt)")
+    List<Object[]> findTypeMonthlyCountWithNullApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                                       @Param("endDateTime") LocalDateTime endDateTime,
+                                                       @Param("type") String type);
 }

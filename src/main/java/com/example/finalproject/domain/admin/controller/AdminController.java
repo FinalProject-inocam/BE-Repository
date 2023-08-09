@@ -3,10 +3,8 @@ package com.example.finalproject.domain.admin.controller;
 import com.example.finalproject.domain.admin.service.AdminService;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
