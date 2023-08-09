@@ -21,6 +21,9 @@ public class S3Utils {
     private String bucket;
 
     public List<String> uploadFile(List<MultipartFile> multipartFile) {
+        if (multipartFile.isEmpty()) {
+            throw new IllegalArgumentException("사진 없이는 등록이 불가능합니다.");
+        }
         List<String> fileUrl = new ArrayList<>();
         try {
             for (MultipartFile file : multipartFile) {
@@ -51,6 +54,14 @@ public class S3Utils {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public Boolean isFile(List<MultipartFile> multipartFiles) {
+        try {
+            return !multipartFiles.get(0).isEmpty();
+        } catch (NullPointerException e) {
+            return false;
         }
     }
 

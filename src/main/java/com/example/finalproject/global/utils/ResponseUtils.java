@@ -34,4 +34,10 @@ public class ResponseUtils {
     public static ApiResponse<?> error(HttpStatus httpStatus, String error) {
         return new ApiResponse<>(false, httpStatus.value(), error, null);
     }
+
+    public static <T> ApiResponse<T> pageOk(Integer size, Integer page, Integer totalCount, Integer totalPages,
+                                            T response) {
+        return new ApiResponse<>(true, 200, null,
+                size, page, totalCount, totalPages, response);
+    }
 }

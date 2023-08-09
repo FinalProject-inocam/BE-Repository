@@ -142,7 +142,7 @@ public class PostService {
     }
 
     private void validateMultipartFile(List<MultipartFile> multipartFile, Post post) {
-        if (!(multipartFile == null)) {
+        if (s3Utils.isFile(multipartFile)) {
             List<String> imageUrls = s3Utils.uploadFile(multipartFile);
             for (String imageUrl : imageUrls) {
                 Image postImage = new Image(imageUrl);

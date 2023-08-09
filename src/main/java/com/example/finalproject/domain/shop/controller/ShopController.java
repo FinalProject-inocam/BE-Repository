@@ -30,7 +30,8 @@ public class ShopController {
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = checkGuest(userDetails);
         ShopsResponseDto shopsResponseDtos = shopService.getShopList(longitude, latitude, user, page, size);
-        return ResponseUtils.ok(shopsResponseDtos);
+        return ResponseUtils.pageOk(shopsResponseDtos.getSize(), shopsResponseDtos.getPage(),
+                shopsResponseDtos.getTotalCount(), shopsResponseDtos.getTotalPages(), shopsResponseDtos.getShopList());
     }
 
     @GetMapping("/{shopId}")
