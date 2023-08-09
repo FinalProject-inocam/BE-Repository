@@ -2,9 +2,14 @@ package com.example.finalproject.global.exception;
 
 
 import com.example.finalproject.domain.mail.exception.MailNotFoundException;
+import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
+import com.example.finalproject.domain.shop.exception.ShopNoContentException;
+import com.example.finalproject.global.enums.ErrorCode;
+import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -13,8 +18,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.nio.file.AccessDeniedException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * ex)
@@ -96,5 +99,27 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> requestParameterExceptionHandler(MissingServletRequestParameterException e) {
         log.error("requestParameter 오류");
         return ResponseUtils.error(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    // No_CONTENT는 기본적으로 응답값이 없음.
+    @ExceptionHandler(ShopNoContentException.class)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public ApiResponse<?> JsonParseExceptionHandler(ShopNoContentException e) {
+        log.error("주변에 조회 가능한 가게가 없습니다.");
+        return ResponseUtils.ok(SuccessCode.NO_SHOP_SUCCESS);
+    }
+
+    @ExceptionHandler(JSONException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<?> JsonParseExceptionHandler(JSONException e) {
+        log.error("존재하지 않는 shopId");
+        return ResponseUtils.error(ErrorCode.SHOP_NOT_FOUND);
+    }
+
+    @ExceptionHandler(ReviewAuthorityException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiResponse<?> JsonParseExceptionHandler(ReviewAuthorityException e) {
+        log.error("권한없는 유저");
+        return ResponseUtils.error(e.getErrorCode());
     }
 }
