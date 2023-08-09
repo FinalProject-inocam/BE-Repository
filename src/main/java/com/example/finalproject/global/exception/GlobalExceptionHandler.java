@@ -6,6 +6,7 @@ import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
 import com.example.finalproject.domain.shop.exception.ShopNoContentException;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
+import com.example.finalproject.global.exception.buisnessException.ConditionDisagreeException;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -121,5 +122,12 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> JsonParseExceptionHandler(ReviewAuthorityException e) {
         log.error("권한없는 유저");
         return ResponseUtils.error(e.getErrorCode());
+    }
+
+    @ExceptionHandler(ConditionDisagreeException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiResponse<?> ConditionDisagreeExceptionHandler(ConditionDisagreeException e) {
+        log.error("소셜 로그인 한 사용자가 모든 항목에 동의 하지 않음");
+        return ResponseUtils.error(ErrorCode.MORE_AGREEMENT_NEEDED);
     }
 }

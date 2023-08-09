@@ -24,6 +24,7 @@ public enum ErrorCode {
     USER_LOGIN_NEED(FORBIDDEN, "로그인이 필요합니다."),
     USER_LOGIN_FAIL(FORBIDDEN, "이메일 혹은 비밀번호가 틀렸습니다."),
     NO_AUTHORITY_TO_DATA(FORBIDDEN, "해당 게시물에 대한 권한이 없습니다."),
+    MORE_AGREEMENT_NEEDED(FORBIDDEN, "모든 권한을 허용해 주세요"),
 
     /* 404 NOT_FOUND : 서버는 요청 받은 리소스를 찾을 수 없다는 의미입니다. */
     USER_NOT_FOUND(NOT_FOUND, "해당 유저 정보를 찾을 수 없습니다"),

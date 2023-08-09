@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -87,5 +89,14 @@ public class AdminService {
             Long count = (Long) result[1];
             targetArray[month - 1] = count;
         }
+    }
+    public List<Map<Integer, Long>> statTest(int year, String type) {
+        List<Long> month = new ArrayList<>(12);
+        List<Map<Integer, Long>> list = purchasesRepository.countPurchaseByYearAndType(year, type);
+//        for (Map<Integer, Long> map : list) {
+//            month.set(map.get("month"), map.get("count"));
+//        }
+//        month.set()
+        return list;
     }
 }

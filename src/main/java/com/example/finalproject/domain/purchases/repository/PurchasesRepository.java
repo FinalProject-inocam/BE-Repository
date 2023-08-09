@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
     Page<Purchase> findAll(Pageable pageable);
@@ -86,4 +87,20 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
     Long findTypeAnnualCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
                                            @Param("endDateTime") LocalDateTime endDateTime,
                                            @Param("type") String type);
+
+
+
+
+    @Query("SELECT MONTH(p.createdAt) AS month, COUNT(*) AS count " +
+            "FROM Purchase p " +
+            "WHERE YEAR(p.createdAt) = :year " +  // 특정 년도
+            "AND p.type = :type " +                 // 특정 카테고리
+            "GROUP BY MONTH(p.createdAt) " +
+            "ORDER BY MONTH(p.createdAt)")
+    List<Map<Integer, Long>> countPurchaseByYearAndType(int year, String type);
 }
+
+
+
+
+
