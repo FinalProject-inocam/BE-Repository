@@ -2,7 +2,7 @@ package com.example.finalproject.domain.auth.entity;
 
 import com.example.finalproject.domain.auth.dto.KakaoUserInfoDto;
 import com.example.finalproject.domain.auth.dto.SignupRequestDto;
-import com.example.finalproject.domain.purchases.dto.MypageRequestDto;
+import com.example.finalproject.domain.mypage.dto.MypageRequestDto;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
