@@ -31,6 +31,21 @@ public class AdminService {
         LocalDateTime startDateTime = startDate.atStartOfDay();
         LocalDateTime endDateTime = endDate.atTime(23, 59, 59);
 
+        LocalDate prevStartDate = LocalDate.of(Integer.parseInt(year) - 1, 1, 1);
+        LocalDate prevEndDate = LocalDate.of(Integer.parseInt(year) - 1, 12, 31);
+
+        Long prevPurchaseTotal = purchasesRepository.findAnnualCountWithoutApprove(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59));
+        Long prevApproveTotal = purchasesRepository.findAnnualCountBetweenDates(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59), true);
+        Long prevCancelTotal = purchasesRepository.findAnnualCountBetweenDates(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59), false);
+
+        Long prevPurchaseModel1 = purchasesRepository.findTypeAnnualCountWithoutApprove(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59), model1);
+        Long prevApproveModel1 = purchasesRepository.findTypeAnnualCountBetweenDates(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59), true, model1);
+        Long prevCancelModel1 = purchasesRepository.findTypeAnnualCountBetweenDates(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59), false, model1);
+
+        Long prevPurchaseModel2 = purchasesRepository.findTypeAnnualCountWithoutApprove(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59), model2);
+        Long prevApproveModel2 = purchasesRepository.findTypeAnnualCountBetweenDates(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59), true, model2);
+        Long prevCancelModel2 = purchasesRepository.findTypeAnnualCountBetweenDates(prevStartDate.atStartOfDay(), prevEndDate.atTime(23, 59, 59), false, model2);
+
         List<Object[]> results_purchase = purchasesRepository.findMonthlyCountWithoutApprove(startDateTime, endDateTime);
         List<Object[]> results_approve = purchasesRepository.findMonthlyCountBetweenDates(startDateTime, endDateTime, true);
         List<Object[]> results_cancel = purchasesRepository.findMonthlyCountBetweenDates(startDateTime, endDateTime, false);
@@ -54,15 +69,17 @@ public class AdminService {
         processResults(results_cancel, cancel);
         // 결과 출력
         for (int i = 0; i < 12; i++) {
-            System.out.println("대기Year: " + year + ", Month: " + (i + 1) + ", Count: " + purchase_model2[i]);
+            System.out.println("대기Year: " + year + ", Month: " + (i + 1) + ", Count: " + purchase[i]);
         }
         for (int i = 0; i < 12; i++) {
-            System.out.println("승인 Year: " + year + ", Month: " + (i + 1) + ", Count: " + approve_model2[i]);
+            System.out.println("승인 Year: " + year + ", Month: " + (i + 1) + ", Count: " + approve[i]);
         }
         for (int i = 0; i < 12; i++) {
-            System.out.println("거부 Year: " + year + ", Month: " + (i + 1) + ", Count: " + cancel_model2[i]);
+            System.out.println("거부 Year: " + year + ", Month: " + (i + 1) + ", Count: " + cancel[i]);
         }
-
+        System.out.printf("PreYear Total - Purchase: %d, Approve: %d, Cancel: %d\n", prevPurchaseTotal, prevApproveTotal, prevCancelTotal);
+        System.out.printf("PreYear Model1 - Purchase: %d, Approve: %d, Cancel: %d\n", prevPurchaseModel1, prevApproveModel1, prevCancelModel1);
+        System.out.printf("PreYear Model2 - Purchase: %d, Approve: %d, Cancel: %d\n", prevPurchaseModel2, prevApproveModel2, prevCancelModel2);
     }
     private void processResults(List<Object[]> results, long[] targetArray) {
         for (Object[] result : results) {
