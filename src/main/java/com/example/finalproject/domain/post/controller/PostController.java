@@ -59,7 +59,8 @@ public class PostController {
         return ResponseUtils.ok(successCode);
     }
 
-    @PostMapping("/{postId}/like")
+    // 게시글 좋아요
+    @PatchMapping("/{postId}/like")
     public ApiResponse<?> likeNews(@PathVariable("postId") Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PostLikeRequestDto postLikeRequestDto) {
         SuccessCode successCode = postService.likePost(postId, userDetails.getUser().getUserId(),postLikeRequestDto);
         return ResponseUtils.ok(successCode);
