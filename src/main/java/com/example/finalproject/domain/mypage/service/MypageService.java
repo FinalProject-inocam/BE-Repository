@@ -1,9 +1,9 @@
-package com.example.finalproject.domain.purchases.service;
+package com.example.finalproject.domain.mypage.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.auth.service.RedisService;
-import com.example.finalproject.domain.purchases.dto.MypageRequestDto;
+import com.example.finalproject.domain.mypage.dto.MypageRequestDto;
 import com.example.finalproject.domain.purchases.exception.PurchasesNotFoundException;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.utils.S3Utils;

@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.purchases.dto;
+package com.example.finalproject.domain.mypage.dto;
 
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;

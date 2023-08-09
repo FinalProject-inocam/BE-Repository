@@ -12,13 +12,16 @@ import com.example.finalproject.domain.purchases.exception.PurchasesNotFoundExce
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.example.finalproject.global.enums.ErrorCode.*;
-import static com.example.finalproject.global.enums.SuccessCode.*;
+import static com.example.finalproject.global.enums.ErrorCode.NO_AUTHORITY_TO_DATA;
+import static com.example.finalproject.global.enums.ErrorCode.PURCHASES_DELETE_FAIL;
+import static com.example.finalproject.global.enums.SuccessCode.PURCHASES_CREATE_SUCCESS;
+import static com.example.finalproject.global.enums.SuccessCode.PURCHASES_DELETE_SUCCESS;
 import static com.example.finalproject.global.utils.ResponseUtils.ok;
 
 @Service
@@ -26,20 +29,30 @@ import static com.example.finalproject.global.utils.ResponseUtils.ok;
 public class PurchasesService {
     private final PurchasesRepository purchasesRepository;
     private final CarRepository carRepository;
+
     // 차량 신청 내역 조회 (마이페이지)
-    public ApiResponse<?> findAllPurchases(User user) {
-        List<PurchasesResponseDto> purchasesList = purchasesRepository.findAllByUser(user)
+    public Page<PurchasesResponseDto> findAllPurchases(int page, int size, User user) {
+        // 사용자별 구매 목록 조회
+        purchasesRepository.findAllByUser(user);
+
+        // 페이지 나누기
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "purchaseId"));
+        Page<Purchase> purchasesPage = purchasesRepository.findAll(pageable);
+
+        List<PurchasesResponseDto> purchasesList = purchasesPage
                 .stream()
                 .map(PurchasesResponseDto::new)
                 .collect(Collectors.toList());
 
-        return ok(purchasesList);
+        long total = purchasesPage.getTotalElements();
+
+        return new PageImpl<>(purchasesList, pageable, total);
     }
 
     // 차량 출고 신청
     public ApiResponse<?> createPurchases(PurchasesRequestDto purchasesRequestDto, User user) {
-        Car car=carRepository.findByType(purchasesRequestDto.getType());
-        Purchase purchase = new Purchase(purchasesRequestDto, user,car.getPrice());
+        Car car = carRepository.findByType(purchasesRequestDto.getType());
+        Purchase purchase = new Purchase(purchasesRequestDto, user, car.getPrice());
         purchasesRepository.save(purchase);
         return ok(PURCHASES_CREATE_SUCCESS);
     }
