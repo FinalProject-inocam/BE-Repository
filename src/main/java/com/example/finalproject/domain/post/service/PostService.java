@@ -17,7 +17,7 @@ import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,27 +40,38 @@ public class PostService {
     private final S3Utils s3Utils;
 
     @Transactional
-    public List<PostAllResponseDto> getPost(UserDetailsImpl userDetails) {
-        List<Post> posts = postRepository.findAll();
+    public Page<PostAllResponseDto> getPost(int page, int size, UserDetailsImpl userDetails) {
+//        List<Post> posts = postRepository.findAll();
+
+        // 페이지 네이션
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Post> postPage = postRepository.findAllBy(pageable);
+
         List<PostAllResponseDto> postsList = new ArrayList<>();
-        for (Post post : posts) {
+        //        List<PostAllResponseDto> postsList = postPage
+        //                .stream()
+        //                .map(PostAllResponseDto::new)
+        //                .collect(Collectors.toList());
+
+        long total = postPage.getTotalElements();
+
+        for (Post post : postPage) {
             Boolean is_like;
             if (userDetails == null) {
                 is_like = false;
             } else {
-                is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(),userDetails.getUser().getUserId());
+                is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(), userDetails.getUser().getUserId());
             }
             Long comment_count = Long.valueOf(post.getCommentList().size());
             Long like_count = postLikeRepository.countByPostId(post.getId());
-
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
             postsList.add(postAllResponseDto);
         }
-        return postsList;
+        return new PageImpl<>(postsList, pageable, total);
     }
 
     @Transactional
-    public PostOneResponseDto getOnePost(Long postid,UserDetailsImpl userDetails) {
+    public PostOneResponseDto getOnePost(Long postid, UserDetailsImpl userDetails) {
         Post post = postRepository.findById(postid).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
@@ -75,10 +86,10 @@ public class PostService {
         if (userDetails == null) {
             is_like = false;
         } else {
-            is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(),userDetails.getUser().getUserId());
+            is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(), userDetails.getUser().getUserId());
         }
 
-        PostOneResponseDto postOneResponseDto = new PostOneResponseDto(post, commentResponseDtoList,like_count,is_like);
+        PostOneResponseDto postOneResponseDto = new PostOneResponseDto(post, commentResponseDtoList, like_count, is_like);
         return postOneResponseDto;
     }
 
@@ -122,8 +133,8 @@ public class PostService {
             post.getImageList().remove(image); // 연관관계 끊기
             postImageRepository.delete(image);
         }
-        User user=userRepository.findByNickname(nickname);
-        postLikeRepository.deleteByPostIdAndUserUserId(postId,user.getUserId()).orElseThrow(null);
+        User user = userRepository.findByNickname(nickname);
+        postLikeRepository.deleteByPostIdAndUserUserId(postId, user.getUserId()).orElseThrow(null);
 
         postRepository.delete(post);
 
