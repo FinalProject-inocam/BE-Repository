@@ -53,4 +53,69 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
     List<Object[]> findTypeMonthlyCountWithNullApprove(@Param("startDateTime") LocalDateTime startDateTime,
                                                        @Param("endDateTime") LocalDateTime endDateTime,
                                                        @Param("type") String type);
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "y.approve = :approve")
+    Long findAnnualCountBetweenDates(@Param("startDateTime") LocalDateTime startDateTime,
+                                     @Param("endDateTime") LocalDateTime endDateTime,
+                                     @Param("approve") Boolean approve);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "y.approve IS NULL")
+    Long findAnnualCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                       @Param("endDateTime") LocalDateTime endDateTime);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "(y.type = :type) AND " +
+            "y.approve = :approve")
+    Long findTypeAnnualCountBetweenDates(@Param("startDateTime") LocalDateTime startDateTime,
+                                         @Param("endDateTime") LocalDateTime endDateTime,
+                                         @Param("approve") Boolean approve,
+                                         @Param("type") String type);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "(y.type = :type) AND " +
+            "y.approve IS NULL")
+    Long findTypeAnnualCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                           @Param("endDateTime") LocalDateTime endDateTime,
+                                           @Param("type") String type);
+//------------------------------------------getMonth
+// 주별 전체 구매 수
+@Query("SELECT COUNT(p) " +
+        "FROM Purchase p " +
+        "WHERE p.createdAt BETWEEN :startDate AND :endDate " +
+        "AND p.approve IS NULL")
+Long findWeeklyCountWithoutApprove(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(p) " +
+            "FROM Purchase p " +
+            "WHERE p.createdAt BETWEEN :startDate AND :endDate " +
+            "AND p.approve = :approve")
+    Long findTypeWeeklyCountByApprove(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, @Param("approve") Boolean approve);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "y.type = :type AND " +
+            "y.approve IS NULL")
+    Long findTypeWeeklyCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                           @Param("endDateTime") LocalDateTime endDateTime,
+                                           @Param("type") String type);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "y.type = :type AND " +
+            "y.approve = :approve")
+    Long findTypeWeeklyCountByApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                      @Param("endDateTime") LocalDateTime endDateTime,
+                                      @Param("type") String type,
+                                      @Param("approve") Boolean approve);
 }
