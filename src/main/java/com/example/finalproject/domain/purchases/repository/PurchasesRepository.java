@@ -5,11 +5,32 @@ import com.example.finalproject.domain.purchases.entity.Purchase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
     Page<Purchase> findAll(Pageable pageable);
 
     List<Purchase> findAllByUser(User user);
+
+
+    @Query("SELECT MONTH(y.createdAt) as month, COUNT(y) as count " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND (y.approve = :approve OR :approve IS NULL) " +
+            "GROUP BY MONTH(y.createdAt)")
+    List<Object[]> findMonthlyCountBetweenDates(@Param("startDateTime") LocalDateTime startDateTime,
+                                                @Param("endDateTime") LocalDateTime endDateTime,
+                                                @Param("approve") Boolean approve); // approve 파라미터 추가
+
+    @Query("SELECT MONTH(y.createdAt) as month, COUNT(y) as count " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND y.approve IS NULL " +
+            "GROUP BY MONTH(y.createdAt)")
+    List<Object[]> findMonthlyCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                                  @Param("endDateTime") LocalDateTime endDateTime);
+
 }
