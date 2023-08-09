@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.post.entity.Image;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
@@ -32,13 +33,15 @@ public class ReviewService {
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, user);
         Review review = new Review(requestDto, shopId, user);
-        List<String> urls = s3Utils.uploadFile(multipartFile);
-        for (String url : urls) {
-            ReviewImage reviewImage = new ReviewImage(url);
-            reviewImageRepository.save(reviewImage);
-            review.getImageUrls().add(reviewImage);
+        // image가 없을 때 빈 url생성 방지
+        if(s3Utils.isFile(multipartFile)) {
+            List<String> urls = s3Utils.uploadFile(multipartFile);
+            for (String url : urls) {
+                ReviewImage reviewImage = new ReviewImage(url);
+                reviewImageRepository.save(reviewImage);
+                review.getImageUrls().add(reviewImage);
+            }
         }
-
         reviewRepository.save(review);
         return SuccessCode.COMMENT_CREATE_SUCCESS;
     }
@@ -51,13 +54,19 @@ public class ReviewService {
         Review review = findReview(reviewId);
         checkAuthority(review, user);
         review.update(requestDto);
-        review.getImageUrls().clear();
-        List<String> urls = s3Utils.uploadFile(multipartFile);
-        for (String url : urls) {
-            ReviewImage reviewImage = new ReviewImage(url);
-            reviewImageRepository.save(reviewImage);
-            review.getImageUrls().add(reviewImage);
+        // image에 값이 있을때만 삭제 추가를 진행
+        if(s3Utils.isFile(multipartFile)) {
+            // 기존 review에서 이미지 삭제
+            review.getImageUrls().forEach(reviewImageRepository::delete);
+            review.getImageUrls().clear();
+            List<String> urls = s3Utils.uploadFile(multipartFile);
+            for (String url : urls) {
+                ReviewImage reviewImage = new ReviewImage(url);
+                reviewImageRepository.save(reviewImage);
+                review.getImageUrls().add(reviewImage);
+            }
         }
+
         return SuccessCode.COMMENT_UPDATE_SUCCESS;
     }
 
@@ -66,6 +75,9 @@ public class ReviewService {
         shopService.getSelectedShop(shopId, user);
         Review review = findReview(reviewId);
         checkAuthority(review, user);
+        // 기존 review에서 이미지 삭제
+        review.getImageUrls().forEach(reviewImageRepository::delete);
+        review.getImageUrls().clear();
         reviewRepository.delete(review);
         return SuccessCode.COMMENT_DELETE_SUCCESS;
     }
