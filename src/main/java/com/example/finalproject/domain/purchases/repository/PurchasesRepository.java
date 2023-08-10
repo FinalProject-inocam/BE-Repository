@@ -118,4 +118,6 @@ Long findWeeklyCountWithoutApprove(@Param("startDate") LocalDateTime startDate, 
                                       @Param("endDateTime") LocalDateTime endDateTime,
                                       @Param("type") String type,
                                       @Param("approve") Boolean approve);
+
+
 }
