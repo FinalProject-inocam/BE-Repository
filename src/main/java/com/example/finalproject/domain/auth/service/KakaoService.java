@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,15 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final JwtProvider jwtUtil;
+
+    @Value("${security.oauth2.client.registration.kakao.client-id}")
+    private String kakaoClientId;
+
+//    @Value("${security.oauth2.client.registration.kakao.client-secret}")
+//    private String kakaoClientSecret;
+
+    @Value("${security.oauth2.client.registration.kakao.redirect-uri}")
+    private String kakaoRedirectUri;
 
     public ApiResponse<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
         log.info("test: " + code);
@@ -77,8 +87,9 @@ public class KakaoService {
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
-        body.add("client_id", "0e983f9b2df2971e5bd1ad75032d0e80");
-        body.add("redirect_uri", "http://inocamfinal.s3-website.ap-northeast-2.amazonaws.com/kakao/auth");
+        body.add("client_id", kakaoClientId);
+//        body.add("client_secret", kakaoClientSecret);
+        body.add("redirect_uri", kakaoRedirectUri);
         body.add("code", code);
 
         RequestEntity<MultiValueMap<String, String>> requestEntity = RequestEntity
