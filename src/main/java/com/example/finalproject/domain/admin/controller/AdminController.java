@@ -1,16 +1,19 @@
 package com.example.finalproject.domain.admin.controller;
 
+import com.example.finalproject.domain.admin.dto.ReleaseDecidereqDto;
+import com.example.finalproject.domain.admin.service.AdminListService;
 import com.example.finalproject.domain.admin.service.AdminService;
 import com.example.finalproject.global.responsedto.ApiResponse;
+import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 public class AdminController {
     private final AdminService adminService;
+    private final AdminListService adminListService;
+
     @GetMapping("/api/stat/purchases/chart")
     public ApiResponse<?> getStat(@RequestParam(name="cal") String cal,
                                   @RequestParam(name="term")String period){
@@ -30,5 +33,30 @@ public class AdminController {
                 break;
         }
         return null;
+    }
+    @GetMapping("/api/admin/totalList")
+    public ApiResponse<?> totalList(){
+        return ResponseUtils.ok(adminListService.totalList());
+    }
+    @GetMapping("/api/admin/approveList")
+    public ApiResponse<?> approveList(@RequestParam("page") int page,
+                                      @RequestParam("size") int size){
+        return ResponseUtils.ok(adminListService.approveList(page,size));
+    }
+    @GetMapping("/api/admin/decideList")
+    public ApiResponse<?> decideList(@RequestParam("page") int page,
+                                      @RequestParam("size") int size){
+        return ResponseUtils.ok(adminListService.decideList(page,size));
+    }
+    @GetMapping("/api/admin/denyList")
+    public ApiResponse<?> denyList(@RequestParam("page") int page,
+                                      @RequestParam("size") int size){
+        return ResponseUtils.ok(adminListService.denyList(page,size));
+    }
+
+    @PatchMapping("/api/admin/purchases/{purchaseId}")
+    public ApiResponse<?> releaseDecide(@PathVariable(name = "purchaseId") Long purchaseId,
+                                        @RequestBody ReleaseDecidereqDto releaseDecidereqDto){
+        return ResponseUtils.ok(adminListService.releaseDecide(purchaseId,releaseDecidereqDto));
     }
 }

@@ -19,6 +19,8 @@ public enum SuccessCode {
     PURCHASES_UPDATE_SUCCESS(OK, "신청 수정 성공"),
     MYPAGE_UPDATE_SUCCESS(OK, "마이페이지 수정"),
     VERIFY_COMPLETE(OK,"인증이 완료 되었습니다"),
+    PURCHASE_APPROVE(OK,"출고 승인이 완료 되었습니다"),
+    PURCHASE_DENIED(OK,"출고 승인이 거절 되었습니다"),
 
     LIKE_CANCEL(OK, "좋아요 취소"),
     DISLIKE_CANCEL(OK, "싫어요 취소"),
