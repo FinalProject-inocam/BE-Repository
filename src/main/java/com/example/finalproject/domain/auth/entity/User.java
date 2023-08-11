@@ -75,7 +75,6 @@ public class User {
         this.email = kakaoUserInfo.getEmail();
         this.password = password;
         this.nickname = kakaoUserInfo.getNickname();
-//        this.gender = kakaoUserInfo.getGender();
         this.role = role;
     }
 
@@ -85,10 +84,10 @@ public class User {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-//        this.gender = kakaoUserInfo.getGender();
         this.role = role;
     }
 
+    // 네이버
     public User(NaverUserInfoDto naverUserInfoDto, String password, UserRoleEnum role) {
         this.naverId = naverUserInfoDto.getId();
         this.email = naverUserInfoDto.getEmail();
@@ -96,6 +95,7 @@ public class User {
         this.nickname = naverUserInfoDto.getNickname();
         this.role = role;
     }
+
 
     // 카카오
     public User kakaoIdUpdate(Long kakaoId) {
@@ -110,7 +110,7 @@ public class User {
     }
 
     // 네이버
-    public User naverIdUpdate(Long naverId) {
+    public User naverIdUpdate(String naverId) {
         this.naverId = naverId;
         return this;
     }
