@@ -1,19 +1,31 @@
 package com.example.finalproject.domain.admin.service;
 
+import com.example.finalproject.domain.admin.dto.PurchaseByApproveDto;
+import com.example.finalproject.domain.car.entity.Car;
+import com.example.finalproject.domain.car.service.CarService;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
+import com.example.finalproject.domain.purchases.repository.QPurchasesRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminService {
     private final PurchasesRepository purchasesRepository;
+    private final QPurchasesRepository qPurchasesRepository;
+    private final CarService carService;
 
     //----------------------------------------- getYear--------------------------------------------------//
     public void getAnalysisForYear(String year) {
@@ -211,6 +223,39 @@ public class AdminService {
         }
         return endOfWeek;
     }
+    /*-------------------------------------------------------------------------------------------*/
+
+    public Map<String, Object> modelPurchaseByApprove(int year) {
+        Map<String, Object> purchaseByApproveDtoMap = new HashMap<>();
+        List<String> carTypeList = carService.getCarList()
+                .stream()
+                .map(Car::getType)
+                .toList();
+        purchaseByApproveDtoMap.put("total", totalPurchaseByApprove(year));
+//        for (String carType : carTypeList) {
+//            purchaseByApproveDtoMap.put(carType, modelPurchaseByApprove(year, carType));
+//        }
+        return purchaseByApproveDtoMap;
+    }
+
+    public PurchaseByApproveDto totalPurchaseByApprove(int year) {
+        List<Long> totalPurchase = getDataByMonthAndApprove(year, null);
+        List<Long> totalApprove = getDataByMonthAndApprove(year, true);
+        List<Long> totalCancel = getDataByMonthAndApprove(year, false);
+        return new PurchaseByApproveDto(totalPurchase, totalApprove, totalCancel);
+    }
+
+    public PurchaseByApproveDto modelPurchaseByApprove(int year, String carType) {
+        List<Long> typePurchase = getDataByMonthAndTypeAndApprove(year, carType, null);
+        List<Long> typeApprove = getDataByMonthAndTypeAndApprove(year, carType, true);
+        List<Long> typeCancel = getDataByMonthAndTypeAndApprove(year, carType, false);
+        return new PurchaseByApproveDto(typePurchase, typeApprove, typeCancel);
+    }
+
+    public List<Long> getDataByMonthAndApprove(int year, Boolean approve) {
+        List<Map<String, Object>> list = purchasesRepository.countPurchaseByYearAndApprove(year, approve);
+        return mapToList(list, 12, "month");
+    }
 
     //----------------------------------------- getWeek--------------------------------------------------//
     public void getAnalysisForWeek(String cal) {
@@ -295,5 +340,113 @@ public class AdminService {
 //            // Move to the next week
 //            startOfWeek = startOfWeek.plusWeeks(1);
         }
+    }
+    public List<Long> getDataByMonthAndTypeAndApprove(int year, String type, Boolean approve) {
+        List<Map<String, Object>> list = purchasesRepository.countPurchaseByYearAndTypeAndApprove(year, type, approve);
+        return mapToList(list, 12, "month");
+    }
+
+    private List<Long> mapToList(List<Map<String, Object>> list, Integer len, String key) {
+        List<Long> result = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            result.add(0L);
+        }
+        for (Map<String, Object> map : list) {
+            Integer index = (Integer) map.get(key) - 1;
+            Long count = (Long) map.get("count");
+            result.set(index, count);
+        }
+        return result;
+    }
+
+    /* 1년간 매달의 신청, 승인, 거절 건수 */
+    public Map<String, Object> yearStat(String cal) {
+        LocalDate localDate = convertStringToLocalDate(cal);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("total", customYearStat(localDate, null));
+        carService.getCarList()
+                .stream()
+                .map(Car::getType)
+                .forEach((type) -> resultMap.put(type, customYearStat(localDate, type)));
+
+        return resultMap;
+    }
+
+    public Map<String, Object> customYearStat(LocalDate localDate, String type) {
+        Map<String, Object> resultMap = new HashMap<>();
+        // current
+        resultMap.put("purchase", qPurchasesRepository.countPurchaseForYear(localDate, null, type));
+        resultMap.put("approve", qPurchasesRepository.countPurchaseForYear(localDate, true, type));
+        resultMap.put("cancel", qPurchasesRepository.countPurchaseForYear(localDate, false, type));
+        // pre
+        resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreYear(localDate, null, type));
+        resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreYear(localDate, true, type));
+        resultMap.put("preCancel", qPurchasesRepository.countPurchaseForPreYear(localDate, false, type));
+
+        return resultMap;
+    }
+
+    /* 1달간 매주의 신청, 승인 거절 건수 */
+    public Map<String, Object> monthStat(String cal) {
+        LocalDate localDate = convertStringToLocalDate(cal);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("total", customMonthStat(localDate, null));
+        carService.getCarList()
+                .stream()
+                .map(Car::getType)
+                .forEach((type) -> resultMap.put(type, customMonthStat(localDate, type)));
+
+        return resultMap;
+    }
+
+    public Map<String, Object> customMonthStat(LocalDate localDate, String type) {
+        Map<String, Object> resultMap = new HashMap<>();
+        // current
+        resultMap.put("purchase", qPurchasesRepository.countPurchaseForMonth(localDate, null, type));
+        resultMap.put("approve", qPurchasesRepository.countPurchaseForMonth(localDate, true, type));
+        resultMap.put("cancel", qPurchasesRepository.countPurchaseForMonth(localDate, false, type));
+        // pre
+        resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreMonth(localDate, null, type));
+        resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreMonth(localDate, true, type));
+        resultMap.put("preCancel", qPurchasesRepository.countPurchaseForPreMonth(localDate, false, type));
+
+        return resultMap;
+    }
+
+    /* 1주간 매일의 신청, 승인 거절 건수 */
+    public Map<String, Object> weekStat(String cal) {
+        LocalDate localDate = convertStringToLocalDate(cal);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("total", customWeekStat(localDate, null));
+        carService.getCarList()
+                .stream()
+                .map(Car::getType)
+                .forEach((type) -> resultMap.put(type, customWeekStat(localDate, type)));
+
+        return resultMap;
+    }
+
+    public Map<String, Object> customWeekStat(LocalDate localDate, String type) {
+        Map<String, Object> resultMap = new HashMap<>();
+        // current
+        resultMap.put("purchase", qPurchasesRepository.countPurchaseForWeek(localDate, null, type));
+        resultMap.put("approve", qPurchasesRepository.countPurchaseForWeek(localDate, true, type));
+        resultMap.put("cancel", qPurchasesRepository.countPurchaseForWeek(localDate, false, type));
+        // pre
+        resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreWeek(localDate, null, type));
+        resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreWeek(localDate, true, type));
+        resultMap.put("preCancel", qPurchasesRepository.countPurchaseForPreWeek(localDate, false, type));
+
+        return resultMap;
+    }
+
+    private LocalDate convertStringToLocalDate(String cal) {
+        // 원하는 날짜 포맷
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        // 문자열을 LocalDate로 변환
+        return LocalDate.parse(cal, formatter);
     }
 }

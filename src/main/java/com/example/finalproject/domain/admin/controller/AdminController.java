@@ -8,6 +8,8 @@ import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 public class AdminController {
@@ -58,5 +60,24 @@ public class AdminController {
     public ApiResponse<?> releaseDecide(@PathVariable(name = "purchaseId") Long purchaseId,
                                         @RequestBody ReleaseDecidereqDto releaseDecidereqDto){
         return ResponseUtils.ok(adminListService.releaseDecide(purchaseId,releaseDecidereqDto));
+    }
+    /*---------------------------------------------------------------------------------------------------*/
+
+    @GetMapping("/api/auth/stat")
+    public ApiResponse<?> getStatTest(@RequestParam String cal) {
+        Map<String, Object> yearMap = adminService.yearStat(cal);
+        return ResponseUtils.ok(yearMap);
+    }
+
+    @GetMapping("/api/auth/stat2")
+    public ApiResponse<?> getStatTest2(@RequestParam String cal) {
+        Map<String, Object> statList = adminService.monthStat(cal);
+        return ResponseUtils.ok(statList);
+    }
+
+    @GetMapping("/api/auth/stat3")
+    public ApiResponse<?> getStatTest3(@RequestParam String cal) {
+        Map<String, Object> statList = adminService.weekStat(cal);
+        return ResponseUtils.ok(statList);
     }
 }

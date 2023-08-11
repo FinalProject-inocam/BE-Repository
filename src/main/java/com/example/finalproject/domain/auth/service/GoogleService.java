@@ -11,16 +11,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.core.env.Environment;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.http.*;
-import org.springframework.core.env.Environment;
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -58,7 +56,7 @@ public class GoogleService {
 
         User googleUser = registerGoogleUserIfNeeded(userResourceNode);
 
-            // 4. JWT 토큰 반환
+        // 4. JWT 토큰 반환
         String accessToken = jwtUtil.createAccessToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 30분
         String refreshToken = jwtUtil.createRefreshToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 3일
         jwtUtil.addAccessJwtHeader(accessToken, response);
@@ -91,6 +89,7 @@ public class GoogleService {
         HttpEntity entity = new HttpEntity(headers);
         return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
     }
+
     private User registerGoogleUserIfNeeded(JsonNode userResourceNode) {
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
@@ -113,7 +112,7 @@ public class GoogleService {
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
 
-                googleUser = new User(id,email,nickname, encodedPassword, UserRoleEnum.USER);
+                googleUser = new User(id, email, nickname, encodedPassword, UserRoleEnum.USER);
             }
 
             userRepository.save(googleUser);

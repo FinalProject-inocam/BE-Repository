@@ -147,17 +147,44 @@ public class KakaoService {
             String email = jsonNode.get("kakao_account")
                     .get("email").asText();
 
-//            String genderEnum = "unknown";
-//            if (jsonNode.get("kakao_account").get("has_gender").asBoolean()) {
-//                String gender = jsonNode.get("kakao_account")
-//                        .get("gender").asText();
-//                genderEnum = gender.equals("male") ? "male" : "female";
-//            }
+            String genderEnum = "unknown";
+            if (jsonNode.get("kakao_account").get("has_gender").asBoolean()) {
+                String gender = jsonNode.get("kakao_account")
+                        .get("gender").asText();
+                genderEnum = gender.equals("male") ? "male" : "female";
+            }
+
+            Integer age_range = Integer.valueOf(
+                    jsonNode.get("kakao_account")
+                            .get("age_range")
+                            .asText()
+                            .substring(0, 2)
+            );
+
 
 
             log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
             return new KakaoUserInfoDto(id, nickname, email);
         } catch (Exception e) {
+            uri = UriComponentsBuilder
+                    .fromUriString("https://kapi.kakao.com")
+                    .path("/v1/user/unlink")
+                    .encode()
+                    .build()
+                    .toUri();
+
+            requestEntity = RequestEntity
+                    .post(uri)
+                    .headers(headers)
+                    .body(new LinkedMultiValueMap<>());
+
+            // HTTP 요청 보내기
+            response = restTemplate.exchange(
+                    requestEntity,
+                    String.class
+            );
+            jsonNode = new ObjectMapper().readTree(response.getBody());
+            log.info(jsonNode.get("id").asText());
             throw new ConditionDisagreeException("권한을 허용해 주세요", e);
         }
     }
