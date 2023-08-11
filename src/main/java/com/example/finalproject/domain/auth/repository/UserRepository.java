@@ -17,4 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     User findByKakaoId(Long kakaoId);
 
     User findByGoogleId(String id);
+
+
+//    Arrays findAllByUser(User user);
 }
