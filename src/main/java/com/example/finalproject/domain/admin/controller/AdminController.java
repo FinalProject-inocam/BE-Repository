@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -16,7 +15,7 @@ import java.util.Map;
 public class AdminController {
     private final AdminService adminService;
 
-    @GetMapping("/api/stat/purchases/chart")
+    @GetMapping("/api/auth/stat/purchases/chart")
     public ApiResponse<?> getStat(@RequestParam(name = "cal") String cal,
                                   @RequestParam(name = "term") String period) {
 
@@ -27,7 +26,7 @@ public class AdminController {
                 break;
             case "getMonth":
                 // 월별 분석
-//                adminService.getAnalysisForMonth(cal);
+                adminService.getAnalysisForMonth(cal);
                 break;
             case "getWeek":
                 // 주별 분석
@@ -36,11 +35,23 @@ public class AdminController {
         }
         return null;
     }
+    /*---------------------------------------------------------------------------------------------------*/
 
-//    @GetMapping("/api/auth/stat")
-//    public ApiResponse<?> getStatTest(@RequestParam(name = "year") int year,
-//                                      @RequestParam(name = "type") String type) {
-//        List<Map<Long, Long>> statList = adminService.statTest(year, type);
-//        return ResponseUtils.ok(statList);
-//    }
+    @GetMapping("/api/auth/stat")
+    public ApiResponse<?> getStatTest(@RequestParam String cal) {
+        Map<String, Object> yearMap = adminService.yearStat(cal);
+        return ResponseUtils.ok(yearMap);
+    }
+
+    @GetMapping("/api/auth/stat2")
+    public ApiResponse<?> getStatTest2(@RequestParam String cal) {
+        Map<String, Object> statList = adminService.monthStat(cal);
+        return ResponseUtils.ok(statList);
+    }
+
+    @GetMapping("/api/auth/stat3")
+    public ApiResponse<?> getStatTest3(@RequestParam String cal) {
+        Map<String, Object> statList = adminService.weekStat(cal);
+        return ResponseUtils.ok(statList);
+    }
 }

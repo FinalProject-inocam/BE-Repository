@@ -43,6 +43,9 @@ public class User {
     private Long kakaoId;
 
     @Column
+    private String googleId;
+
+    @Column
     private String profileImg;
 
     public User(SignupRequestDto requestDto, String password, UserRoleEnum role) {
@@ -54,6 +57,7 @@ public class User {
         this.birthdate = requestDto.getBirthdate();
         this.role = role;
     }
+
     public void update(MypageRequestDto mypageRequestDto, String newpassword, String profileImg) {
         this.password = newpassword;
         this.nickname = mypageRequestDto.getNickname();
@@ -70,8 +74,22 @@ public class User {
         this.role = role;
     }
 
+    public User(String id, String email, String nickname, String password, UserRoleEnum role) {
+        this.googleId = id;
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+//        this.gender = kakaoUserInfo.getGender();
+        this.role = role;
+    }
+
     public User kakaoIdUpdate(Long kakaoId) {
         this.kakaoId = kakaoId;
+        return this;
+    }
+
+    public User googleIdUpdate(String id) {
+        this.googleId = id;
         return this;
     }
 }

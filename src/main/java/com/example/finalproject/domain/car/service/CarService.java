@@ -5,6 +5,8 @@ import com.example.finalproject.domain.car.repository.CarRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CarService {
@@ -15,5 +17,9 @@ public class CarService {
                 carRepository.save(car);
                 Car car2 = new Car("k5","400000000");
             carRepository.save(car2);
+    }
+
+    public List<Car> getCarList() {
+        return carRepository.findAll();
     }
 }

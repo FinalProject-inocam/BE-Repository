@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +40,9 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
             "(y.type = :type OR :type IS NULL) " +
             "GROUP BY MONTH(y.createdAt)")
     List<Object[]> findTypeMonthlyCountBetweenDates(@Param("startDateTime") LocalDateTime startDateTime,
-                                                @Param("endDateTime") LocalDateTime endDateTime,
-                                                @Param("approve") Boolean approve,
-                                                @Param("type") String type);
+                                                    @Param("endDateTime") LocalDateTime endDateTime,
+                                                    @Param("approve") Boolean approve,
+                                                    @Param("type") String type);
 
     @Query("SELECT MONTH(y.createdAt) as month, COUNT(y) as count " +
             "FROM Purchase y " +
@@ -54,6 +53,7 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
     List<Object[]> findTypeMonthlyCountWithNullApprove(@Param("startDateTime") LocalDateTime startDateTime,
                                                        @Param("endDateTime") LocalDateTime endDateTime,
                                                        @Param("type") String type);
+
     @Query("SELECT COUNT(y) " +
             "FROM Purchase y " +
             "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
@@ -88,19 +88,54 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
                                            @Param("endDateTime") LocalDateTime endDateTime,
                                            @Param("type") String type);
 
+    //------------------------------------------getMonth
+// 주별 전체 구매 수
+    @Query("SELECT COUNT(p) " +
+            "FROM Purchase p " +
+            "WHERE p.createdAt BETWEEN :startDate AND :endDate " +
+            "AND p.approve IS NULL")
+    Long findWeeklyCountWithoutApprove(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
+    @Query("SELECT COUNT(p) " +
+            "FROM Purchase p " +
+            "WHERE p.createdAt BETWEEN :startDate AND :endDate " +
+            "AND p.approve = :approve")
+    Long findTypeWeeklyCountByApprove(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate, @Param("approve") Boolean approve);
 
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "y.type = :type AND " +
+            "y.approve IS NULL")
+    Long findTypeWeeklyCountWithoutApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                           @Param("endDateTime") LocalDateTime endDateTime,
+                                           @Param("type") String type);
+
+    @Query("SELECT COUNT(y) " +
+            "FROM Purchase y " +
+            "WHERE y.createdAt BETWEEN :startDateTime AND :endDateTime AND " +
+            "y.type = :type AND " +
+            "y.approve = :approve")
+    Long findTypeWeeklyCountByApprove(@Param("startDateTime") LocalDateTime startDateTime,
+                                      @Param("endDateTime") LocalDateTime endDateTime,
+                                      @Param("type") String type,
+                                      @Param("approve") Boolean approve);
+
+    /*--------------------------------------------------------------------------------------------------------------*/
+    @Query("SELECT MONTH(p.createdAt) AS month, COUNT(*) AS count " +
+            "FROM Purchase p " +
+            "WHERE YEAR(p.createdAt) = :year " +  // 특정 년도
+            "AND p.approve = :approve " +
+            "GROUP BY MONTH(p.createdAt) " +
+            "ORDER BY MONTH(p.createdAt)")
+    List<Map<String, Object>> countPurchaseByYearAndApprove(int year, Boolean approve);
 
     @Query("SELECT MONTH(p.createdAt) AS month, COUNT(*) AS count " +
             "FROM Purchase p " +
             "WHERE YEAR(p.createdAt) = :year " +  // 특정 년도
             "AND p.type = :type " +                 // 특정 카테고리
+            "AND (p.approve = :approve OR (:approve IS NULL AND p.approve is null)) " +
             "GROUP BY MONTH(p.createdAt) " +
             "ORDER BY MONTH(p.createdAt)")
-    List<Map<Integer, Long>> countPurchaseByYearAndType(int year, String type);
+    List<Map<String, Object>> countPurchaseByYearAndTypeAndApprove(int year, String type, Boolean approve);
 }
-
-
-
-
-
