@@ -29,7 +29,7 @@ public class AdminController {
                 break;
             case "getWeek":
                 // 주별 분석
-//                adminService.getAnalysisForWeek(cal);
+                adminService.getAnalysisForWeek(cal);
                 break;
         }
         return null;
