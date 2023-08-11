@@ -3,6 +3,7 @@ package com.example.finalproject.domain.auth.controller;
 import com.example.finalproject.domain.auth.dto.SignupRequestDto;
 import com.example.finalproject.domain.auth.service.GoogleService;
 import com.example.finalproject.domain.auth.service.KakaoService;
+import com.example.finalproject.domain.auth.service.NaverService;
 import com.example.finalproject.domain.auth.service.UserService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
@@ -26,6 +27,7 @@ public class UserController {
     private final UserService userService;
     private final KakaoService kakaoService;
     private final GoogleService googleService;
+    private final NaverService naverService;
 
     //구글 로그인
     @GetMapping("/login/google")
@@ -39,6 +41,15 @@ public class UserController {
     // GET https://kauth.kakao.com/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}
     public ApiResponse<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
         return kakaoService.kakaoLogin(code, response);
+    }
+
+    // 네이버 로그인
+    @GetMapping("/login/naver")
+    // Get https://nid.naver.com/oauth2.0/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}
+    // GET https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id={CLIENT_ID}&state=STATE_STRING&redirect_uri={CALLBACK_URL}
+    //     https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=CLIENT_ID&state=STATE_STRING&redirect_uri=CALLBACK_URL
+    public ApiResponse<?> naverLogin(@RequestParam String code, @RequestParam String state, HttpServletResponse response) throws JsonProcessingException {
+        return naverService.naverLogin(code, state, response);
     }
 
     @PostMapping("/signup")
