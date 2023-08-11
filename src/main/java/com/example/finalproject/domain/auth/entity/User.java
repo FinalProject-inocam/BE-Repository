@@ -44,7 +44,7 @@ public class User {
     private Long kakaoId;
 
     @Column
-    private Long naverId;
+    private String naverId;
 
     @Column
     private String googleId;

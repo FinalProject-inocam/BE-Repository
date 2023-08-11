@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class NaverUserInfoDto {
-    private Long id;
+    private String id;
     private String nickname;
     private String email;
 

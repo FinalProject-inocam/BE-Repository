@@ -54,7 +54,7 @@ public class NaverService {
         String naverAccessToken = getToken(code, state);
 
         // 2. 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
-        NaverUserInfoDto naverUserInfo = getNaverUserInfo(naverAccessToken);
+        JsonNode jsonNode = getNaverUserInfo(naverAccessToken);
 
         // 3. 필요시에 회원가입
         User naverUser = registerNaverUserIfNeeded(naverUserInfo);
@@ -107,7 +107,7 @@ public class NaverService {
         return jsonNode.get("access_token").asText();
     }
 
-    private NaverUserInfoDto getNaverUserInfo(String accessToken) throws JsonProcessingException {
+    private JsonNode getNaverUserInfo(String accessToken) throws JsonProcessingException {
         log.info("토큰에서 유저정보 가져오기");
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
@@ -161,11 +161,16 @@ public class NaverService {
         }
     }
 
-    private User registerNaverUserIfNeeded(NaverUserInfoDto naverUserInfo) {
+    private User registerNaverUserIfNeeded(JsonNode jsonNode) {
         log.info("미가입 회원 회원가입처리");
-        // DB 에 중복된 Kakao Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
-        Long naverId = naverUserInfo.getId(); // @kakao.com // naver.com
-        User naverUser = userRepository.findByKakaoId(naverId);
+        String id = jsonNode.get("response").get("id").asText();
+
+        // DB 에 중복된 naver Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
+        String nickname = jsonNode.get("response").get("nickname").asText() + id;// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
+        String email = jsonNode.get("response").get("email").asText();
+        String naverId = id; // naver.com
+
+        User naverUser = userRepository.findByNaverId(naverId);
 
         if (naverUser == null) {
             // 네이버 사용자 email 동일한 email 가진 회원이 있는지 확인 // 이미 가입 email == naver login email // @kakao, naver
@@ -181,8 +186,8 @@ public class NaverService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
-
-                naverUser = new User(naverUserInfo, encodedPassword, UserRoleEnum.USER);
+                NaverUserInfoDto naverUserInfoDto = new NaverUserInfoDto(id, nickname, email);
+                naverUser = new User(naverUserInfoDto, encodedPassword, UserRoleEnum.USER);
             }
 
             userRepository.save(naverUser);
