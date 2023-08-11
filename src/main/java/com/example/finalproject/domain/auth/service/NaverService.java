@@ -4,7 +4,6 @@ import com.example.finalproject.domain.auth.dto.NaverUserInfoDto;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.global.enums.UserRoleEnum;
-import com.example.finalproject.global.exception.buisnessException.ConditionDisagreeException;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.JwtProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,14 +49,15 @@ public class NaverService {
 
     public ApiResponse<?> naverLogin(String code, String state, HttpServletResponse response) throws JsonProcessingException {
         log.info("test: " + code);
+
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String naverAccessToken = getToken(code, state);
 
         // 2. 토큰으로 카카오 API 호출 : "액세스 토큰"으로 "카카오 사용자 정보" 가져오기
-        NaverUserInfoDto naverUserInfo = getNaverUserInfo(naverAccessToken);
+        JsonNode jsonNode = getNaverUserInfo(naverAccessToken);
 
         // 3. 필요시에 회원가입
-        User naverUser = registerNaverUserIfNeeded(naverUserInfo);
+        User naverUser = registerNaverUserIfNeeded(jsonNode);
 
         // 4. JWT 토큰 반환
         String accessToken = jwtUtil.createAccessToken(naverUser.getEmail(), naverUser.getRole(), naverUser.getNickname(), naverUser.getGender()); // 30분
@@ -72,7 +72,7 @@ public class NaverService {
         log.info("토큰가져오기");
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
-                .fromUriString("https://nid.naver.com/oauth2.0/authorize")
+                .fromUriString("https://nid.naver.com/oauth2.0/")
                 .path("/token")
                 .encode()
                 .build()
@@ -107,7 +107,7 @@ public class NaverService {
         return jsonNode.get("access_token").asText();
     }
 
-    private NaverUserInfoDto getNaverUserInfo(String accessToken) throws JsonProcessingException {
+    private JsonNode getNaverUserInfo(String accessToken) throws JsonProcessingException {
         log.info("토큰에서 유저정보 가져오기");
         // 요청 URL 만들기
         URI uri = UriComponentsBuilder
@@ -134,61 +134,44 @@ public class NaverService {
                 requestEntity,
                 String.class
         );
-        log.info("요청확인 전");
+        log.info("요청 확인 전");
         JsonNode jsonNode = new ObjectMapper().readTree(response.getBody());
         log.info(jsonNode.toString());
-        log.info("요청확인 후");
-        try {
-            log.info(jsonNode.get("naver_account").toString());
-            Long id = jsonNode.get("id").asLong();
-            String nickname = jsonNode.get("properties")
-                    .get("nickname").asText() + id;// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
-            String email = jsonNode.get("naver_account")
-                    .get("email").asText();
-
-//            String genderEnum = "unknown";
-//            if (jsonNode.get("kakao_account").get("has_gender").asBoolean()) {
-//                String gender = jsonNode.get("kakao_account")
-//                        .get("gender").asText();
-//                genderEnum = gender.equals("male") ? "male" : "female";
-//            }
-
-
-            log.info("네이버 사용자 정보: " + id + ", " + nickname + ", " + email);
-            return new NaverUserInfoDto(id, nickname, email);
-        } catch (Exception e) {
-            throw new ConditionDisagreeException("권한을 허용해 주세요", e);
-        }
+        log.info("요청 확인 후");
+        return jsonNode;
     }
 
-    private User registerNaverUserIfNeeded(NaverUserInfoDto naverUserInfo) {
+    private User registerNaverUserIfNeeded(JsonNode jsonNode) {
         log.info("미가입 회원 회원가입처리");
-        // DB 에 중복된 Kakao Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
-        Long naverId = naverUserInfo.getId(); // @kakao.com // naver.com
-        User naverUser = userRepository.findByKakaoId(naverId);
+        String id = jsonNode.get("response").get("id").asText();
+
+        // DB 에 중복된 naver Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
+        String nickname = jsonNode.get("response").get("nickname").asText() + id;// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
+        String email = jsonNode.get("response").get("email").asText();
+        String naverId = id; // naver.com
+
+        User naverUser = userRepository.findByNaverId(naverId);
 
         if (naverUser == null) {
             // 네이버 사용자 email 동일한 email 가진 회원이 있는지 확인 // 이미 가입 email == naver login email // @kakao, naver
             // 기존 회원가입을 naverEmail로 한경우
-            String kakaoEmail = naverUserInfo.getEmail();
-            User sameEmailUser = userRepository.findByEmail(kakaoEmail).orElse(null);
+            String naverEmail = email;
+            User sameEmailUser = userRepository.findByEmail(naverEmail).orElse(null);
             if (sameEmailUser != null) {
                 naverUser = sameEmailUser; // kakaoId || default
-                // 기존 회원정보에 카카오 Id 추가
+                // 기존 회원정보에 네이버 Id 추가
                 naverUser = naverUser.naverIdUpdate(naverId);
             } else {
                 // 신규 회원가입
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
-
-                naverUser = new User(naverUserInfo, encodedPassword, UserRoleEnum.USER);
+                NaverUserInfoDto naverUserInfoDto = new NaverUserInfoDto(id, nickname, email);
+                naverUser = new User(naverUserInfoDto, encodedPassword, UserRoleEnum.USER);
             }
-
             userRepository.save(naverUser);
         }
         return naverUser;
     }
-
 }
 
