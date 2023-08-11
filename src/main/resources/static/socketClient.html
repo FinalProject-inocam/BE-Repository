@@ -13,7 +13,8 @@
 
 <script>
   var socket = io('http://localhost:9090');
-
+  // localhost:9090에서 localhost를 백엔드에서 배포된 주소로 고치고
+  // 프론트에서 이 html파일을 추가해서 사이트에 배포하면 사실상 연결된거 아닌가?
   socket.on('connect', function() {
     console.log('Connected!');
   });
