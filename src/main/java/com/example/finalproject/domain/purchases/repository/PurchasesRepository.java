@@ -121,6 +121,69 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
                                       @Param("type") String type,
                                       @Param("approve") Boolean approve);
 
+    //------------------------------------------getWeek
+
+    @Query("SELECT COUNT(p) FROM Purchase p " +
+            "WHERE p.createdAt >= :startDate AND p.createdAt <= :endDate " +
+            "AND p.approve IS NULL")
+    Long findDailyCountWithoutApprove(@Param("startDate") LocalDateTime startDate,
+                                      @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(p) FROM Purchase p " +
+            "WHERE p.createdAt >= :startDate AND p.createdAt <= :endDate " +
+            "AND p.approve = :approve")
+    Long findTypeDailyCountByApprove(@Param("startDate") LocalDateTime startDate,
+                                     @Param("endDate") LocalDateTime endDate,
+                                     @Param("approve") Boolean approve);
+
+    @Query("SELECT COUNT(p) FROM Purchase p " +
+            "WHERE p.createdAt >= :startDate AND p.createdAt <= :endDate " +
+            "AND p.type = :type " +
+            "AND p.approve IS NULL")
+    Long findTypeDailyCountWithoutApprove(@Param("startDate") LocalDateTime startDate,
+                                          @Param("endDate") LocalDateTime endDate,
+                                          @Param("type") String type);
+
+    @Query("SELECT COUNT(p) FROM Purchase p " +
+            "WHERE p.createdAt >= :startDate AND p.createdAt <= :endDate " +
+            "AND p.type = :type " +
+            "AND p.approve = :approve")
+    Long findTypeDailyCountByApprove(@Param("startDate") LocalDateTime startDate,
+                                     @Param("endDate") LocalDateTime endDate,
+                                     @Param("type") String type,
+                                     @Param("approve") Boolean approve);
+
+    // Custom query to find daily statistics for a given date and model
+//    @Query("SELECT COUNT(p) FROM Purchase p " +
+//            "WHERE p.createdAt >= :startDate AND p.createdAt <= :endDate " +
+//            "AND p.type = :type " +
+//            "AND p.approve IS NULL")
+//    Long findModelDailyCountWithoutApprove(@Param("startDate") LocalDateTime startDate,
+//                                           @Param("endDate") LocalDateTime endDate,
+//                                           @Param("type") String type);
+//
+//    @Query("SELECT COUNT(p) FROM Purchase p " +
+//            "WHERE p.createdAt >= :startDate AND p.createdAt <= :endDate " +
+//            "AND p.type = :type " +
+//            "AND p.approve = :approve")
+//    Long findModelDailyCountByApprove(@Param("startDate") LocalDateTime startDate,
+//                                      @Param("endDate") LocalDateTime endDate,
+//                                      @Param("type") String type,
+//                                      @Param("approve") Boolean approve);
+    //
+    Page<Purchase> findByApprove(Pageable pageable, Boolean approve);
+
+    @Query("SELECT COUNT(p) FROM Purchase p WHERE p.approve IS NULL AND p.createdAt BETWEEN :startDate AND :endDate")
+    Long countByApproveIsNullAndCreatedAtBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(p) FROM Purchase p WHERE p.approve = TRUE AND p.createdAt BETWEEN :startDate AND :endDate")
+    Long countByApproveIsTrueAndCreatedAtBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT COUNT(p) FROM Purchase p WHERE p.approve = FALSE AND p.createdAt BETWEEN :startDate AND :endDate")
+    Long countByApproveIsFalseAndCreatedAtBetween(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+
+    Long countByApprove(Boolean approve);
+
     /*--------------------------------------------------------------------------------------------------------------*/
     @Query("SELECT MONTH(p.createdAt) AS month, COUNT(*) AS count " +
             "FROM Purchase p " +

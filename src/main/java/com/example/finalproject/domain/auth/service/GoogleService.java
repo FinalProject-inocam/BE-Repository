@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.social.service;
+package com.example.finalproject.domain.auth.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
@@ -25,8 +26,9 @@ import static com.example.finalproject.global.enums.SuccessCode.USER_LOGIN_SUCCE
 
 
 @Service
+@Slf4j(topic = "Google Login")
 @RequiredArgsConstructor
-public class SocialService {
+public class GoogleService {
     private final UserRepository userRepository;
     private final Environment env;
     private final JwtProvider jwtUtil;
@@ -45,9 +47,9 @@ public class SocialService {
     @Value("${security.oauth2.google.resource-uri}")
     String resourceUri;
 
-    public SuccessCode socialLogin(String code, String registrationId, HttpServletResponse response) throws IOException, ServletException {
-        String googleAccessToken = getAccessToken(code, registrationId);
-        JsonNode userResourceNode = getUserResource(googleAccessToken, registrationId);
+    public SuccessCode googleLogin(String code, HttpServletResponse response) throws IOException, ServletException {
+        String googleAccessToken = getAccessToken(code);
+        JsonNode userResourceNode = getUserResource(googleAccessToken);
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
         String id = userResourceNode.get("id").asText();
@@ -59,11 +61,12 @@ public class SocialService {
         String refreshToken = jwtUtil.createRefreshToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 3일
         jwtUtil.addAccessJwtHeader(accessToken, response);
         jwtUtil.addRefreshJwtHeader(refreshToken, response);
-
+        log.info("accessToken : {}", accessToken);
+        log.info("refreshToken : {}", refreshToken);
         return USER_LOGIN_SUCCESS;
     }
 
-    private String getAccessToken(String authorizationCode, String registrationId) {
+    private String getAccessToken(String authorizationCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", authorizationCode);
         params.add("client_id", clientId);
@@ -80,7 +83,7 @@ public class SocialService {
         return accessTokenNode.get("access_token").asText();
     }
 
-    private JsonNode getUserResource(String accessToken, String registrationId) {
+    private JsonNode getUserResource(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity entity = new HttpEntity(headers);

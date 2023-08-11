@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.auth.entity;
 
 import com.example.finalproject.domain.auth.dto.KakaoUserInfoDto;
+import com.example.finalproject.domain.auth.dto.NaverUserInfoDto;
 import com.example.finalproject.domain.auth.dto.SignupRequestDto;
 import com.example.finalproject.domain.mypage.dto.MypageRequestDto;
 import com.example.finalproject.global.enums.UserRoleEnum;
@@ -43,6 +44,9 @@ public class User {
     private Long kakaoId;
 
     @Column
+    private String naverId;
+
+    @Column
     private String googleId;
 
     @Column
@@ -65,31 +69,49 @@ public class User {
         this.profileImg = profileImg;
     }
 
+    // 카카오
     public User(KakaoUserInfoDto kakaoUserInfo, String password, UserRoleEnum role) {
         this.kakaoId = kakaoUserInfo.getId();
         this.email = kakaoUserInfo.getEmail();
         this.password = password;
         this.nickname = kakaoUserInfo.getNickname();
-//        this.gender = kakaoUserInfo.getGender();
         this.role = role;
     }
 
+    // 구글
     public User(String id, String email, String nickname, String password, UserRoleEnum role) {
         this.googleId = id;
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-//        this.gender = kakaoUserInfo.getGender();
         this.role = role;
     }
 
+    // 네이버
+    public User(NaverUserInfoDto naverUserInfoDto, String password, UserRoleEnum role) {
+        this.naverId = naverUserInfoDto.getId();
+        this.email = naverUserInfoDto.getEmail();
+        this.password = password;
+        this.nickname = naverUserInfoDto.getNickname();
+        this.role = role;
+    }
+
+
+    // 카카오
     public User kakaoIdUpdate(Long kakaoId) {
         this.kakaoId = kakaoId;
         return this;
     }
 
+    // 구글
     public User googleIdUpdate(String id) {
         this.googleId = id;
+        return this;
+    }
+
+    // 네이버
+    public User naverIdUpdate(String naverId) {
+        this.naverId = naverId;
         return this;
     }
 }

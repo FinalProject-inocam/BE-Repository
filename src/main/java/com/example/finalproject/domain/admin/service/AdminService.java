@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -116,23 +117,25 @@ public class AdminService {
         LocalDateTime endDateTime = LocalDateTime.of(year, month, startDateTime.toLocalDate().lengthOfMonth(), 23, 59, 59);
 
         // 전월의 시작 및 끝 날짜 설정
-//        LocalDateTime prevStartDate = startDate.minusMonths(1);
-//        LocalDateTime prevEndDate = prevStartDate.with(TemporalAdjusters.lastDayOfMonth()).atTime(23, 59, 59);
+        LocalDate prevStartDate = startDateTime.toLocalDate().minusMonths(1);
+        LocalDateTime prevStartDateTime = prevStartDate.atStartOfDay();
 
+        LocalDate prevEndDate = prevStartDate.with(TemporalAdjusters.lastDayOfMonth());
+        LocalDateTime prevEndDateTime = prevEndDate.atTime(23, 59, 59);
         // This month's data arrays
-        long[] totalPurchase = new long[4];
-        long[] totalApprove = new long[4];
-        long[] totalCancel = new long[4];
-        long[] model1Purchase = new long[4];
-        long[] model1Approve = new long[4];
-        long[] model1Cancel = new long[4];
-        long[] model2Purchase = new long[4];
-        long[] model2Approve = new long[4];
-        long[] model2Cancel = new long[4];
+        long[] totalPurchase = new long[5];
+        long[] totalApprove = new long[5];
+        long[] totalCancel = new long[5];
+        long[] model1Purchase = new long[5];
+        long[] model1Approve = new long[5];
+        long[] model1Cancel = new long[5];
+        long[] model2Purchase = new long[5];
+        long[] model2Approve = new long[5];
+        long[] model2Cancel = new long[5];
 
         String model1 = "K3";
         String model2 = "K5";
-        for (int week = 1; week <= 4; week++) {
+        for (int week = 1; week <= 5; week++) {
             LocalDateTime startOfWeek = getStartOfWeek(startDateTime, week);
             LocalDateTime endOfWeek = getEndOfWeek(startDateTime, week);
 
@@ -148,28 +151,64 @@ public class AdminService {
             model2Approve[week - 1] = purchasesRepository.findTypeWeeklyCountByApprove(startOfWeek, endOfWeek, model2, false);
             model2Cancel[week - 1] = purchasesRepository.findTypeWeeklyCountByApprove(startOfWeek, endOfWeek, model2, false);
         }
-        for (int i = 1; i <= 4; i++) {
-            System.out.println("total Week " + i);
+        Long prevTotalPurchase = purchasesRepository.findWeeklyCountWithoutApprove(prevStartDateTime, prevEndDateTime);
+        Long prevTotalApprove = purchasesRepository.findTypeWeeklyCountByApprove(prevStartDateTime, prevEndDateTime, true);
+        Long prevTotalCancel = purchasesRepository.findTypeWeeklyCountByApprove(prevStartDateTime, prevEndDateTime, false);
+        Long prevModel1Purchase = purchasesRepository.findTypeWeeklyCountWithoutApprove(prevStartDateTime, prevEndDateTime, model1);
+        Long prevModel1Approve = purchasesRepository.findTypeWeeklyCountByApprove(prevStartDateTime, prevEndDateTime, model1, true);
+        Long prevModel1Cancel = purchasesRepository.findTypeWeeklyCountByApprove(prevStartDateTime, prevEndDateTime, model1, false);
+        Long prevModel2Purchase = purchasesRepository.findTypeWeeklyCountWithoutApprove(prevStartDateTime, prevEndDateTime, model2);
+        Long prevModel2Approve = purchasesRepository.findTypeWeeklyCountByApprove(prevStartDateTime, prevEndDateTime, model2, true);
+        Long prevModel2Cancel = purchasesRepository.findTypeWeeklyCountByApprove(prevStartDateTime, prevEndDateTime, model2, false);
+        for (int i = 1; i <= 5; i++) {
+            LocalDateTime startOfWeek = getStartOfWeek(startDateTime, i);
+            LocalDateTime endOfWeek = getEndOfWeek(startDateTime, i);
+
+            System.out.println("Week " + i + " (" + startOfWeek.toLocalDate() + " - " + endOfWeek.toLocalDate() + ")");
             System.out.println("Total Purchase: " + totalPurchase[i - 1]);
             System.out.println("Total Approve: " + totalApprove[i - 1]);
             System.out.println("Total Cancel: " + totalCancel[i - 1]);
             System.out.println("");
         }
-        for (int i = 1; i <= 4; i++) {
-            System.out.println("model 1 Week " + i);
+        for (int i = 1; i <= 5; i++) {
+            LocalDateTime startOfWeek = getStartOfWeek(startDateTime, i);
+            LocalDateTime endOfWeek = getEndOfWeek(startDateTime, i);
+
+            System.out.println("Model 1 Week " + i + " (" + startOfWeek.toLocalDate() + " - " + endOfWeek.toLocalDate() + ")");
             System.out.println("Model1 Purchase: " + model1Purchase[i - 1]);
             System.out.println("Model1 Approve: " + model1Approve[i - 1]);
             System.out.println("Model1 Cancel: " + model1Cancel[i - 1]);
             System.out.println("");
         }
 
-        for (int i = 1; i <= 4; i++) {
-            System.out.println("model 2 Week " + i);
+        for (int i = 1; i <= 5; i++) {
+            LocalDateTime startOfWeek = getStartOfWeek(startDateTime, i);
+            LocalDateTime endOfWeek = getEndOfWeek(startDateTime, i);
+
+            System.out.println("Model 2 Week " + i + " (" + startOfWeek.toLocalDate() + " - " + endOfWeek.toLocalDate() + ")");
             System.out.println("Model2 Purchase: " + model2Purchase[i - 1]);
             System.out.println("Model2 Approve: " + model2Approve[i - 1]);
             System.out.println("Model2 Cancel: " + model2Cancel[i - 1]);
             System.out.println("");
         }
+        System.out.println("Previous Month Data:");
+        System.out.println("---------------------");
+
+        System.out.println("Total Purchase without Approve: " + prevTotalPurchase);
+        System.out.println("Total Purchase with Approve (True): " + prevTotalApprove);
+        System.out.println("Total Purchase with Approve (False): " + prevTotalCancel);
+
+        System.out.println("\nModel1 (" + model1 + ") Data:");
+        System.out.println("Purchase without Approve: " + prevModel1Purchase);
+        System.out.println("Purchase with Approve (True): " + prevModel1Approve);
+        System.out.println("Purchase with Approve (False): " + prevModel1Cancel);
+
+        System.out.println("\nModel2 (" + model2 + ") Data:");
+        System.out.println("Purchase without Approve: " + prevModel2Purchase);
+        System.out.println("Purchase with Approve (True): " + prevModel2Approve);
+        System.out.println("Purchase with Approve (False): " + prevModel2Cancel);
+
+        System.out.println("---------------------");
         // Construct the response object
     }
 
@@ -218,6 +257,90 @@ public class AdminService {
         return mapToList(list, 12, "month");
     }
 
+    //----------------------------------------- getWeek--------------------------------------------------//
+    public void getAnalysisForWeek(String cal) {
+        // YYYY-MM-DD
+        int year = Integer.parseInt(cal.split("-")[0]);
+        int month = Integer.parseInt(cal.split("-")[1]);
+        int day = Integer.parseInt(cal.split("-")[2]);
+
+        LocalDate date = LocalDate.of(year, month, day);
+        LocalDateTime startOfWeek = date.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).atTime(0, 0, 0);
+
+        long[] totalPurchase = new long[7];
+        long[] totalApprove = new long[7];
+        long[] totalCancel = new long[7];
+
+        long[] purchase_model1 = new long[7];
+        long[] approve_model1 = new long[7];
+        long[] cancel_model1 = new long[7];
+
+        long[] purchase_model2 = new long[7];
+        long[] approve_model2 = new long[7];
+        long[] cancel_model2 = new long[7];
+
+        String model1 = "K3";
+        String model2 = "K5";
+
+        // Calculate weekly data for each day of the week
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+
+            // 각 요일의 시작과 끝 시간을 계산하여 startOfDay와 endOfDay에 저장
+            LocalDateTime startOfDay = startOfWeek.plusDays(dayOfWeek.getValue() - 1);
+            LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+
+            // purchasesRepository를 사용하여 해당 기간 동안 구매 건수, 승인 건수 및 취소 건수를 계산하여 각각 purchaseTotal, approveTotal, cancelTotal 배열에 저장
+            totalPurchase[dayOfWeek.getValue() - 1] = purchasesRepository.findDailyCountWithoutApprove(startOfDay, endOfDay);
+            totalApprove[dayOfWeek.getValue() - 1] = purchasesRepository.findTypeDailyCountByApprove(startOfDay, endOfDay, true);
+            totalCancel[dayOfWeek.getValue() - 1] = purchasesRepository.findTypeDailyCountByApprove(startOfDay, endOfDay, false);
+
+            purchase_model1[dayOfWeek.getValue() - 1] = purchasesRepository.findTypeDailyCountWithoutApprove(startOfDay, endOfDay, model1);
+            approve_model1[dayOfWeek.getValue() - 1] = purchasesRepository.findTypeDailyCountByApprove(startOfDay, endOfDay, model1, true);
+            cancel_model1[dayOfWeek.getValue() - 1] = purchasesRepository.findTypeDailyCountByApprove(startOfDay, endOfDay, model1, false);
+
+            purchase_model2[dayOfWeek.getValue() - 1] = purchasesRepository.findTypeDailyCountWithoutApprove(startOfDay, endOfDay, model2);
+            approve_model2[dayOfWeek.getValue() - 1] = purchasesRepository.findTypeDailyCountByApprove(startOfDay, endOfDay, model2, true);
+            cancel_model2[dayOfWeek.getValue() - 1] = purchasesRepository.findTypeDailyCountByApprove(startOfDay, endOfDay, model2, false);
+        }
+
+
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            LocalDateTime startOfDay = startOfWeek.plusDays(dayOfWeek.getValue() - 1);
+            LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+            int dayIndex = dayOfWeek.getValue() - 1;
+            System.out.println("Day: " + endOfDay.getDayOfWeek());
+            System.out.println("Total Purchase: " + totalPurchase[dayIndex]);
+            System.out.println("Total Approve: " + totalApprove[dayIndex]);
+            System.out.println("Total Cancel: " + totalCancel[dayIndex]);
+            System.out.println("-----------------------------");
+        }
+
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            LocalDateTime startOfDay = startOfWeek.plusDays(dayOfWeek.getValue() - 1);
+            LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+            int dayIndex = dayOfWeek.getValue() - 1;
+            System.out.println("Day: " + endOfDay.getDayOfWeek());
+            System.out.println("Model 1 - Purchase: " + purchase_model1[dayIndex]);
+            System.out.println("Model 1 - Approve: " + approve_model1[dayIndex]);
+            System.out.println("Model 1 - Cancel: " + cancel_model1[dayIndex]);
+            System.out.println("-----------------------------");
+//            // Move to the next week
+//            startOfWeek = startOfWeek.plusWeeks(1);
+        }
+
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            LocalDateTime startOfDay = startOfWeek.plusDays(dayOfWeek.getValue() - 1);
+            LocalDateTime endOfDay = startOfDay.plusDays(1).minusSeconds(1);
+            int dayIndex = dayOfWeek.getValue() - 1;
+            System.out.println("Day: " + endOfDay.getDayOfWeek());
+            System.out.println("Model 2 - Purchase: " + purchase_model2[dayIndex]);
+            System.out.println("Model 2 - Approve: " + approve_model2[dayIndex]);
+            System.out.println("Model 2 - Cancel: " + cancel_model2[dayIndex]);
+            System.out.println("-----------------------------");
+//            // Move to the next week
+//            startOfWeek = startOfWeek.plusWeeks(1);
+        }
+    }
     public List<Long> getDataByMonthAndTypeAndApprove(int year, String type, Boolean approve) {
         List<Map<String, Object>> list = purchasesRepository.countPurchaseByYearAndTypeAndApprove(year, type, approve);
         return mapToList(list, 12, "month");
