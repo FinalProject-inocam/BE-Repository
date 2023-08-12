@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Socket.io Client</title>
+  <title>Chat Application</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <body>
@@ -12,22 +12,31 @@
 <div id="chatArea"></div>
 
 <script>
+  // Socket.io 클라이언트 설정
   var socket = io('http://localhost:9090');
-  // localhost:9090에서 localhost를 백엔드에서 배포된 주소로 고치고
-  // 프론트에서 이 html파일을 추가해서 사이트에 배포하면 사실상 연결된거 아닌가?
+
+  // 사용자와 방 정보 (실제 서비스에서는 로그인 및 방 선택을 통해 얻어와야 합니다.)
+  var currentRoomId = 1; // 예시: 방 ID를 1로 설정
+  var currentUsername = "JohnDoe"; // 예시: 사용자 이름을 'JohnDoe'로 설정
+
   socket.on('connect', function() {
-    console.log('Connected!');
+    console.log('Connected to the server');
   });
 
   socket.on('chat_message', function(data) {
     var chatArea = document.getElementById('chatArea');
-    chatArea.innerHTML += data + '<br>'; // 채팅 메시지를 채팅 영역에 추가합니다.
+    chatArea.innerHTML += data.username + ": " + data.content + '<br>'; // 채팅 메시지를 채팅 영역에 추가
   });
 
   function sendMessage() {
-    var message = document.getElementById('inputMessage').value; // 텍스트 입력란에서 메시지를 가져옵니다.
-    socket.emit('chat_message', message); // Socket.io 서버로 메시지를 보냅니다.
-    document.getElementById('inputMessage').value = ''; // 텍스트 입력란을 초기화합니다.
+    var message = document.getElementById('inputMessage').value;
+    var messageDto = {
+      content: message,
+      roomId: currentRoomId, // 현재 방의 ID
+      username: currentUsername // 현재 사용자 이름
+    };
+    socket.emit('chat_message', messageDto);
+    document.getElementById('inputMessage').value = '';
   }
 </script>
 </body>

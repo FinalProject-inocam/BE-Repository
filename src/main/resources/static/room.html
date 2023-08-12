@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Room Management</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+<h1>Chat Rooms</h1>
+
+<!-- Create New Room -->
+<button onclick="createNewRoom()">Create New Room</button>
+
+<!-- Room List -->
+<ul id="roomList">
+  <!-- Dynamically populated -->
+</ul>
+
+<!-- Joining a Room -->
+<input type="text" id="roomIdToJoin" placeholder="Enter Room ID to Join">
+<button onclick="joinRoom()">Join Room</button>
+
+<script>
+  var socket = io.connect('http://localhost:9090');
+
+  // Example function to create a new room
+  function createNewRoom() {
+    // Emit to server, server should handle room creation logic
+    socket.emit('create_room');
+  }
+
+  socket.on('room_created', function (roomId) {
+    // Append the new room to the list
+    var roomList = document.getElementById('roomList');
+    var listItem = document.createElement('li');
+    listItem.innerHTML = "Room ID: " + roomId;
+    roomList.appendChild(listItem);
+  });
+
+  function joinRoom() {
+    var roomId = document.getElementById('roomIdToJoin').value;
+    if (roomId) {
+      window.location.href = '/chat.html?roomId=' + roomId;
+    } else {
+      alert('Please enter a room ID.');
+    }
+  }
+</script>
+
+</body>
+</html>
