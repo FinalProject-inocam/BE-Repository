@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 
 @Service
 @Slf4j(topic = "web socket")
-
 public class SocketIOService {
 
     @Autowired
@@ -44,7 +43,14 @@ public class SocketIOService {
     }
 
     private void handleClientConnect(SocketIOClient client) {
-        // 연결될 때의 로직
+        String roomId = client.getHandshakeData().getSingleUrlParam("roomId");
+        if (roomId != null && !roomId.isEmpty()) {
+            client.joinRoom(roomId);
+            log.info("Client joined to room: " + roomId);
+        } else {
+            log.warn("Client tried to connect without a roomId");
+        }
+        // 기타 연결 로직 (필요하다면)
     }
 
     private void handleChatMessage(SocketIOClient client, MessageDto messageDto, AckRequest ackRequest) {
@@ -53,7 +59,7 @@ public class SocketIOService {
             broadcastMessage(messageDto);
             log.info("is it ok2");
         } catch (Exception e) {
-            // 로깅 or 예외 처리
+            log.error("Error handling chat message", e);
         }
     }
 
@@ -62,7 +68,6 @@ public class SocketIOService {
         Room room = roomRepository.findById(messageDto.getRoomId()).orElse(null);
 
         if (user == null || room == null) {
-            // 예외 처리
             throw new RuntimeException("User or Room not found!");
         }
 
@@ -76,6 +81,7 @@ public class SocketIOService {
     }
 
     private void broadcastMessage(MessageDto messageDto) {
+        log.info("room Id : " + messageDto.getRoomId());
         socketIOServer.getRoomOperations(messageDto.getRoomId().toString()).sendEvent("chat_message", messageDto);
         log.info("is it ok?");
     }

@@ -28,7 +28,11 @@
   });
 
   socket.on('chat_message', function(data) {
+    console.log('Socket connected:', socket.connected);
     var chatArea = document.getElementById('chatArea');
+    console.log("hey is it connect?")
+    console.log('Socket connected:', socket.connected);
+    console.log('data',data.content)
     chatArea.innerHTML += data.username + ': ' + data.content + '<br>';
   });
 
