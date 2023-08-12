@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Room</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body>
+
+<div>
+  <h2>Chat Room</h2>
+  <div id="chatArea" style="height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: auto;"></div>
+  <input type="text" id="inputMessage" placeholder="Type your message here">
+  <button onclick="sendMessage()">Send</button>
+  <button onclick="leaveRoom()">Leave Room</button>
+</div>
+
+<script>
+  // roomId와 username은 URL 파라미터로부터 추출하거나 다른 방식으로 설정될 수 있습니다.
+  var currentRoomId = new URLSearchParams(window.location.search).get('roomId');
+  var currentUsername = 'YOUR_USERNAME'; // 이 부분은 실제 유저 이름으로 바꿀 필요가 있습니다.
+
+  var socket = io.connect('http://localhost:9090?roomId=' + currentRoomId);
+
+  socket.on('connect', function() {
+    console.log('Connected to room:', currentRoomId);
+  });
+
+  socket.on('chat_message', function(data) {
+    var chatArea = document.getElementById('chatArea');
+    chatArea.innerHTML += data.username + ': ' + data.content + '<br>';
+  });
+
+  function sendMessage() {
+    var message = document.getElementById('inputMessage').value;
+    var messageDto = {
+      content: message,
+      roomId: currentRoomId,
+      nickname: currentUsername
+    };
+    socket.emit('chat_message', messageDto);
+    document.getElementById('inputMessage').value = '';
+    console.log('message :', messageDto.content);
+
+  }
+
+  function leaveRoom() {
+    socket.disconnect();
+    // 원한다면 다른 페이지로 리다이렉트도 가능합니다.
+    // window.location.href = '/path-to-some-page';
+  }
+</script>
+
+</body>
+</html>
