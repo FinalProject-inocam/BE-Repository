@@ -170,7 +170,6 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
 //                                      @Param("endDate") LocalDateTime endDate,
 //                                      @Param("type") String type,
 //                                      @Param("approve") Boolean approve);
-    //
     Page<Purchase> findByApprove(Pageable pageable, Boolean approve);
 
     @Query("SELECT COUNT(p) FROM Purchase p WHERE p.approve IS NULL AND p.createdAt BETWEEN :startDate AND :endDate")
