@@ -14,10 +14,14 @@ import com.example.finalproject.domain.post.repository.PostLikeRepository;
 import com.example.finalproject.domain.post.repository.PostRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
+import com.example.finalproject.global.responsedto.PageResponse;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,18 +45,12 @@ public class PostService {
 
     @Transactional
     public Page<PostAllResponseDto> getPost(int page, int size, UserDetailsImpl userDetails) {
-//        List<Post> posts = postRepository.findAll();
 
         // 페이지 네이션
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Post> postPage = postRepository.findAllBy(pageable);
 
         List<PostAllResponseDto> postsList = new ArrayList<>();
-        //        List<PostAllResponseDto> postsList = postPage
-        //                .stream()
-        //                .map(PostAllResponseDto::new)
-        //                .collect(Collectors.toList());
-
         long total = postPage.getTotalElements();
 
         for (Post post : postPage) {
@@ -67,7 +65,7 @@ public class PostService {
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
             postsList.add(postAllResponseDto);
         }
-        return new PageImpl<>(postsList, pageable, total);
+        return new PageResponse(postsList, pageable, total);
     }
 
     @Transactional
@@ -105,7 +103,6 @@ public class PostService {
         postRepository.save(post);
         return POST_CREATE_SUCCESS;
     }
-
 
     @Transactional
     public SuccessCode updatePost(List<MultipartFile> multipartFile, PostRequestDto postRequestDto, Long postId, String nickname) {
@@ -178,8 +175,6 @@ public class PostService {
         if (!user.getRole().equals(UserRoleEnum.ADMIN) && !post.getUser().getUserId().equals(user.getUserId())) {
             throw new PostsNotFoundException(NO_AUTHORITY_TO_DATA);
         }
-
         return post;
     }
-
 }

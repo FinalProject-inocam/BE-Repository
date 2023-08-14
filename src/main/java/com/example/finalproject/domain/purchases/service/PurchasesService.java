@@ -11,12 +11,16 @@ import com.example.finalproject.domain.purchases.entity.Purchase;
 import com.example.finalproject.domain.purchases.exception.PurchasesNotFoundException;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.global.responsedto.ApiResponse;
+import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.example.finalproject.global.enums.ErrorCode.NO_AUTHORITY_TO_DATA;
 import static com.example.finalproject.global.enums.ErrorCode.PURCHASES_DELETE_FAIL;
@@ -39,14 +43,13 @@ public class PurchasesService {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "purchaseId"));
         Page<Purchase> purchasesPage = purchasesRepository.findAll(pageable);
 
-        List<PurchasesResponseDto> purchasesList = purchasesPage
-                .stream()
-                .map(PurchasesResponseDto::new)
-                .collect(Collectors.toList());
+        List<PurchasesResponseDto> purchasesResponseDtoList = new ArrayList<>();
 
-        long total = purchasesPage.getTotalElements();
-
-        return new PageImpl<>(purchasesList, pageable, total);
+        for (Purchase purchase : purchasesPage) {
+            PurchasesResponseDto purchasesResponseDto = new PurchasesResponseDto(purchase);
+            purchasesResponseDtoList.add(purchasesResponseDto);
+        }
+        return new PageResponse(purchasesResponseDtoList, pageable, purchasesPage.getTotalElements());
     }
 
     // 차량 출고 신청
@@ -56,7 +59,6 @@ public class PurchasesService {
         purchasesRepository.save(purchase);
         return ok(PURCHASES_CREATE_SUCCESS);
     }
-
 
     // 차량 신청 내역 수정
     public PurchasesPatchResponseDto updatePurchases(Long purchaseId, PurchasesRequestDto purchasesRequestDto, User user) {
@@ -86,5 +88,4 @@ public class PurchasesService {
             throw new PostsNotFoundException(NO_AUTHORITY_TO_DATA);
         }
     }
-
 }

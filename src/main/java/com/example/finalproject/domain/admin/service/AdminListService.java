@@ -3,21 +3,23 @@ package com.example.finalproject.domain.admin.service;
 import com.example.finalproject.domain.admin.dto.ReleaseDecidereqDto;
 import com.example.finalproject.domain.admin.dto.TotalListResponseDto;
 import com.example.finalproject.domain.admin.exception.AdminNotFoundException;
-import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.entity.Purchase;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.global.enums.SuccessCode;
+import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_CLIENT;
 import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_DATA;
 
 @Service
@@ -25,56 +27,34 @@ import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_DATA;
 public class AdminListService {
     private final PurchasesRepository purchasesRepository;
 
-    public Page<PurchasesResponseDto> approveList(int page, int size) {
-
-        // 페이지 나누기
+    // 페이지 나누기
+    public Page<PurchasesResponseDto> fetchList(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "purchaseId"));
-        Page<Purchase> purchasesPage = purchasesRepository.findByApprove(pageable,null);
+        Page<Purchase> purchasesPage = purchasesRepository.findByApprove(pageable, null);
 
-        List<PurchasesResponseDto> purchasesList = purchasesPage
-                .stream()
-                .map(PurchasesResponseDto::new)
-                .collect(Collectors.toList());
+        List<PurchasesResponseDto> purchasesResponseDtoList = new ArrayList<>();
 
-        long total = purchasesPage.getTotalElements();
+        for (Purchase purchase : purchasesPage) {
+            PurchasesResponseDto purchasesResponseDto = new PurchasesResponseDto(purchase);
+            purchasesResponseDtoList.add(purchasesResponseDto);
+        }
+        return new PageResponse(purchasesResponseDtoList, pageable, purchasesPage.getTotalElements());
+    }
 
-        return new PageImpl<>(purchasesList, pageable, total);
+    public Page<PurchasesResponseDto> approveList(int page, int size) {
+        return fetchList(page, size);
     }
 
     public Page<PurchasesResponseDto> decideList(int page, int size) {
-
-        // 페이지 나누기
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "purchaseId"));
-        Page<Purchase> purchasesPage = purchasesRepository.findByApprove(pageable,true);
-
-        List<PurchasesResponseDto> purchasesList = purchasesPage
-                .stream()
-                .map(PurchasesResponseDto::new)
-                .collect(Collectors.toList());
-
-        long total = purchasesPage.getTotalElements();
-
-        return new PageImpl<>(purchasesList, pageable, total);
+        return fetchList(page, size);
     }
 
     public Page<PurchasesResponseDto> denyList(int page, int size) {
-
-        // 페이지 나누기
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "purchaseId"));
-        Page<Purchase> purchasesPage = purchasesRepository.findByApprove(pageable,false);
-
-        List<PurchasesResponseDto> purchasesList = purchasesPage
-                .stream()
-                .map(PurchasesResponseDto::new)
-                .collect(Collectors.toList());
-
-        long total = purchasesPage.getTotalElements();
-
-        return new PageImpl<>(purchasesList, pageable, total);
+        return fetchList(page, size);
     }
 
 
-//   신청건수 : 금달 + 이월건수
+    //   신청건수 : 금달 + 이월건수
 //	승인필요 총합 : approveList.length // 금달 + 이월건수
 //	승인확정 총합 : decideList.length // 금달 + 이월건수
 //	승인거절 총합 : denyList.length // 금달 + 이월건수
@@ -96,25 +76,23 @@ public class AdminListService {
         Long approvedCount = purchasesRepository.countByApproveIsTrueAndCreatedAtBetween(startDateTime, endDateTime);
         Long deniedCount = purchasesRepository.countByApproveIsFalseAndCreatedAtBetween(startDateTime, endDateTime);
 
-        System.out.println("출고 대기 : "+needApprovalCount);
-        System.out.println("출고 승인 : "+approvedCount);
-        System.out.println("출고 거절 : "+deniedCount);
-        return new TotalListResponseDto(needApprovalCount,approvedCount,deniedCount);
+        System.out.println("출고 대기 : " + needApprovalCount);
+        System.out.println("출고 승인 : " + approvedCount);
+        System.out.println("출고 거절 : " + deniedCount);
+        return new TotalListResponseDto(needApprovalCount, approvedCount, deniedCount);
     }
+
     @Transactional
     public SuccessCode releaseDecide(Long id, ReleaseDecidereqDto releaseDecidereqDto) {
-        Purchase purchase=purchasesRepository.findById(id).orElseThrow(
+        Purchase purchase = purchasesRepository.findById(id).orElseThrow(
                 () -> new AdminNotFoundException(NOT_FOUND_DATA)
         );
-        if(releaseDecidereqDto.getApprove()){
-            purchase.update(releaseDecidereqDto.getApprove(),releaseDecidereqDto.getDeliveryDate());
+        if (releaseDecidereqDto.getApprove()) {
+            purchase.update(releaseDecidereqDto.getApprove(), releaseDecidereqDto.getDeliveryDate());
             return SuccessCode.PURCHASE_APPROVE;
-        }
-        else{
-            purchase.update(releaseDecidereqDto.getApprove(),releaseDecidereqDto.getDenyMessage());
+        } else {
+            purchase.update(releaseDecidereqDto.getApprove(), releaseDecidereqDto.getDenyMessage());
             return SuccessCode.PURCHASE_DENIED;
         }
     }
-
-
 }
