@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/posts")
+@RequestMapping("/api/communities")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
