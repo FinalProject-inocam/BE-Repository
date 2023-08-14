@@ -21,7 +21,7 @@
   var currentRoomId = new URLSearchParams(window.location.search).get('roomId');
   var currentUsername = 'YOUR_USERNAME'; // 이 부분은 실제 유저 이름으로 바꿀 필요가 있습니다.
 
-  var socket = io.connect('http://localhost:9090?roomId=' + currentRoomId);
+  var socket = io.connect('http://3.35.68.30:9090?roomId=' + currentRoomId);
 
   socket.on('connect', function() {
     console.log('Connected to room:', currentRoomId);
