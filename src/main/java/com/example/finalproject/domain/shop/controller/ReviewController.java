@@ -60,4 +60,8 @@ public class ReviewController {
         SuccessCode successCode = reviewService.revisit(shopId,reviewId,userDetails.getUser());
         return ResponseUtils.ok(successCode);
     }
+    @GetMapping("/star")
+    public ApiResponse<?> getstar(@PathVariable String shopId){
+        return ResponseUtils.ok(reviewService.getStar(shopId));
+    }
 }

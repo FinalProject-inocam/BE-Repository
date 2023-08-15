@@ -2,18 +2,15 @@ package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
-import com.example.finalproject.domain.post.entity.Image;
-import com.example.finalproject.domain.post.entity.Post;
-import com.example.finalproject.domain.post.entity.PostLike;
-import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
+import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.Revisit;
 import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
 import com.example.finalproject.domain.shop.repository.ReviewImageRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
-import com.example.finalproject.domain.shop.repository.RevistRepository;
+import com.example.finalproject.domain.shop.repository.RevisitRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.utils.S3Utils;
@@ -24,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_CLIENT;
-import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_DATA;
 import static com.example.finalproject.global.enums.SuccessCode.*;
 
 @Service
@@ -39,12 +33,13 @@ public class ReviewService {
     private final S3Utils s3Utils;
     private final ReviewImageRepository reviewImageRepository;
     private final UserRepository userRepository;
-    private final RevistRepository revistRepository;
+    private final RevisitRepository revistRepository;
     @Transactional
     public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile, ReviewRequestDto requestDto, User user) {
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, user);
-        Review review = new Review(requestDto, shopId, user);
+        Boolean revisit=false;
+        Review review = new Review(requestDto, shopId, user,revisit);
         // image가 없을 때 빈 url생성 방지
         if(s3Utils.isFile(multipartFile)) {
             List<String> urls = s3Utils.uploadFile(multipartFile);
@@ -111,24 +106,54 @@ public class ReviewService {
             }
         }
     }
-
+    @Transactional
     public SuccessCode revisit(String shopId,Long reviewId,User user) {
-        log.info("user"+user.getNickname());
         Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
                 new NullPointerException("존재하지 않는 후기입니다.")
         );
         if(review.getUser().getUserId()!=user.getUserId()){
             throw new ReviewAuthorityException(ErrorCode.DIFFIRENT_USER);
         }
-        log.info("review"+review.getReview());
         Revisit revisit = revistRepository.findByReviewIdAndUserUserId(review.getId(), review.getUser().getUserId());
-        log.info("1");
         if (revisit!=null) {
             revistRepository.delete(revisit);
+            review.updateRevisit(false);
             return REVISIT_FALSE;
         } else {
             revistRepository.save(new Revisit(user, review));
+            review.updateRevisit(true);
             return REVISIT_TRUE;
         }
+    }
+
+    public ReviewStarResponseDto getStar(String shopId){
+        List<Review> reivewList=reviewRepository.findAllByShopId(shopId);
+        int[] countStar=new int[6];
+        for(Review review : reivewList){
+            Integer star=review.getStar();
+            switch (star) {
+                case 0:
+                    countStar[0]++;
+                    break;
+                case 1:
+                    countStar[1]++;
+                    break;
+                case 2:
+                    countStar[2]++;
+                    break;
+                case 3:
+                    countStar[3]++;
+                    break;
+                case 4:
+                    countStar[4]++;
+                    break;
+                case 5:
+                    countStar[5]++;
+                    break;
+            }
+        }
+        ReviewStarResponseDto reviewStarResponseDto=new ReviewStarResponseDto(countStar);
+
+        return reviewStarResponseDto;
     }
 }

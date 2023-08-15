@@ -14,6 +14,7 @@ public class ReviewResponseDto {
     private String review;
     private String nickname;
     private Integer star;
+    private Boolean revisit;
     private List<String> imageUrls;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
@@ -23,6 +24,7 @@ public class ReviewResponseDto {
         this.nickname = review.getUser().getNickname();
         this.review = review.getReview();
         this.star = review.getStar();
+        this.revisit=review.getRevisit();
         this.imageUrls = review.getImageUrls()
                 .stream()
                 .map(ReviewImage::getImage)
