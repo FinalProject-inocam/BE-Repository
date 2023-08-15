@@ -54,4 +54,10 @@ public class ReviewController {
         SuccessCode successCode = reviewService.deleteReview(shopId, reviewId, user);
         return ResponseUtils.ok(successCode);
     }
+
+    @PatchMapping("/revisit")
+    public ApiResponse<?> revisit(@PathVariable String shopId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        SuccessCode successCode = reviewService.revisit(shopId,userDetails.getUser());
+        return ResponseUtils.ok(successCode);
+    }
 }
