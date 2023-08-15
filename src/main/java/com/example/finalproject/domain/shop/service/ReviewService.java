@@ -112,11 +112,16 @@ public class ReviewService {
         }
     }
 
-    public SuccessCode revisit(String shopId,User user) {
+    public SuccessCode revisit(String shopId,Long reviewId,User user) {
         log.info("user"+user.getNickname());
-        Review review = reviewRepository.findByShopId(shopId);
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new NullPointerException("존재하지 않는 후기입니다.")
+        );
+        if(review.getUser().getUserId()!=user.getUserId()){
+            throw new ReviewAuthorityException(ErrorCode.DIFFIRENT_USER);
+        }
         log.info("review"+review.getReview());
-        Revisit revisit = revistRepository.findByReviewIdAndUserUserId(review.getId(), user.getUserId());
+        Revisit revisit = revistRepository.findByReviewIdAndUserUserId(review.getId(), review.getUser().getUserId());
         log.info("1");
         if (revisit!=null) {
             revistRepository.delete(revisit);
