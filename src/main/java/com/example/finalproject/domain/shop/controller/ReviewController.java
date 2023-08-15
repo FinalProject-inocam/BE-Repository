@@ -55,9 +55,9 @@ public class ReviewController {
         return ResponseUtils.ok(successCode);
     }
 
-    @PatchMapping("/revisit")
-    public ApiResponse<?> revisit(@PathVariable String shopId,@AuthenticationPrincipal UserDetailsImpl userDetails){
-        SuccessCode successCode = reviewService.revisit(shopId,userDetails.getUser());
+    @PatchMapping("/revisit/{reviewId}")
+    public ApiResponse<?> revisit(@PathVariable String shopId,@PathVariable Long reviewId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        SuccessCode successCode = reviewService.revisit(shopId,reviewId,userDetails.getUser());
         return ResponseUtils.ok(successCode);
     }
 }
