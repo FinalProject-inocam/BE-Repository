@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.admin.service;
 
+import com.example.finalproject.domain.admin.dto.AllPurchasseResponseDto;
 import com.example.finalproject.domain.admin.dto.ReleaseDecidereqDto;
 import com.example.finalproject.domain.admin.dto.TotalListResponseDto;
 import com.example.finalproject.domain.admin.exception.AdminNotFoundException;
@@ -28,40 +29,19 @@ public class AdminListService {
     private final PurchasesRepository purchasesRepository;
 
     // 페이지 나누기
-    public Page<PurchasesResponseDto> fetchList(int page, int size) {
+    @Transactional
+    public Page<PurchasesResponseDto> allList(int page,int size){
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "purchaseId"));
-        Page<Purchase> purchasesPage = purchasesRepository.findByApprove(pageable, null);
-
-        List<PurchasesResponseDto> purchasesResponseDtoList = new ArrayList<>();
-
-        for (Purchase purchase : purchasesPage) {
-            PurchasesResponseDto purchasesResponseDto = new PurchasesResponseDto(purchase);
-            purchasesResponseDtoList.add(purchasesResponseDto);
+        Page<Purchase> purchaseList=purchasesRepository.findAll(pageable);
+        List<AllPurchasseResponseDto> purchasesResponseDtoList = new ArrayList<>();
+        for (Purchase purchase : purchaseList) {
+            AllPurchasseResponseDto allPurchasseResponseDto = new AllPurchasseResponseDto(purchase);
+            purchasesResponseDtoList.add(allPurchasseResponseDto);
         }
-        return new PageResponse(purchasesResponseDtoList, pageable, purchasesPage.getTotalElements());
-    }
-
-    public Page<PurchasesResponseDto> approveList(int page, int size) {
-        return fetchList(page, size);
-    }
-
-    public Page<PurchasesResponseDto> decideList(int page, int size) {
-        return fetchList(page, size);
-    }
-
-    public Page<PurchasesResponseDto> denyList(int page, int size) {
-        return fetchList(page, size);
+        return new PageResponse(purchasesResponseDtoList, pageable, purchaseList.getTotalElements());
     }
 
 
-    //   신청건수 : 금달 + 이월건수
-//	승인필요 총합 : approveList.length // 금달 + 이월건수
-//	승인확정 총합 : decideList.length // 금달 + 이월건수
-//	승인거절 총합 : denyList.length // 금달 + 이월건수
-//   **** 딜레마 발생 ****
-//   금달+이월건수인데 승인확정하고 승인거절에 이월건수라는게 존재할 수 있는가에 대해서
-//    이월이라는건 처리되지않은 건에 대해서 발생하는 것 아닌가? true 혹은 false로 처리된 데이터에 대해서 이월이라는 개념이 존재할 수 있는가
-    // 일단 지금은 밤이 깊었으니 3개 모두 다 금달을 기준으로 조회하게 하고 추후에 수정하는 방향으로
     public TotalListResponseDto totalList() {
         LocalDateTime currentDateTime = LocalDateTime.now();
 
@@ -94,5 +74,13 @@ public class AdminListService {
             purchase.update(releaseDecidereqDto.getApprove(), releaseDecidereqDto.getDenyMessage());
             return SuccessCode.PURCHASE_DENIED;
         }
+    }
+
+    public PurchasesResponseDto getone(Long purchaseId) {
+        Purchase purchase=purchasesRepository.findById(purchaseId).orElseThrow(() ->
+                new NullPointerException("존재하지않는 신청입니다.")
+        );
+        PurchasesResponseDto purchasesResponseDto=new PurchasesResponseDto(purchase);
+        return purchasesResponseDto;
     }
 }

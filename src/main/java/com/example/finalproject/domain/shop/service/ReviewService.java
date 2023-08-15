@@ -1,13 +1,19 @@
 package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.post.entity.Image;
+import com.example.finalproject.domain.post.entity.Post;
+import com.example.finalproject.domain.post.entity.PostLike;
+import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
+import com.example.finalproject.domain.shop.entity.Revisit;
 import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
 import com.example.finalproject.domain.shop.repository.ReviewImageRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
+import com.example.finalproject.domain.shop.repository.RevistRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.utils.S3Utils;
@@ -18,6 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_CLIENT;
+import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_DATA;
+import static com.example.finalproject.global.enums.SuccessCode.*;
 
 @Service
 @Slf4j
@@ -27,7 +38,8 @@ public class ReviewService {
     private final ShopService shopService;
     private final S3Utils s3Utils;
     private final ReviewImageRepository reviewImageRepository;
-
+    private final UserRepository userRepository;
+    private final RevistRepository revistRepository;
     @Transactional
     public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile, ReviewRequestDto requestDto, User user) {
         // shopId가 있는지 확인
@@ -97,6 +109,21 @@ public class ReviewService {
             if (review.getUser().getUserId() != user.getUserId()) {
                 throw new ReviewAuthorityException(ErrorCode.NO_AUTHORITY_TO_DATA);
             }
+        }
+    }
+
+    public SuccessCode revisit(String shopId,User user) {
+        log.info("user"+user.getNickname());
+        Review review = reviewRepository.findByShopId(shopId);
+        log.info("review"+review.getReview());
+        Revisit revisit = revistRepository.findByReviewIdAndUserUserId(review.getId(), user.getUserId());
+        log.info("1");
+        if (revisit!=null) {
+            revistRepository.delete(revisit);
+            return REVISIT_FALSE;
+        } else {
+            revistRepository.save(new Revisit(user, review));
+            return REVISIT_TRUE;
         }
     }
 }
