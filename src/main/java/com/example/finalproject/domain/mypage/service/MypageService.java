@@ -4,8 +4,10 @@ import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.auth.service.RedisService;
 import com.example.finalproject.domain.mypage.dto.MypageRequestDto;
+import com.example.finalproject.domain.mypage.dto.MypageResDto;
 import com.example.finalproject.domain.purchases.exception.PurchasesNotFoundException;
 import com.example.finalproject.global.enums.SuccessCode;
+import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.S3Utils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static com.example.finalproject.global.enums.ErrorCode.NO_AUTHORITY_TO_DATA;
 import static com.example.finalproject.global.enums.ErrorCode.USER_NOT_FOUND;
+import static com.example.finalproject.global.utils.ResponseUtils.ok;
 
 @Slf4j
 @Service
@@ -58,5 +61,9 @@ public class MypageService {
 //            throw new IllegalArgumentException("중복되는 닉네임이 있습니다.");
 //        }
         return SuccessCode.MYPAGE_UPDATE_SUCCESS;
+    }
+
+    public ApiResponse<MypageResDto> getMypage(User user) {
+        return ok(new MypageResDto(user));
     }
 }
