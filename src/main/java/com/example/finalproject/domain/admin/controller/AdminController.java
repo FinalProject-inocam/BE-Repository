@@ -47,6 +47,10 @@ public class AdminController {
     {
     return ResponseUtils.ok(adminListService.allList(page,size));
     }
+    @GetMapping("/api/admin/purchases/{purchaseId}")
+    public ApiResponse<?> getone(@PathVariable(name = "purchaseId") Long purchaseId){
+        return ResponseUtils.ok(adminListService.getone(purchaseId));
+    }
     @PatchMapping("/api/admin/purchases/{purchaseId}")
     public ApiResponse<?> releaseDecide(@PathVariable(name = "purchaseId") Long purchaseId,
                                         @RequestBody ReleaseDecidereqDto releaseDecidereqDto){

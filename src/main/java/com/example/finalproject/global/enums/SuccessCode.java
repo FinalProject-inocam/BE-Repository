@@ -21,6 +21,8 @@ public enum SuccessCode {
     VERIFY_COMPLETE(OK,"인증이 완료 되었습니다"),
     PURCHASE_APPROVE(OK,"출고 승인이 완료 되었습니다"),
     PURCHASE_DENIED(OK,"출고 승인이 거절 되었습니다"),
+    REVISIT_TRUE(OK,"재방문의사 있음"),
+    REVISIT_FALSE(OK,"재방문의사 없음"),
 
     LIKE_CANCEL(OK, "좋아요 취소"),
     DISLIKE_CANCEL(OK, "싫어요 취소"),

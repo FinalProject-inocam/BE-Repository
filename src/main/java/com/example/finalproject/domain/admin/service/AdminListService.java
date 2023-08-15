@@ -75,4 +75,12 @@ public class AdminListService {
             return SuccessCode.PURCHASE_DENIED;
         }
     }
+
+    public PurchasesResponseDto getone(Long purchaseId) {
+        Purchase purchase=purchasesRepository.findById(purchaseId).orElseThrow(() ->
+                new NullPointerException("존재하지않는 신청입니다.")
+        );
+        PurchasesResponseDto purchasesResponseDto=new PurchasesResponseDto(purchase);
+        return purchasesResponseDto;
+    }
 }
