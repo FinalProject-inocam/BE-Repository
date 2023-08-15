@@ -40,22 +40,13 @@ public class AdminController {
     public ApiResponse<?> totalList(){
         return ResponseUtils.ok(adminListService.totalList());
     }
-    @GetMapping("/api/admin/approveList")
-    public ApiResponse<?> approveList(@RequestParam("page") int page,
-                                      @RequestParam("size") int size){
-        return ResponseUtils.ok(adminListService.approveList(page,size));
-    }
-    @GetMapping("/api/admin/decideList")
-    public ApiResponse<?> decideList(@RequestParam("page") int page,
-                                      @RequestParam("size") int size){
-        return ResponseUtils.ok(adminListService.decideList(page,size));
-    }
-    @GetMapping("/api/admin/denyList")
-    public ApiResponse<?> denyList(@RequestParam("page") int page,
-                                      @RequestParam("size") int size){
-        return ResponseUtils.ok(adminListService.denyList(page,size));
-    }
 
+    @GetMapping("/api/admin/allList")
+    public ApiResponse<?> allList(@RequestParam int page,
+                                  @RequestParam int size)
+    {
+    return ResponseUtils.ok(adminListService.allList(page,size));
+    }
     @PatchMapping("/api/admin/purchases/{purchaseId}")
     public ApiResponse<?> releaseDecide(@PathVariable(name = "purchaseId") Long purchaseId,
                                         @RequestBody ReleaseDecidereqDto releaseDecidereqDto){
