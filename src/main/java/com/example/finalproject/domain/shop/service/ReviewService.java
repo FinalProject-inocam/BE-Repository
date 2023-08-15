@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.finalproject.global.enums.SuccessCode.*;
@@ -155,5 +156,75 @@ public class ReviewService {
         ReviewStarResponseDto reviewStarResponseDto=new ReviewStarResponseDto(countStar);
 
         return reviewStarResponseDto;
+    }
+
+    public List<String> getbanner(String shopId) {
+        List<Review> reviewList=reviewRepository.findAllByShopIdOrderByStarDesc(shopId);// 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
+                                                                                        // 그래서 일단 별점 순으로 정렬해서 가져옴
+        List<String> imageList=new ArrayList<>();
+        log.info("rk : "+reviewList.size());
+        if(reviewList.size()>=4) {
+            for (int i = 0; i <= 3; i++) {
+                if (reviewList.get(i).getImageUrls().size() == 0) {
+                    imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+                    continue;
+                }
+                Review review = reviewList.get(i);
+                ReviewImage img = review.getImageUrls().get(0);
+
+                if (reviewList.size() != 0) {
+                    imageList.add(img.getImage());
+                }
+            }
+        }
+
+        if(reviewList.size()==3){
+            for (int i = 0; i <= 2; i++) {
+                Review review = reviewList.get(i);
+                ReviewImage img = review.getImageUrls().get(0);
+
+                if (reviewList.size() != 0) {
+                    imageList.add(img.getImage());
+                }
+            }
+            for(int j=0;j<1;j++) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+
+        if(reviewList.size()==2){
+            for (int i = 0; i <= 1; i++) {
+                Review review = reviewList.get(i);
+                ReviewImage img = review.getImageUrls().get(0);
+
+                if (reviewList.size() != 0) {
+                    imageList.add(img.getImage());
+                }
+            }
+            for(int j=0;j<2;j++) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+
+        if(reviewList.size()==1){
+            for (int i = 0; i <= 0; i++) {
+                Review review = reviewList.get(i);
+                ReviewImage img = review.getImageUrls().get(0);
+
+                if (reviewList.size() != 0) {
+                    imageList.add(img.getImage());
+                }
+            }
+            for(int j=0;j<3;j++) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+
+        if(reviewList.size()==0){
+            for(int j=0;j<4;j++) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+        return imageList;
     }
 }
