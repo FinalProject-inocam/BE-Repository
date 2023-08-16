@@ -365,7 +365,7 @@ public class QPurchasesRepository {
             ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
         }
 
-        log.info("연간 성별분포 : " + genderMap);
+        log.info("월간 성별분포 : " + genderMap);
         return genderMap;
     }
 
@@ -557,6 +557,170 @@ public class QPurchasesRepository {
         }
         log.info("주간 통계 : " + resultMap);
         return resultMap;
+    }
+
+    public Map<String, Map> countPurchaseByGenderForWeek(LocalDate localDate, String type) {
+        log.info("주간 성별분포");
+        QPurchase qPurchase = QPurchase.purchase;
+
+        LocalDate startOfWeek = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endOfWeek = localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+
+        BooleanExpression typeCondition = null;
+        if (type != null) {
+            typeCondition = qPurchase.type.eq(type);
+        }
+
+        // 각 주의 시작일을 계산하고 저장
+        List<Tuple> result = queryFactory
+                .select(
+                        qPurchase.gender,
+                        qPurchase.gender.count()
+                )
+                .from(qPurchase)
+                .where(
+                        qPurchase.createdAt.between(startOfWeek.atStartOfDay(),
+                                endOfWeek.atTime(23, 59, 59, 999999)),
+                        typeCondition
+                )
+                .groupBy(qPurchase.gender)
+                .fetch();
+
+        Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
+        Map<String, Long> resultMap = new HashMap<>();
+        Map<String, Integer> ratioMap = new HashMap<>();
+
+        resultMap.put("MALE", 0l);
+        resultMap.put("FEMALE", 0l);
+        resultMap.put("COMPANY", 0l);
+
+        genderMap.put("byGender", resultMap);
+        genderMap.put("ratio", ratioMap);
+
+        Float sum = 0f;
+
+        // 결과를 맵에 저장
+        for (Tuple tuple : result) {
+            String gender = tuple.get(qPurchase.gender);
+            long count = tuple.get(qPurchase.gender.count());
+            resultMap.put(gender, count);
+            sum += count;
+        }
+
+        for (String gender : resultMap.keySet()) {
+            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+        }
+
+        log.info("주간 성별분포 : " + genderMap);
+        return genderMap;
+    }
+
+    public Map<String, Map> countPurchaseByAgeForWeek(LocalDate localDate, String type) {
+        log.info("주간 나이");
+        QPurchase qPurchase = QPurchase.purchase;
+
+        LocalDate startOfWeek = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endOfWeek = localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+
+        BooleanExpression typeCondition = null;
+        if (type != null) {
+            typeCondition = qPurchase.type.eq(type);
+        }
+
+        List<Integer> result = queryFactory
+                .select(
+                        qPurchase.birthYear
+                )
+                .from(qPurchase)
+                .where(
+                        qPurchase.createdAt.between(startOfWeek.atStartOfDay(),
+                                endOfWeek.atTime(23, 59, 59, 999999)),
+                        typeCondition
+                )
+                .fetch();
+
+        Map<String, Map> ageMap = new HashMap<>();  // age 정보 담을 맵
+        Map<String, Long> resultMap = new HashMap<>();
+        Map<String, Integer> ratioMap = new HashMap<>();
+
+        for (int i = 10; i < 80; i += 10) {
+            resultMap.put(Integer.toString(i), 0l);
+        }
+        resultMap.put("70+", 0l);
+
+        ageMap.put("byAge", resultMap);
+        ageMap.put("ratio", ratioMap);
+
+        Float sum = 0f;
+
+        // 결과를 맵에 저장
+        for (Integer birthYear : result) { // 사실 별로 안좋은 해결책인것 같은데...
+            Integer age = (LocalDate.now().getYear() - birthYear) / 10 * 10;
+            if (age > 60) {
+                resultMap.put("70+", resultMap.get("70+") + 1);
+            }
+            String ageToString = Integer.toString(age);
+            resultMap.put(ageToString, resultMap.get(ageToString) + 1);
+            sum++;
+        }
+
+        for (String age : resultMap.keySet()) {
+            ratioMap.put(age, Math.round(resultMap.get(age) * 100 / sum));
+        }
+
+        log.info("주간 나이분포 : " + ageMap);
+        return ageMap;
+    }
+
+    public Map<String, Map> countPurchaseByColorForWeek(LocalDate localDate, String type) {
+        log.info("주간 색깔분포");
+        QPurchase qPurchase = QPurchase.purchase;
+
+        LocalDate startOfWeek = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endOfWeek = localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+
+        BooleanExpression typeCondition = null;
+        if (type != null) {
+            typeCondition = qPurchase.type.eq(type);
+        }
+
+        List<Tuple> result = queryFactory
+                .select(
+                        qPurchase.color,
+                        qPurchase.color.count()
+                )
+                .from(qPurchase)
+                .where(
+                        qPurchase.createdAt.between(startOfWeek.atStartOfDay(),
+                                endOfWeek.atTime(23, 59, 59, 999999)),
+                        typeCondition
+                )
+                .groupBy(qPurchase.color)
+                .orderBy(qPurchase.color.asc())
+                .fetch();
+        Map<String, Map> colorMap = new HashMap<>();  // 색깔 담을 맵
+        Map<String, Long> resultMap = new HashMap<>();
+        Map<String, Integer> ratioMap = new HashMap<>();
+
+        colorMap.put("byColor", resultMap);
+        colorMap.put("ratio", ratioMap);
+
+        Float sum = 0f;
+
+        // 결과를 맵에 저장
+        for (Tuple tuple : result) {
+            String color = tuple.get(qPurchase.color);
+            long count = tuple.get(qPurchase.color.count());
+            resultMap.put(color, count);
+            sum += count;
+        }
+
+        for (String gender : resultMap.keySet()) {
+            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+        }
+
+        log.info("주간 색깔분포 : " + colorMap);
+        return colorMap;
     }
 
     public Long countPurchaseForPreWeek(LocalDate localDate, Boolean approve, String type) {

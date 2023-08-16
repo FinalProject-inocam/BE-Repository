@@ -108,9 +108,10 @@ public class AdminService {
         resultMap.put("purchase", qPurchasesRepository.countPurchaseForWeek(localDate, null, type));
         resultMap.put("approve", qPurchasesRepository.countPurchaseForWeek(localDate, true, type));
         resultMap.put("cancel", qPurchasesRepository.countPurchaseForWeek(localDate, false, type));
-        // gender, age
-//        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForYear(localDate, type));
-//        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForYear(localDate, type));
+        // gender, age, color
+        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForWeek(localDate, type));
+        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForWeek(localDate, type));
+        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForWeek(localDate, type));
         // pre
         resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreWeek(localDate, null, type));
         resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreWeek(localDate, true, type));
