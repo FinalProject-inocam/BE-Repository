@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 public class PurchasesRequestDto {
     private String type;
     private String color;
+    private String gender;
+    private Integer birthYear;
     private Boolean alarm;
     private String content;
     private String addressName;

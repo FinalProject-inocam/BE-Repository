@@ -16,26 +16,7 @@ public class AdminController {
     private final AdminService adminService;
     private final AdminListService adminListService;
 
-    @GetMapping("/api/stat/purchases/chart")
-    public ApiResponse<?> getStat(@RequestParam(name="cal") String cal,
-                                  @RequestParam(name="term")String period){
 
-        switch (period) {
-            case "getYear":
-                //년별 분석
-                adminService.getAnalysisForYear(cal);
-                break;
-            case "getMonth":
-                // 월별 분석
-                adminService.getAnalysisForMonth(cal);
-                break;
-            case "getWeek":
-                // 주별 분석
-                adminService.getAnalysisForWeek(cal);
-                break;
-        }
-        return null;
-    }
     @GetMapping("/api/admin/totalList")
     public ApiResponse<?> totalList(){
         return ResponseUtils.ok(adminListService.totalList());
