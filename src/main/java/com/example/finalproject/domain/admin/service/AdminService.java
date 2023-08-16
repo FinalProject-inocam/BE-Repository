@@ -21,7 +21,9 @@ public class AdminService {
     private final QPurchasesRepository qPurchasesRepository;
     private final CarService carService;
 
+
     /* 특정 기간(2020~2023)의 연별 신청, 승인, 거절 건수 */
+
 
 
     /* 1년간 매달의 신청, 승인, 거절 건수 */

@@ -33,6 +33,7 @@ public class GoogleService {
     private final Environment env;
     private final JwtProvider jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private final RedisService redisService;
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -57,12 +58,14 @@ public class GoogleService {
         User googleUser = registerGoogleUserIfNeeded(userResourceNode);
 
         // 4. JWT 토큰 반환
-        String accessToken = jwtUtil.createAccessToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 30분
-        String refreshToken = jwtUtil.createRefreshToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 3일
-        jwtUtil.addAccessJwtHeader(accessToken, response);
-        jwtUtil.addRefreshJwtHeader(refreshToken, response);
-        log.info("accessToken : {}", accessToken);
-        log.info("refreshToken : {}", refreshToken);
+//        String accessToken = jwtUtil.createAccessToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 30분
+//        String refreshToken = jwtUtil.createRefreshToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 3일
+//        jwtUtil.addAccessJwtHeader(accessToken, response);
+//        jwtUtil.addRefreshJwtHeader(refreshToken, response);
+//        log.info("accessToken : {}", accessToken);
+//        log.info("refreshToken : {}", refreshToken);
+        // 로그인 절차
+        redisService.newLogin(googleUser, response);
         return USER_LOGIN_SUCCESS;
     }
 

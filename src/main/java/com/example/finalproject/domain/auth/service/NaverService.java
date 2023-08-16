@@ -37,6 +37,7 @@ public class NaverService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final JwtProvider jwtUtil;
+    private final RedisService redisService;
 
     @Value("${security.oauth2.naver.client-id}")
     private String naverClientId;
@@ -60,10 +61,13 @@ public class NaverService {
         User naverUser = registerNaverUserIfNeeded(jsonNode);
 
         // 4. JWT 토큰 반환
-        String accessToken = jwtUtil.createAccessToken(naverUser.getEmail(), naverUser.getRole(), naverUser.getNickname(), naverUser.getGender()); // 30분
-        String refreshToken = jwtUtil.createRefreshToken(naverUser.getEmail(), naverUser.getRole(), naverUser.getNickname(), naverUser.getGender()); // 3일
-        jwtUtil.addAccessJwtHeader(accessToken, response);
-        jwtUtil.addRefreshJwtHeader(refreshToken, response);
+//        String accessToken = jwtUtil.createAccessToken(naverUser.getEmail(), naverUser.getRole(), naverUser.getNickname(), naverUser.getGender()); // 30분
+//        String refreshToken = jwtUtil.createRefreshToken(naverUser.getEmail(), naverUser.getRole(), naverUser.getNickname(), naverUser.getGender()); // 3일
+//        jwtUtil.addAccessJwtHeader(accessToken, response);
+//        jwtUtil.addRefreshJwtHeader(refreshToken, response);
+
+        // 로그인 절차
+        redisService.newLogin(naverUser, response);
 
         return ok(USER_LOGIN_SUCCESS);
     }
