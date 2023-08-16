@@ -37,12 +37,12 @@ public class Review extends Timestamped {
     @ManyToOne
     private User user;
 
-    public Review(ReviewRequestDto requestDto, String shopId, User user,Boolean revisit) {
+    public Review(ReviewRequestDto requestDto, String shopId, User user) {
         this.review = requestDto.getReview();
         this.star = requestDto.getStar();
         this.user = user;
         this.shopId = shopId;
-        this.revisit=revisit;
+        this.revisit=requestDto.getRevisit();
     }
 
     public void update(ReviewRequestDto requestDto) {

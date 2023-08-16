@@ -6,11 +6,9 @@ import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
-import com.example.finalproject.domain.shop.entity.Revisit;
 import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
 import com.example.finalproject.domain.shop.repository.ReviewImageRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
-import com.example.finalproject.domain.shop.repository.RevisitRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.utils.S3Utils;
@@ -23,8 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.finalproject.global.enums.SuccessCode.*;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -34,13 +30,11 @@ public class ReviewService {
     private final S3Utils s3Utils;
     private final ReviewImageRepository reviewImageRepository;
     private final UserRepository userRepository;
-    private final RevisitRepository revistRepository;
     @Transactional
     public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile, ReviewRequestDto requestDto, User user) {
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, user);
-        Boolean revisit=false;
-        Review review = new Review(requestDto, shopId, user,revisit);
+        Review review = new Review(requestDto, shopId, user);
         // image가 없을 때 빈 url생성 방지
         if(s3Utils.isFile(multipartFile)) {
             List<String> urls = s3Utils.uploadFile(multipartFile);
@@ -107,25 +101,7 @@ public class ReviewService {
             }
         }
     }
-    @Transactional
-    public SuccessCode revisit(String shopId,Long reviewId,User user) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-                new NullPointerException("존재하지 않는 후기입니다.")
-        );
-        if(review.getUser().getUserId()!=user.getUserId()){
-            throw new ReviewAuthorityException(ErrorCode.DIFFIRENT_USER);
-        }
-        Revisit revisit = revistRepository.findByReviewIdAndUserUserId(review.getId(), review.getUser().getUserId());
-        if (revisit!=null) {
-            revistRepository.delete(revisit);
-            review.updateRevisit(false);
-            return REVISIT_FALSE;
-        } else {
-            revistRepository.save(new Revisit(user, review));
-            review.updateRevisit(true);
-            return REVISIT_TRUE;
-        }
-    }
+
 
     public ReviewStarResponseDto getStar(String shopId){
         List<Review> reivewList=reviewRepository.findAllByShopId(shopId);
@@ -166,7 +142,6 @@ public class ReviewService {
         if(reviewList.size()>=4) {
             for (int i = 0; i <= 3; i++) {
                 if (reviewList.get(i).getImageUrls().size() == 0) {
-                    imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
                     continue;
                 }
                 Review review = reviewList.get(i);
@@ -176,10 +151,16 @@ public class ReviewService {
                     imageList.add(img.getImage());
                 }
             }
+            while (imageList.size() < 4) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
         }
 
         if(reviewList.size()==3){
             for (int i = 0; i <= 2; i++) {
+                if (reviewList.get(i).getImageUrls().size() == 0) {
+                    continue;
+                }
                 Review review = reviewList.get(i);
                 ReviewImage img = review.getImageUrls().get(0);
 
@@ -187,13 +168,16 @@ public class ReviewService {
                     imageList.add(img.getImage());
                 }
             }
-            for(int j=0;j<1;j++) {
+            while (imageList.size() < 4) {
                 imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
             }
         }
 
         if(reviewList.size()==2){
             for (int i = 0; i <= 1; i++) {
+                if (reviewList.get(i).getImageUrls().size() == 0) {
+                    continue;
+                }
                 Review review = reviewList.get(i);
                 ReviewImage img = review.getImageUrls().get(0);
 
@@ -208,6 +192,9 @@ public class ReviewService {
 
         if(reviewList.size()==1){
             for (int i = 0; i <= 0; i++) {
+                if (reviewList.get(i).getImageUrls().size() == 0) {
+                    continue;
+                }
                 Review review = reviewList.get(i);
                 ReviewImage img = review.getImageUrls().get(0);
 
