@@ -61,8 +61,4 @@ public class ReviewController {
         return ResponseUtils.ok(reviewService.getStar(shopId));
     }
 
-    @GetMapping("/banner")
-    public ApiResponse<?> getimage(@PathVariable String shopId){
-        return ResponseUtils.ok(reviewService.getbanner(shopId));
-    }
 }

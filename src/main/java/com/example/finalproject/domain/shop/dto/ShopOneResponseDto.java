@@ -19,8 +19,9 @@ public class ShopOneResponseDto {
     private Integer likeCount;
     private Double avgStar;
     private List<ReviewResponseDto> reviews;
+    private List<String> banner;
 
-    public ShopOneResponseDto(JSONObject itemJson, List<Review> reviews, List<ShopLike> shopLikes, User user) {
+    public ShopOneResponseDto(JSONObject itemJson, List<Review> reviews, List<ShopLike> shopLikes, User user,List<String>banner) {
         this.shopId = itemJson.getString("bizesId");
         this.shopName = itemJson.getString("bizesNm");
         this.address = itemJson.getString("rdnmAdr");
@@ -45,5 +46,6 @@ public class ShopOneResponseDto {
         this.reviews = reviews.stream()
                 .map(ReviewResponseDto::new)
                 .toList();
+        this.banner=banner;
     }
 }
