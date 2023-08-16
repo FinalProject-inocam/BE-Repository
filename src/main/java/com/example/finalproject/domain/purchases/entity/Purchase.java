@@ -50,7 +50,7 @@ public class Purchase extends Timestamped {
 
     private Date deliveryDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
