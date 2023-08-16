@@ -31,8 +31,8 @@ public class UserController {
 
     //구글 로그인
     @GetMapping("/login/google")
-    public ApiResponse<?> googleLogin(@RequestParam String code, HttpServletResponse response) throws IOException, ServletException {
-        SuccessCode successCode = googleService.googleLogin(code, response);
+    public ApiResponse<?> googleLogin(@RequestParam String code,HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        SuccessCode successCode = googleService.googleLogin(code, response,request);
         return ResponseUtils.ok(successCode);
     }
 
