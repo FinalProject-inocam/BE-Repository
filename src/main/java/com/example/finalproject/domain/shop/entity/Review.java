@@ -34,6 +34,10 @@ public class Review extends Timestamped {
     @Column(nullable = false)
     private String shopId;
 
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn
+    private List<ReviewLike> reviewLikes = new ArrayList<>();
+
     @ManyToOne
     private User user;
 

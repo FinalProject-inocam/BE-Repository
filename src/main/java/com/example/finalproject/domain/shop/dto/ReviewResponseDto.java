@@ -1,8 +1,10 @@
 package com.example.finalproject.domain.shop.dto;
 
+import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.post.entity.Image;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
+import com.example.finalproject.domain.shop.entity.ReviewLike;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -18,8 +20,8 @@ public class ReviewResponseDto {
     private List<String> imageUrls;
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
-
-    public ReviewResponseDto(Review review) {
+    private Boolean isLike;
+    public ReviewResponseDto(Review review, User user) {
         this.reviewId = review.getId();
         this.nickname = review.getUser().getNickname();
         this.review = review.getReview();
@@ -31,5 +33,9 @@ public class ReviewResponseDto {
                 .toList();
         this.createAt = review.getCreatedAt();
         this.modifiedAt = review.getModifiedAt();
+        this.isLike = user != null && review.getReviewLikes().stream()
+                .map(ReviewLike::getUser)
+                .map(User::getUserId)
+                .anyMatch(userId -> userId.equals(user.getUserId()));
     }
 }
