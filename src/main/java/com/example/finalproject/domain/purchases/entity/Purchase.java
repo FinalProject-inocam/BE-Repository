@@ -35,7 +35,6 @@ public class Purchase extends Timestamped {
     @Column(nullable = false)
     private Boolean alarm;
 
-    @Column(nullable = false)
     private String content;
 
     @Column(nullable = false)

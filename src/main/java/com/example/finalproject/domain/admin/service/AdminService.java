@@ -21,10 +21,48 @@ public class AdminService {
     private final QPurchasesRepository qPurchasesRepository;
     private final CarService carService;
 
+    // 입력 받은 term 값에 따라 어떤 통계를 쓸지 분배해주는 메서드
+    public Map<String, Object> checkStat(String cal, String term) {
+        switch (term) {
+            case "getYear":
+                return yearStat(cal);
+            case "getMonth":
+                return monthStat(cal);
+            case "getWeek":
+                return weekStat(cal);
+        }
+        throw new NullPointerException("term값이 올바르지 않습니다.");
+    }
+
 
     /* 특정 기간(2020~2023)의 연별 신청, 승인, 거절 건수 */
+    public Map<String, Object> yearsStat(String startCal, String endCal) {
+        LocalDate startDate = convertStringToLocalDate(startCal);
+        LocalDate endDate = convertStringToLocalDate(endCal);
 
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("total", customYearsStat(startDate, endDate, null));
+        carService.getCarList()
+                .stream()
+                .map(Car::getType)
+                .forEach((type) -> resultMap.put(type, customYearsStat(startDate, endDate, type)));
 
+        return resultMap;
+    }
+
+    public Map<String, Object> customYearsStat(LocalDate strartDate, LocalDate endDate, String type) {
+        Map<String, Object> resultMap = new HashMap<>();
+        // current
+        resultMap.put("purchase", qPurchasesRepository.countPurchaseForYears(strartDate, endDate, null, type));
+        resultMap.put("approve", qPurchasesRepository.countPurchaseForYears(strartDate, endDate, true, type));
+        resultMap.put("cancel", qPurchasesRepository.countPurchaseForYears(strartDate, endDate, false, type));
+        // gender, age, color
+        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForYears(strartDate, endDate, type));
+        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForYears(strartDate, endDate, type));
+        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYears(strartDate, endDate, type));
+
+        return resultMap;
+    }
 
     /* 1년간 매달의 신청, 승인, 거절 건수 */
     public Map<String, Object> yearStat(String cal) {

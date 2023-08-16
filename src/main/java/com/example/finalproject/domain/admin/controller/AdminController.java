@@ -10,8 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@RestController("/api/admin")
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/admin")
 public class AdminController {
     private final AdminService adminService;
     private final AdminListService adminListService;
@@ -39,21 +40,35 @@ public class AdminController {
     }
     /*---------------------------------------------------------------------------------------------------*/
 
-    @GetMapping("/stat/purchases/chart")
-    public ApiResponse<?> getStatTest(@RequestParam String cal) {
-        Map<String, Object> yearMap = adminService.yearStat(cal);
-        return ResponseUtils.ok(yearMap);
+//    @GetMapping("/stats/purchases/chart")
+//    public ApiResponse<?> getStatTest(@RequestParam String cal,
+//                                      @RequestParam String term) {
+//        Map<String, Object> statMap = adminService.checkStat(cal, term);
+//        return ResponseUtils.ok(statMap);
+//    }
+
+    @GetMapping("/stats/purchases/years")
+    public ApiResponse<?> getStatYears(@RequestParam String startCal,
+                                       @RequestParam String endCal) {
+        Map<String, Object> statMap = adminService.yearsStat(startCal, endCal);
+        return ResponseUtils.ok(statMap);
     }
 
-    @GetMapping("/api/auth/stat2")
-    public ApiResponse<?> getStatTest2(@RequestParam String cal) {
-        Map<String, Object> statList = adminService.monthStat(cal);
-        return ResponseUtils.ok(statList);
+    @GetMapping("/stats/purchases/year")
+    public ApiResponse<?> getStatYear(@RequestParam String cal) {
+        Map<String, Object> statMap = adminService.yearStat(cal);
+        return ResponseUtils.ok(statMap);
     }
 
-    @GetMapping("/api/auth/stat3")
-    public ApiResponse<?> getStatTest3(@RequestParam String cal) {
-        Map<String, Object> statList = adminService.weekStat(cal);
-        return ResponseUtils.ok(statList);
+    @GetMapping("/stats/purchases/month")
+    public ApiResponse<?> getStatMonth(@RequestParam String cal) {
+        Map<String, Object> statMap = adminService.monthStat(cal);
+        return ResponseUtils.ok(statMap);
+    }
+
+    @GetMapping("/stats/purchases/week")
+    public ApiResponse<?> getStatWeek(@RequestParam String cal) {
+        Map<String, Object> statMap = adminService.weekStat(cal);
+        return ResponseUtils.ok(statMap);
     }
 }

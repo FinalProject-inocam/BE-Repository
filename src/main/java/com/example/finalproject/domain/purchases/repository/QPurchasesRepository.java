@@ -26,6 +26,218 @@ public class QPurchasesRepository {
 
     private final JPAQueryFactory queryFactory;
 
+    public Map<Integer, Long> countPurchaseForYears(LocalDate StartDate, LocalDate endDate, Boolean approve, String type) {
+        log.info("연별 통계");
+        QPurchase qPurchase = QPurchase.purchase;
+
+        Integer startYear = StartDate.getYear();
+        Integer endYear = endDate.getYear();
+
+        BooleanExpression approveCondition = null;
+        if (approve != null) {
+            approveCondition = qPurchase.approve.eq(approve);
+        }
+
+        BooleanExpression typeCondition = null;
+        if (type != null) {
+            typeCondition = qPurchase.type.eq(type);
+        }
+
+        List<Tuple> result = queryFactory
+                .select(
+                        qPurchase.createdAt.year(),
+                        qPurchase.createdAt.count()
+                )
+                .from(qPurchase)
+                .where(
+                        qPurchase.createdAt.year().between(startYear, endYear),
+                        approveCondition,
+                        typeCondition
+                )
+                .groupBy(qPurchase.createdAt.year())
+                .orderBy(qPurchase.createdAt.year().asc())
+                .fetch();
+        Map<Integer, Long> resultMap = new HashMap<>();  // 연별 데이터를 저장할 맵
+
+        // 연별 데이터 초기화
+        for (int i = startYear; i <= endYear; i++) {
+            resultMap.put(i, 0L);  // 기본값 0으로 초기화
+        }
+
+        // 결과를 맵에 저장
+        for (Tuple tuple : result) {
+            int year = tuple.get(qPurchase.createdAt.year());
+            long count = tuple.get(qPurchase.createdAt.count());
+            resultMap.put(year, count);
+        }
+        log.info("연별 통계 : " + resultMap);
+        return resultMap;
+    }
+
+    public Map<String, Map> countPurchaseByGenderForYears(LocalDate StartDate, LocalDate endDate, String type) {
+        log.info("다년간 성별분포");
+        QPurchase qPurchase = QPurchase.purchase;
+
+        Integer startYear = StartDate.getYear();
+        Integer endYear = endDate.getYear();
+
+        BooleanExpression typeCondition = null;
+        if (type != null) {
+            typeCondition = qPurchase.type.eq(type);
+        }
+
+        List<Tuple> result = queryFactory
+                .select(
+                        qPurchase.gender,
+                        qPurchase.gender.count()
+                )
+                .from(qPurchase)
+                .where(
+                        qPurchase.createdAt.year().between(startYear, endYear),
+                        typeCondition
+                )
+                .groupBy(qPurchase.gender)
+                .orderBy(qPurchase.gender.asc())
+                .fetch();
+        Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
+        Map<String, Long> resultMap = new HashMap<>();
+        Map<String, Integer> ratioMap = new HashMap<>();
+
+        resultMap.put("MALE", 0l);
+        resultMap.put("FEMALE", 0l);
+        resultMap.put("COMPANY", 0l);
+
+        genderMap.put("byGender", resultMap);
+        genderMap.put("ratio", ratioMap);
+
+        Float sum = 0f;
+
+        // 결과를 맵에 저장
+        for (Tuple tuple : result) {
+            String gender = tuple.get(qPurchase.gender);
+            long count = tuple.get(qPurchase.gender.count());
+            resultMap.put(gender, count);
+            sum += count;
+        }
+
+        for (String gender : resultMap.keySet()) {
+            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+        }
+
+        log.info("다년간 성별분포 : " + genderMap);
+        return genderMap;
+    }
+
+    public Map<String, Map> countPurchaseByAgeForYears(LocalDate StartDate, LocalDate endDate, String type) {
+        log.info("다년간 나이");
+        QPurchase qPurchase = QPurchase.purchase;
+
+        Integer startYear = StartDate.getYear();
+        Integer endYear = endDate.getYear();
+
+        BooleanExpression typeCondition = null;
+        if (type != null) {
+            typeCondition = qPurchase.type.eq(type);
+        }
+
+        NumberExpression<Integer> ageExpression = Expressions.currentDate().year()
+                .subtract(qPurchase.birthYear)
+                .divide(10).floor().multiply(10);
+
+        List<Integer> result = queryFactory
+                .select(
+                        qPurchase.birthYear
+                )
+                .from(qPurchase)
+                .where(
+                        qPurchase.createdAt.year().between(startYear, endYear),
+                        typeCondition
+                )
+                .fetch();
+
+        Map<String, Map> ageMap = new HashMap<>();  // age 정보 담을 맵
+        Map<String, Long> resultMap = new HashMap<>();
+        Map<String, Integer> ratioMap = new HashMap<>();
+
+        for (int i = 10; i < 80; i += 10) {
+            resultMap.put(Integer.toString(i), 0l);
+        }
+        resultMap.put("70+", 0l);
+
+        ageMap.put("byAge", resultMap);
+        ageMap.put("ratio", ratioMap);
+
+        Float sum = 0f;
+
+        // 결과를 맵에 저장
+        for (Integer birthYear : result) { // 사실 별로 안좋은 해결책인것 같은데...
+            Integer age = (LocalDate.now().getYear() - birthYear) / 10 * 10;
+            if (age > 60) {
+                resultMap.put("70+", resultMap.get("70+") + 1);
+            }
+            String ageToString = Integer.toString(age);
+            resultMap.put(ageToString, resultMap.get(ageToString) + 1);
+            sum++;
+        }
+
+        for (String age : resultMap.keySet()) {
+            ratioMap.put(age, Math.round(resultMap.get(age) * 100 / sum));
+        }
+
+        log.info("다년간 나이분포 : " + ageMap);
+        return ageMap;
+    }
+
+    public Map<String, Map> countPurchaseByColorForYears(LocalDate StartDate, LocalDate endDate, String type) {
+        log.info("다년간 색깔분포");
+        QPurchase qPurchase = QPurchase.purchase;
+
+        Integer startYear = StartDate.getYear();
+        Integer endYear = endDate.getYear();
+
+        BooleanExpression typeCondition = null;
+        if (type != null) {
+            typeCondition = qPurchase.type.eq(type);
+        }
+
+        List<Tuple> result = queryFactory
+                .select(
+                        qPurchase.color,
+                        qPurchase.color.count()
+                )
+                .from(qPurchase)
+                .where(
+                        qPurchase.createdAt.year().between(startYear, endYear),
+                        typeCondition
+                )
+                .groupBy(qPurchase.color)
+                .orderBy(qPurchase.color.asc())
+                .fetch();
+        Map<String, Map> colorMap = new HashMap<>();  // 색깔 담을 맵
+        Map<String, Long> resultMap = new HashMap<>();
+        Map<String, Integer> ratioMap = new HashMap<>();
+
+        colorMap.put("byColor", resultMap);
+        colorMap.put("ratio", ratioMap);
+
+        Float sum = 0f;
+
+        // 결과를 맵에 저장
+        for (Tuple tuple : result) {
+            String color = tuple.get(qPurchase.color);
+            long count = tuple.get(qPurchase.color.count());
+            resultMap.put(color, count);
+            sum += count;
+        }
+
+        for (String gender : resultMap.keySet()) {
+            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+        }
+
+        log.info("다년간 색깔분포 : " + colorMap);
+        return colorMap;
+    }
+
     public Map<Integer, Long> countPurchaseForYear(LocalDate localDate, Boolean approve, String type) {
         log.info("연간 통계");
         QPurchase qPurchase = QPurchase.purchase;
