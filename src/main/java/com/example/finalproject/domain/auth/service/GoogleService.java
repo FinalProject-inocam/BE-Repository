@@ -42,20 +42,15 @@ public class GoogleService {
     @Value("${security.oauth2.google.client-secret}")
     private String clientSecret;
     @Value("${security.oauth2.google.redirect-uri}")
-    private String local;
-    @Value("${security.oauth2.google.redirect-uri1}")
-    private String http;
-    @Value("${security.oauth2.google.redirect-uri2}")
-    private String https;
+    private String redirectUri;
     @Value("${security.oauth2.google.token-uri}")
     String tokenUri;
     @Value("${security.oauth2.google.resource-uri}")
     String resourceUri;
 
-    public SuccessCode googleLogin(String code, HttpServletResponse response, HttpServletRequest request) throws IOException, ServletException {
-        String redirectUri = getRedirectUri(request);
-        log.info("uri : "+redirectUri);
-        String googleAccessToken = getAccessToken(code,redirectUri);
+    public SuccessCode googleLogin(String code, HttpServletResponse response) throws IOException, ServletException {
+
+        String googleAccessToken = getAccessToken(code);
         JsonNode userResourceNode = getUserResource(googleAccessToken);
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
@@ -73,7 +68,7 @@ public class GoogleService {
         return USER_LOGIN_SUCCESS;
     }
 
-    private String getAccessToken(String authorizationCode,String redirectUri) {
+    private String getAccessToken(String authorizationCode) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("code", authorizationCode);
         params.add("client_id", clientId);
@@ -95,17 +90,6 @@ public class GoogleService {
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity entity = new HttpEntity(headers);
         return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
-    }
-    public String getRedirectUri(HttpServletRequest request) {
-        String clientUri = request.getRequestURL().toString();
-
-        if (clientUri.contains("localhost:3000")) {
-            return local;
-        } else if (clientUri.startsWith("https")) {
-            return https;
-        } else {
-            return http;
-        }
     }
     private User registerGoogleUserIfNeeded(JsonNode userResourceNode) {
         String email = userResourceNode.get("email").asText();
