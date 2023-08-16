@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<?> handleException(IllegalArgumentException e) {
-        log.error("일반적인 클라이언트의 잘못된 요청 시");
+        log.error("일반적인 클라이언트의 잘못된 요청 시 : " + e.getMessage());
         return ResponseUtils.error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -46,13 +46,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiResponse<?> handleException(NullPointerException e) {
-        log.error("사용자가 제출한 데이터로 해당 객체를 찾을 수 없을 때");
+        log.error("사용자가 제출한 데이터로 해당 객체를 찾을 수 없을 때 : " + e.getMessage());
         return ResponseUtils.error(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
     @ExceptionHandler(MailNotFoundException.class)
     public ApiResponse<?> handleNewsNotFoundException(MailNotFoundException e) {
-        log.info(e.getMessage());
+        log.info("존재하지 않는 메일 : " + e.getMessage());
         return ResponseUtils.error(e.getErrorCode());
     }
 //     // request 입력시 올바르지 않은 값일 경우 (valid 관련)
@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiResponse<?> handleException(AccessDeniedException e) {
-        log.error("권한 요청이 잘못들어왔을 경우");
+        log.error("권한 요청이 잘못들어왔을 경우 : " + e.getMessage());
         return ResponseUtils.error(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
@@ -85,20 +85,20 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<?> validationExceptionHandler(MethodArgumentNotValidException e) {
-        log.error("valid를 만족하지 못했을때");
 //        Map<String, String> errors = new LinkedHashMap<>();
 //        e.getBindingResult().getFieldErrors()
 //                .forEach(error -> errors.put(
 //                        error.getField(), error.getDefaultMessage()
 //                ));
         String error = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+        log.error("valid를 만족하지 못했을때 : " + error);
         return ResponseUtils.error(HttpStatus.BAD_REQUEST, error);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<?> requestParameterExceptionHandler(MissingServletRequestParameterException e) {
-        log.error("requestParameter 오류");
+        log.error("requestParameter 오류 : " + e.getMessage());
         return ResponseUtils.error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -106,28 +106,28 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ShopNoContentException.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public ApiResponse<?> JsonParseExceptionHandler(ShopNoContentException e) {
-        log.error("주변에 조회 가능한 가게가 없습니다.");
+        log.error("주변에 조회 가능한 가게가 없습니다. : " + e.getMessage());
         return ResponseUtils.ok(SuccessCode.NO_SHOP_SUCCESS);
     }
 
     @ExceptionHandler(JSONException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<?> JsonParseExceptionHandler(JSONException e) {
-        log.error("존재하지 않는 shopId");
+        log.error("존재하지 않는 shopId : " + e.getMessage());
         return ResponseUtils.error(ErrorCode.SHOP_NOT_FOUND);
     }
 
     @ExceptionHandler(ReviewAuthorityException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiResponse<?> JsonParseExceptionHandler(ReviewAuthorityException e) {
-        log.error("권한없는 유저");
+        log.error("권한없는 유저 : " + e.getMessage());
         return ResponseUtils.error(e.getErrorCode());
     }
 
     @ExceptionHandler(ConditionDisagreeException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiResponse<?> ConditionDisagreeExceptionHandler(ConditionDisagreeException e) {
-        log.error("소셜 로그인 한 사용자가 모든 항목에 동의 하지 않음");
+        log.error("소셜 로그인 한 사용자가 모든 항목에 동의 하지 않음 : " + e.getMessage());
         return ResponseUtils.error(ErrorCode.MORE_AGREEMENT_NEEDED);
     }
 }

@@ -38,6 +38,7 @@ public class KakaoService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
+    private final RedisService redisService;
     private final JwtProvider jwtUtil;
 
     @Value("${security.oauth2.client.registration.kakao.client-id}")
@@ -62,10 +63,12 @@ public class KakaoService {
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 4. JWT 토큰 반환
-        String accessToken = jwtUtil.createAccessToken(kakaoUser.getEmail(), kakaoUser.getRole(), kakaoUser.getNickname(), kakaoUser.getGender()); // 30분
-        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getEmail(), kakaoUser.getRole(), kakaoUser.getNickname(), kakaoUser.getGender()); // 3일
-        jwtUtil.addAccessJwtHeader(accessToken, response);
-        jwtUtil.addRefreshJwtHeader(refreshToken, response);
+//        String accessToken = jwtUtil.createAccessToken(kakaoUser.getEmail(), kakaoUser.getRole(), kakaoUser.getNickname(), kakaoUser.getGender()); // 30분
+//        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getEmail(), kakaoUser.getRole(), kakaoUser.getNickname(), kakaoUser.getGender()); // 3일
+//        jwtUtil.addAccessJwtHeader(accessToken, response);
+//        jwtUtil.addRefreshJwtHeader(refreshToken, response);
+        // 로그인 절차
+        redisService.newLogin(kakaoUser, response);
 
         return ok(USER_LOGIN_SUCCESS);
     }

@@ -27,9 +27,14 @@ public class Purchase extends Timestamped {
     private String color;
 
     @Column(nullable = false)
-    private Boolean alarm;
+    private String gender;
 
     @Column(nullable = false)
+    private Integer birthYear;
+
+    @Column(nullable = false)
+    private Boolean alarm;
+
     private String content;
 
     @Column(nullable = false)
@@ -51,6 +56,8 @@ public class Purchase extends Timestamped {
     public Purchase(PurchasesRequestDto purchasesRequestDto, User user,Long price) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
+        this.gender = purchasesRequestDto.getGender();
+        this.birthYear = purchasesRequestDto.getBirthYear();
         this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
         this.addressName = purchasesRequestDto.getAddressName();
@@ -70,6 +77,8 @@ public class Purchase extends Timestamped {
     public void update(PurchasesRequestDto purchasesRequestDto) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
+        this.gender = purchasesRequestDto.getGender();
+        this.birthYear = purchasesRequestDto.getBirthYear();
         this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
         this.addressName = purchasesRequestDto.getAddressName();
