@@ -8,7 +8,6 @@ import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ShopLike;
 import com.example.finalproject.domain.shop.exception.ShopNoContentException;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
-import com.example.finalproject.domain.shop.repository.RevisitRepository;
 import com.example.finalproject.domain.shop.repository.ShopLikeRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +32,11 @@ public class ShopService {
     private final RestTemplate restTemplate;
     private final ReviewRepository reviewRepository;
     private final ShopLikeRepository shopLikeRepository;
-    private final RevisitRepository revisitRepository;
     // RestTemplateBuilder의 build()를 사용하여 RestTemplate을 생성합니다.
-    public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository, ShopLikeRepository shopLikeRepository, RevisitRepository revistRepository) {
+    public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository, ShopLikeRepository shopLikeRepository) {
         this.restTemplate = builder.build();
         this.reviewRepository = reviewRepository;
         this.shopLikeRepository = shopLikeRepository;
-        this.revisitRepository=revistRepository;
     }
 
     // openApi 사용시 필요한 servicekey

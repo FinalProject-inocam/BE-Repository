@@ -55,13 +55,14 @@ public class ReviewController {
         return ResponseUtils.ok(successCode);
     }
 
-    @PatchMapping("/revisit/{reviewId}")
-    public ApiResponse<?> revisit(@PathVariable String shopId,@PathVariable Long reviewId,@AuthenticationPrincipal UserDetailsImpl userDetails){
-        SuccessCode successCode = reviewService.revisit(shopId,reviewId,userDetails.getUser());
-        return ResponseUtils.ok(successCode);
-    }
+
     @GetMapping("/star")
     public ApiResponse<?> getstar(@PathVariable String shopId){
         return ResponseUtils.ok(reviewService.getStar(shopId));
+    }
+
+    @GetMapping("/banner")
+    public ApiResponse<?> getimage(@PathVariable String shopId){
+        return ResponseUtils.ok(reviewService.getbanner(shopId));
     }
 }

@@ -6,11 +6,9 @@ import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
-import com.example.finalproject.domain.shop.entity.Revisit;
 import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
 import com.example.finalproject.domain.shop.repository.ReviewImageRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
-import com.example.finalproject.domain.shop.repository.RevisitRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.utils.S3Utils;
@@ -20,9 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.finalproject.global.enums.SuccessCode.*;
 
 @Service
 @Slf4j
@@ -33,13 +30,11 @@ public class ReviewService {
     private final S3Utils s3Utils;
     private final ReviewImageRepository reviewImageRepository;
     private final UserRepository userRepository;
-    private final RevisitRepository revistRepository;
     @Transactional
     public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile, ReviewRequestDto requestDto, User user) {
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, user);
-        Boolean revisit=false;
-        Review review = new Review(requestDto, shopId, user,revisit);
+        Review review = new Review(requestDto, shopId, user);
         // image가 없을 때 빈 url생성 방지
         if(s3Utils.isFile(multipartFile)) {
             List<String> urls = s3Utils.uploadFile(multipartFile);
@@ -106,25 +101,7 @@ public class ReviewService {
             }
         }
     }
-    @Transactional
-    public SuccessCode revisit(String shopId,Long reviewId,User user) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-                new NullPointerException("존재하지 않는 후기입니다.")
-        );
-        if(review.getUser().getUserId()!=user.getUserId()){
-            throw new ReviewAuthorityException(ErrorCode.DIFFIRENT_USER);
-        }
-        Revisit revisit = revistRepository.findByReviewIdAndUserUserId(review.getId(), review.getUser().getUserId());
-        if (revisit!=null) {
-            revistRepository.delete(revisit);
-            review.updateRevisit(false);
-            return REVISIT_FALSE;
-        } else {
-            revistRepository.save(new Revisit(user, review));
-            review.updateRevisit(true);
-            return REVISIT_TRUE;
-        }
-    }
+
 
     public ReviewStarResponseDto getStar(String shopId){
         List<Review> reivewList=reviewRepository.findAllByShopId(shopId);
@@ -155,5 +132,86 @@ public class ReviewService {
         ReviewStarResponseDto reviewStarResponseDto=new ReviewStarResponseDto(countStar);
 
         return reviewStarResponseDto;
+    }
+
+    public List<String> getbanner(String shopId) {
+        List<Review> reviewList=reviewRepository.findAllByShopIdOrderByStarDesc(shopId);// 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
+                                                                                        // 그래서 일단 별점 순으로 정렬해서 가져옴
+        List<String> imageList=new ArrayList<>();
+        log.info("rk : "+reviewList.size());
+        if(reviewList.size()>=4) {
+            for (int i = 0; i <= 3; i++) {
+                if (reviewList.get(i).getImageUrls().size() == 0) {
+                    continue;
+                }
+                Review review = reviewList.get(i);
+                ReviewImage img = review.getImageUrls().get(0);
+
+                if (reviewList.size() != 0) {
+                    imageList.add(img.getImage());
+                }
+            }
+            while (imageList.size() < 4) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+
+        if(reviewList.size()==3){
+            for (int i = 0; i <= 2; i++) {
+                if (reviewList.get(i).getImageUrls().size() == 0) {
+                    continue;
+                }
+                Review review = reviewList.get(i);
+                ReviewImage img = review.getImageUrls().get(0);
+
+                if (reviewList.size() != 0) {
+                    imageList.add(img.getImage());
+                }
+            }
+            while (imageList.size() < 4) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+
+        if(reviewList.size()==2){
+            for (int i = 0; i <= 1; i++) {
+                if (reviewList.get(i).getImageUrls().size() == 0) {
+                    continue;
+                }
+                Review review = reviewList.get(i);
+                ReviewImage img = review.getImageUrls().get(0);
+
+                if (reviewList.size() != 0) {
+                    imageList.add(img.getImage());
+                }
+            }
+            for(int j=0;j<2;j++) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+
+        if(reviewList.size()==1){
+            for (int i = 0; i <= 0; i++) {
+                if (reviewList.get(i).getImageUrls().size() == 0) {
+                    continue;
+                }
+                Review review = reviewList.get(i);
+                ReviewImage img = review.getImageUrls().get(0);
+
+                if (reviewList.size() != 0) {
+                    imageList.add(img.getImage());
+                }
+            }
+            for(int j=0;j<3;j++) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+
+        if(reviewList.size()==0){
+            for(int j=0;j<4;j++) {
+                imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
+            }
+        }
+        return imageList;
     }
 }
