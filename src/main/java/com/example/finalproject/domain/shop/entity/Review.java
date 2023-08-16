@@ -24,7 +24,10 @@ public class Review extends Timestamped {
     @Column(nullable = false)
     private Integer star;
 
-    @OneToMany
+    @Column(nullable = false)
+    private Boolean revisit;
+
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "review_id")
     private List<ReviewImage> imageUrls = new ArrayList<>();
 
@@ -39,10 +42,15 @@ public class Review extends Timestamped {
         this.star = requestDto.getStar();
         this.user = user;
         this.shopId = shopId;
+        this.revisit=requestDto.getRevisit();
     }
 
     public void update(ReviewRequestDto requestDto) {
         this.review = requestDto.getReview();
         this.star = requestDto.getStar();
+    }
+
+    public void updateRevisit(Boolean revisit) {
+        this.revisit=revisit;
     }
 }

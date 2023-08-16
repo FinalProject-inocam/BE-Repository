@@ -16,4 +16,6 @@ public class ReviewRequestDto {
     @Min(value = 0, message = "0점 미만의 별점은 줄 수 없습니다.", groups = MinGroup.class)
     @Max(value = 5, message = "5점 초과의 별점은 줄 수 없습니다.", groups = MaxGroup.class)
     private Integer star;
+
+    private Boolean revisit;
 }

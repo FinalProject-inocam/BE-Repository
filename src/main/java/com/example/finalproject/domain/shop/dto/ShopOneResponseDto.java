@@ -45,6 +45,5 @@ public class ShopOneResponseDto {
         this.reviews = reviews.stream()
                 .map(ReviewResponseDto::new)
                 .toList();
-
     }
 }

@@ -32,7 +32,6 @@ public class ShopService {
     private final RestTemplate restTemplate;
     private final ReviewRepository reviewRepository;
     private final ShopLikeRepository shopLikeRepository;
-
     // RestTemplateBuilder의 build()를 사용하여 RestTemplate을 생성합니다.
     public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository, ShopLikeRepository shopLikeRepository) {
         this.restTemplate = builder.build();
