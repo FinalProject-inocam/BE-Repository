@@ -8,6 +8,7 @@ import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.ShopLike;
 import com.example.finalproject.domain.shop.exception.ShopNoContentException;
+import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.domain.shop.repository.ShopLikeRepository;
 import com.example.finalproject.global.enums.SuccessCode;
@@ -33,11 +34,13 @@ public class ShopService {
     private final RestTemplate restTemplate;
     private final ReviewRepository reviewRepository;
     private final ShopLikeRepository shopLikeRepository;
+    private final ReviewLikeRepository reviewLikeRepository;
     // RestTemplateBuilder의 build()를 사용하여 RestTemplate을 생성합니다.
-    public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository, ShopLikeRepository shopLikeRepository) {
+    public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository, ShopLikeRepository shopLikeRepository,ReviewLikeRepository reviewLikeRepository) {
         this.restTemplate = builder.build();
         this.reviewRepository = reviewRepository;
         this.shopLikeRepository = shopLikeRepository;
+        this.reviewLikeRepository=reviewLikeRepository;
     }
 
     // openApi 사용시 필요한 servicekey
@@ -128,7 +131,7 @@ public class ShopService {
         List<Review> reviews = reviewRepository.findAllByShopId(shopId);
         List<ShopLike> shopLikes = shopLikeRepository.findAllByShopId(shopId);
         List<String> banner=getbanner(shopId);
-        ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(itemToJsonObj, reviews, shopLikes, user,banner);
+        ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(itemToJsonObj, reviews, shopLikes, user,banner,reviewLikeRepository);
 
         return shopOneResponseDto;
     }

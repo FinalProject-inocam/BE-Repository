@@ -2,12 +2,17 @@ package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
+import com.example.finalproject.domain.post.entity.Post;
+import com.example.finalproject.domain.post.entity.PostLike;
+import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
+import com.example.finalproject.domain.shop.entity.ReviewLike;
 import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
 import com.example.finalproject.domain.shop.repository.ReviewImageRepository;
+import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
@@ -20,6 +25,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_CLIENT;
+import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_DATA;
+import static com.example.finalproject.global.enums.SuccessCode.LIKE_CANCEL;
+import static com.example.finalproject.global.enums.SuccessCode.LIKE_SUCCESS;
 
 @Service
 @Slf4j
@@ -30,6 +41,7 @@ public class ReviewService {
     private final S3Utils s3Utils;
     private final ReviewImageRepository reviewImageRepository;
     private final UserRepository userRepository;
+    private final ReviewLikeRepository reviewLikeRepository;
     @Transactional
     public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile, ReviewRequestDto requestDto, User user) {
         // shopId가 있는지 확인
@@ -134,5 +146,20 @@ public class ReviewService {
         return reviewStarResponseDto;
     }
 
+    @Transactional
+    public SuccessCode getlike(String shopId, Long reviewId,User user) {
+        Review review=reviewRepository.findById(reviewId).orElseThrow(
+                () -> new PostsNotFoundException(NOT_FOUND_DATA)
+        );
 
+        Optional<ReviewLike> reviewLike = reviewLikeRepository.findByReviewIdAndUserUserId(reviewId, user.getUserId());
+        if (reviewLike.isPresent()) {
+            reviewLikeRepository.delete(reviewLike.get());
+            return LIKE_CANCEL;
+        } else {
+            ReviewLike newReviewLike = reviewLikeRepository.save(new ReviewLike(user, review.getId(),shopId));
+            review.getReviewLikes().add(newReviewLike);
+            return LIKE_SUCCESS;
+        }
+    }
 }

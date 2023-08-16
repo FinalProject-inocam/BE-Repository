@@ -3,6 +3,7 @@ package com.example.finalproject.domain.shop.dto;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ShopLike;
+import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import lombok.Getter;
 import org.json.JSONObject;
 
@@ -21,7 +22,7 @@ public class ShopOneResponseDto {
     private List<ReviewResponseDto> reviews;
     private List<String> banner;
 
-    public ShopOneResponseDto(JSONObject itemJson, List<Review> reviews, List<ShopLike> shopLikes, User user,List<String>banner) {
+    public ShopOneResponseDto(JSONObject itemJson, List<Review> reviews, List<ShopLike> shopLikes, User user, List<String>banner, ReviewLikeRepository reviewLikeRepository) {
         this.shopId = itemJson.getString("bizesId");
         this.shopName = itemJson.getString("bizesNm");
         this.address = itemJson.getString("rdnmAdr");
@@ -43,9 +44,10 @@ public class ShopOneResponseDto {
                 .average()
                 .orElse(0);
         //comment전체값 출력
-        this.reviews = reviews.stream()
-                .map(ReviewResponseDto::new)
-                .toList();
+        for(Review review : reviews){
+            ReviewResponseDto reviewResponseDto=new ReviewResponseDto(review,user);
+            this.reviews.add(reviewResponseDto);
+        }
         this.banner=banner;
     }
 }

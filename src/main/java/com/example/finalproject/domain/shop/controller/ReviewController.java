@@ -61,4 +61,8 @@ public class ReviewController {
         return ResponseUtils.ok(reviewService.getStar(shopId));
     }
 
+    @GetMapping("/{reviewId}/like")
+    public ApiResponse<?> getstar(@PathVariable String shopId,@PathVariable Long reviewId,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseUtils.ok(reviewService.getlike(shopId,reviewId,userDetails.getUser()));
+    }
 }
