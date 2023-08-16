@@ -7,6 +7,7 @@ import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import lombok.Getter;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,7 +20,7 @@ public class ShopOneResponseDto {
     private Boolean isLike;
     private Integer likeCount;
     private Double avgStar;
-    private List<ReviewResponseDto> reviews;
+    private List<ReviewResponseDto> reviews = new ArrayList<>();
     private List<String> banner;
 
     public ShopOneResponseDto(JSONObject itemJson, List<Review> reviews, List<ShopLike> shopLikes, User user, List<String>banner, ReviewLikeRepository reviewLikeRepository) {
