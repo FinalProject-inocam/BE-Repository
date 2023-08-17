@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,14 +46,12 @@ public class AdminListService {
     public TotalListResponseDto totalList() {
         LocalDateTime currentDateTime = LocalDateTime.now();
 
-        int year = currentDateTime.getYear();
-        int month = currentDateTime.getMonthValue();
+        // 오늘 날짜의 시작 및 끝 날짜 설정
+        LocalDateTime startDateTime = LocalDateTime.of(currentDateTime.toLocalDate(), LocalTime.MIDNIGHT); // 오늘 날짜의 시작 시간
+        LocalDateTime endDateTime = LocalDateTime.of(currentDateTime.toLocalDate(), LocalTime.MAX); // 오늘 날짜의 끝 시간
 
-        // 해당 월의 시작 및 끝 날짜 설정
-        LocalDateTime startDateTime = LocalDateTime.of(year, month, 1, 0, 0);
-        LocalDateTime endDateTime = LocalDateTime.of(year, month, startDateTime.toLocalDate().lengthOfMonth(), 23, 59, 59);
-
-        Long needApprovalCount = purchasesRepository.countByApprove(null);
+//        Long needApprovalCount = purchasesRepository.countByApprove(null);
+        Long needApprovalCount=purchasesRepository.countByApproveIsNullAndCreatedAtBetween(startDateTime, endDateTime);
         Long approvedCount = purchasesRepository.countByApproveIsTrueAndCreatedAtBetween(startDateTime, endDateTime);
         Long deniedCount = purchasesRepository.countByApproveIsFalseAndCreatedAtBetween(startDateTime, endDateTime);
 
