@@ -139,7 +139,13 @@ public class ShopService {
         List<Review> reviewList=reviewRepository.findAllByShopIdOrderByStarDesc(shopId);// 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
         // 그래서 일단 별점 순으로 정렬해서 가져옴
         List<String> imageList=new ArrayList<>();
-        log.info("rk : "+reviewList.size());
+        log.info("imagecount : "+reviewList.size());
+        /*
+         size가 몇이건 간에 리뷰에 있는 사진들을 하나씩 가져와서 list에 넣는다. (for문을 통해 전체 조회)
+         중간에 list.size가 4개가 됬을때 break로 탈출 시킨다.
+         for문이 끝나고도 list가 부족한경우(if 조건)
+         list.size가 4가 될때 까지 default 이미지를 넣어준다.(while) or (4-size for 문)
+        * */
         if(reviewList.size()>=4) {
             for (int i = 0; i <= 3; i++) {
                 if (reviewList.get(i).getImageUrls().size() == 0) {

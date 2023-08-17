@@ -27,12 +27,12 @@ public class AuthExceptionFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             // 현재 확인된 exception이... UsernameNotFoundException 뿐인것 같은데...
             log.error(e.getMessage());
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setContentType("application/json;charset=UTF-8");
 
             new ObjectMapper().writeValue(response.getOutputStream(),
-                    ResponseUtils.error(HttpStatus.BAD_REQUEST, e.getMessage())
+                    ResponseUtils.error(HttpStatus.UNAUTHORIZED, e.getMessage())
             );
         }
     }
