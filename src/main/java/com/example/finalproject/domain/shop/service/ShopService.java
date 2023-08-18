@@ -8,6 +8,7 @@ import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.ShopLike;
 import com.example.finalproject.domain.shop.exception.ShopNoContentException;
+import com.example.finalproject.domain.shop.repository.ReviewImageRepository;
 import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.domain.shop.repository.ShopLikeRepository;
@@ -35,12 +36,14 @@ public class ShopService {
     private final ReviewRepository reviewRepository;
     private final ShopLikeRepository shopLikeRepository;
     private final ReviewLikeRepository reviewLikeRepository;
+
     // RestTemplateBuilder의 build()를 사용하여 RestTemplate을 생성합니다.
-    public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository, ShopLikeRepository shopLikeRepository,ReviewLikeRepository reviewLikeRepository) {
+    public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository,
+                       ShopLikeRepository shopLikeRepository, ReviewLikeRepository reviewLikeRepository) {
         this.restTemplate = builder.build();
         this.reviewRepository = reviewRepository;
         this.shopLikeRepository = shopLikeRepository;
-        this.reviewLikeRepository=reviewLikeRepository;
+        this.reviewLikeRepository = reviewLikeRepository;
     }
 
     // openApi 사용시 필요한 servicekey
@@ -128,29 +131,47 @@ public class ShopService {
                 .getJSONObject(0);
 
         String shopId = itemToJsonObj.getString("bizesId");
-        List<Review> reviews = reviewRepository.findAllByShopId(shopId);
+        // 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
+        // 그래서 일단 별점 순으로 정렬해서 가져옴
+        List<Review> reviews = reviewRepository.findAllByShopIdOrderByStarDesc(shopId);
         List<ShopLike> shopLikes = shopLikeRepository.findAllByShopId(shopId);
-        List<String> banner=getbanner(shopId);
-        ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(itemToJsonObj, reviews, shopLikes, user,banner,reviewLikeRepository);
+        List<String> banner = getBanner(reviews);
+        Integer reviewImageSize = getImageSize(reviews);
+        ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(itemToJsonObj, reviews, shopLikes, user, banner, reviewImageSize);
 
         return shopOneResponseDto;
     }
-    public List<String> getbanner(String shopId) {
-        List<Review> reviewList=reviewRepository.findAllByShopIdOrderByStarDesc(shopId);// 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
-        // 그래서 일단 별점 순으로 정렬해서 가져옴
-        List<String> imageList=new ArrayList<>();
-        for(int i=0;i<reviewList.size();i++){
-            if(imageList.size()==4){
-                break;
-            }
-            if (reviewList.get(i).getImageUrls().size() == 0) {
+
+    private Integer getImageSize(List<Review> reviews) {
+        Integer count = 0;
+        for (Review review : reviews) {
+            count += review.getImageUrls().size();
+        }
+        return count;
+    }
+
+    public List<String> getBanner(List<Review> reviews) {
+        Integer imageSize = 5;
+        List<String> imageList = new ArrayList<>();
+        reviewImageLoop:
+        for (Review review : reviews) {
+//            if (imageList.size() == imageSize) {
+//                break;
+//            }
+            if (review.getImageUrls().size() == 0) {
                 continue;
             }
-            Review review = reviewList.get(i);
-            ReviewImage img = review.getImageUrls().get(0);
-            imageList.add(review.getImageUrls().get(0).getImage());
+//            Review review = reviews.get(i);
+            List<ReviewImage> reviewImages = review.getImageUrls();
+            for (ReviewImage reviewImage : reviewImages) {
+                imageList.add(reviewImage.getImage());
+                if (imageList.size() == imageSize) {
+                    break reviewImageLoop;
+                }
+            }
+//            imageList.add(review.getImageUrls().get(0).getImage());
         }
-        while (imageList.size() < 4) {
+        while (imageList.size() < imageSize) {
             imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
         }
         return imageList;
