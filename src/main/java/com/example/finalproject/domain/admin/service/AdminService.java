@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.admin.service;
 
+import com.example.finalproject.domain.auth.repository.QUserRepository;
 import com.example.finalproject.domain.car.entity.Car;
 import com.example.finalproject.domain.car.service.CarService;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class AdminService {
     private final PurchasesRepository purchasesRepository;
     private final QPurchasesRepository qPurchasesRepository;
+    private final QUserRepository qUserRepository;
     private final CarService carService;
 
     // 입력 받은 term 값에 따라 어떤 통계를 쓸지 분배해주는 메서드
@@ -160,10 +162,34 @@ public class AdminService {
         return resultMap;
     }
 
+    // string to localDate
     private LocalDate convertStringToLocalDate(String cal) {
         // 원하는 날짜 포맷
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         // 문자열을 LocalDate로 변환
         return LocalDate.parse(cal, formatter);
+    }
+
+    // 연간 회원 통계
+    public Map<String, Object> userStat(String cal) {
+        LocalDate localDate = convertStringToLocalDate(cal);
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("total", customUserStat(localDate));
+
+        return resultMap;
+    }
+
+    public Map<String, Object> customUserStat(LocalDate localDate) {
+        Map<String, Object> resultMap = new HashMap<>();
+        // current
+        resultMap.put("users", qUserRepository.countUserForYear(localDate));
+        // gender, age
+        resultMap.put("gender", qUserRepository.countUserByGenderForYear(localDate));
+        resultMap.put("age", qUserRepository.countUserByAgeForYear(localDate));
+        // pre
+        resultMap.put("prePurchase", qUserRepository.countUserForPreYear(localDate));
+
+        return resultMap;
     }
 }
