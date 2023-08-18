@@ -48,7 +48,8 @@ public class UserService {
             }
             role = UserRoleEnum.ADMIN;
         }
-        User user = new User(requestDto, password, role);
+        String IMAGE_URL = "https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
+        User user = new User(requestDto, password, role, IMAGE_URL);
         userRepository.save(user);
         return SuccessCode.USER_SIGNUP_SUCCESS;
     }
