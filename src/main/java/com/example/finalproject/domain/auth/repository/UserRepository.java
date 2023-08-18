@@ -18,7 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findByNaverId(String naverId);
 
-    User findByGoogleId(String id);
+    User findByGoogleId(String googleId);
 
 
 //    Arrays findAllByUser(User user);

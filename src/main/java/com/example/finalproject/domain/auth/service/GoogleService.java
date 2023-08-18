@@ -97,9 +97,9 @@ public class GoogleService {
     private User registerGoogleUserIfNeeded(JsonNode userResourceNode) {
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
-        String id = userResourceNode.get("id").asText();
-//                Long.parseLong(userResourceNode.get("id").asText());
-        User googleUser = userRepository.findByGoogleId(id);
+        String googleId = userResourceNode.get("id").asText();
+//                Long.parseLong(userResourceNode.get("googleId").asText());
+        User googleUser = userRepository.findByGoogleId(googleId);
 
         if (googleUser == null) {
             // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인 // 이미 가입 email == kakao login email // @kakao, naver
@@ -109,14 +109,14 @@ public class GoogleService {
             if (sameEmailUser != null) {
                 googleUser = sameEmailUser; // kakaoId || default
                 // 기존 회원정보에 카카오 Id 추가
-                googleUser = googleUser.googleIdUpdate(id);
+                googleUser = googleUser.googleIdUpdate(googleId);
             } else {
                 // 신규 회원가입
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
 
-                googleUser = new User(id, email, nickname, encodedPassword, UserRoleEnum.USER);
+                googleUser = new User(googleId, email, nickname, encodedPassword, UserRoleEnum.USER);
             }
 
             userRepository.save(googleUser);
