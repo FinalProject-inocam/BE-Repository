@@ -17,7 +17,7 @@ public class ShopDto {
     private Double longitude;
     private Double latitude;
     private Boolean isLike;
-    private Integer like_count;
+    private Integer likeCount;
     private Double avgStar;
 
     public ShopDto (JSONObject itemJson, List<Review> reviews, List<ShopLike> shopLikes, User user) {
@@ -34,7 +34,7 @@ public class ShopDto {
                 .toList()
                 .contains(user.getUserId());
         //shoplike전체 숫자 세기
-        this.like_count = shopLikes.size();
+        this.likeCount = shopLikes.size();
         //comment전체 가져와서 그 중 star값 평균
         this.avgStar = reviews.stream()
                 .map(Review::getStar)
