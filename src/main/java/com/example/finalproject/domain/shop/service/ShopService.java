@@ -131,11 +131,10 @@ public class ShopService {
                 .getJSONObject(0);
 
         String shopId = itemToJsonObj.getString("bizesId");
-        // 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
-        // 그래서 일단 별점 순으로 정렬해서 가져옴
-        List<Review> reviews = reviewRepository.findAllByShopIdOrderByStarDesc(shopId);
+        // 댓글 최신순
+        List<Review> reviews = reviewRepository.findAllByShopIdOrderByCreatedAtDesc(shopId);
         List<ShopLike> shopLikes = shopLikeRepository.findAllByShopId(shopId);
-        List<String> banner = getBanner(reviews);
+        List<String> banner = getBanner(shopId);
         Integer reviewImageSize = getImageSize(reviews);
         ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(itemToJsonObj, reviews, shopLikes, user, banner, reviewImageSize);
 
@@ -150,7 +149,11 @@ public class ShopService {
         return count;
     }
 
-    public List<String> getBanner(List<Review> reviews) {
+    public List<String> getBanner(String shopId) {
+        // 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
+        // 그래서 일단 별점 순으로 정렬해서 가져옴
+        List<Review> reviews = reviewRepository.findAllByShopIdOrderByStarDesc(shopId);
+
         Integer imageSize = 5;
         List<String> imageList = new ArrayList<>();
         reviewImageLoop:
