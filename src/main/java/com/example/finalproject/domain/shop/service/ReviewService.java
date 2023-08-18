@@ -42,13 +42,14 @@ public class ReviewService {
     private final ReviewImageRepository reviewImageRepository;
     private final UserRepository userRepository;
     private final ReviewLikeRepository reviewLikeRepository;
+
     @Transactional
     public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile, ReviewRequestDto requestDto, User user) {
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, user);
         Review review = new Review(requestDto, shopId, user);
         // image가 없을 때 빈 url생성 방지
-        if(s3Utils.isFile(multipartFile)) {
+        if (s3Utils.isFile(multipartFile)) {
             List<String> urls = s3Utils.uploadFile(multipartFile);
             for (String url : urls) {
                 ReviewImage reviewImage = new ReviewImage(url);
@@ -69,7 +70,7 @@ public class ReviewService {
         checkAuthority(review, user);
         review.update(requestDto);
         // image에 값이 있을때만 삭제 추가를 진행
-        if(s3Utils.isFile(multipartFile)) {
+        if (s3Utils.isFile(multipartFile)) {
             // 기존 review에서 이미지 삭제
             review.getImageUrls().forEach(reviewImageRepository::delete);
             review.getImageUrls().clear();
@@ -115,11 +116,11 @@ public class ReviewService {
     }
 
 
-    public ReviewStarResponseDto getStar(String shopId){
-        List<Review> reivewList=reviewRepository.findAllByShopId(shopId);
-        int[] countStar=new int[6];
-        for(Review review : reivewList){
-            Integer star=review.getStar();
+    public ReviewStarResponseDto getStar(String shopId) {
+        List<Review> reivewList = reviewRepository.findAllByShopId(shopId);
+        int[] countStar = new int[6];
+        for (Review review : reivewList) {
+            Integer star = review.getStar();
             switch (star) {
                 case 0:
                     countStar[0]++;
@@ -141,14 +142,14 @@ public class ReviewService {
                     break;
             }
         }
-        ReviewStarResponseDto reviewStarResponseDto=new ReviewStarResponseDto(countStar);
+        ReviewStarResponseDto reviewStarResponseDto = new ReviewStarResponseDto(countStar);
 
         return reviewStarResponseDto;
     }
 
     @Transactional
-    public SuccessCode getlike(String shopId, Long reviewId,User user) {
-        Review review=reviewRepository.findById(reviewId).orElseThrow(
+    public SuccessCode getlike(String shopId, Long reviewId, User user) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
 
@@ -157,7 +158,7 @@ public class ReviewService {
             reviewLikeRepository.delete(reviewLike.get());
             return LIKE_CANCEL;
         } else {
-            ReviewLike newReviewLike = reviewLikeRepository.save(new ReviewLike(user, review.getId(),shopId));
+            ReviewLike newReviewLike = reviewLikeRepository.save(new ReviewLike(user, review.getId(), shopId));
             review.getReviewLikes().add(newReviewLike);
             return LIKE_SUCCESS;
         }

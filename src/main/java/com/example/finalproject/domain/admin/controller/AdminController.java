@@ -71,4 +71,11 @@ public class AdminController {
         Map<String, Object> statMap = adminService.weekStat(cal);
         return ResponseUtils.ok(statMap);
     }
+
+    /*----------------------*/
+    @GetMapping("/stats/users/year")
+    public ApiResponse<?> getUserYear(@RequestParam String cal) {
+        Map<String, Object> statMap = adminService.userStat(cal);
+        return ResponseUtils.ok(statMap);
+    }
 }

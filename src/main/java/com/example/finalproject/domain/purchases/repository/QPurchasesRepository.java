@@ -967,4 +967,5 @@ public class QPurchasesRepository {
         log.info("전주 통계 : " + result.toString());
         return result.get(0);
     }
+
 }

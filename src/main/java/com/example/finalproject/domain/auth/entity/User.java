@@ -4,7 +4,9 @@ import com.example.finalproject.domain.auth.dto.KakaoUserInfoDto;
 import com.example.finalproject.domain.auth.dto.NaverUserInfoDto;
 import com.example.finalproject.domain.auth.dto.SignupRequestDto;
 import com.example.finalproject.domain.mypage.dto.MypageRequestDto;
+import com.example.finalproject.global.enums.UserGenderEnum;
 import com.example.finalproject.global.enums.UserRoleEnum;
+import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Table(name = "user")
-public class User {
+public class User extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
@@ -28,10 +30,11 @@ public class User {
     private String nickname;
 
     @Column
-    private String gender;
+    @Enumerated(value = EnumType.STRING)
+    private UserGenderEnum gender;
 
     @Column
-    private String birthdate;
+    private Integer birthYear;
 
     @Column
     private String phoneNumber;
@@ -52,13 +55,13 @@ public class User {
     @Column
     private String profileImg;
 
-    public User(SignupRequestDto requestDto, String password, UserRoleEnum role, String IMAGE_URL) {
+    public User(SignupRequestDto requestDto, String password, UserRoleEnum role, UserGenderEnum gender, String IMAGE_URL) {
         this.email = requestDto.getEmail();
         this.password = password;
         this.nickname = requestDto.getNickname();
         this.phoneNumber = requestDto.getPhoneNumber();
-        this.gender = requestDto.getGender();
-        this.birthdate = requestDto.getBirthdate();
+        this.gender = gender;
+        this.birthYear = requestDto.getBirthYear();
         this.role = role;
         this.profileImg = IMAGE_URL;
     }
@@ -80,8 +83,8 @@ public class User {
     }
 
     // 구글
-    public User(String id, String email, String nickname, String password, UserRoleEnum role) {
-        this.googleId = id;
+    public User(String googleId, String email, String nickname, String password, UserRoleEnum role) {
+        this.googleId = googleId;
         this.email = email;
         this.password = password;
         this.nickname = nickname;
@@ -105,8 +108,8 @@ public class User {
     }
 
     // 구글
-    public User googleIdUpdate(String id) {
-        this.googleId = id;
+    public User googleIdUpdate(String googleId) {
+        this.googleId = googleId;
         return this;
     }
 

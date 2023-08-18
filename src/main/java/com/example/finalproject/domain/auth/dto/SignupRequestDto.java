@@ -2,6 +2,7 @@ package com.example.finalproject.domain.auth.dto;
 
 import com.example.finalproject.global.utils.ValidationGroups.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 
@@ -20,13 +21,13 @@ public class SignupRequestDto {
     @NotBlank(message = "닉네임은 필수입니다.", groups = NotBlankGroup.class)
     private String nickname;
 
-    @NotBlank(message = "성별은 필수입니다.", groups = NotBlankGroup.class)
+//    @NotBlank(message = "성별은 필수입니다.", groups = NotBlankGroup.class)
     private String gender;
 
-    @NotBlank(message = "생년월일은 필수입니다.", groups = NotBlankGroup.class)
-    private String birthdate;
+//    @NotNull(message = "출생년도는 필수입니다.", groups = NotNullGroup.class)
+    private Integer birthYear;
 
-    @NotBlank(message = "휴대전화번호는 필수입니다.", groups = NotBlankGroup.class)
+//    @NotBlank(message = "휴대전화번호는 필수입니다.", groups = NotBlankGroup.class)
     private String phoneNumber;
 
     private boolean admin = false;
