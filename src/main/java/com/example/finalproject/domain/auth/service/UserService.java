@@ -4,6 +4,7 @@ import com.example.finalproject.domain.auth.dto.SignupRequestDto;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.global.enums.SuccessCode;
+import com.example.finalproject.global.enums.UserGenderEnum;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.utils.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -48,8 +49,16 @@ public class UserService {
             }
             role = UserRoleEnum.ADMIN;
         }
+        UserGenderEnum genderEnum = null;
+        if (requestDto.getGender().equals("male")){
+            genderEnum = UserGenderEnum.MALE;
+        }
+        if (requestDto.getGender().equals("female")) {
+            genderEnum = UserGenderEnum.FEMALE;
+        }
+
         String IMAGE_URL = "https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
-        User user = new User(requestDto, password, role, IMAGE_URL);
+        User user = new User(requestDto, password, role, genderEnum, IMAGE_URL);
         userRepository.save(user);
         return SuccessCode.USER_SIGNUP_SUCCESS;
     }
