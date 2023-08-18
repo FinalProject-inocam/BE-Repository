@@ -52,7 +52,7 @@ public class User {
     @Column
     private String profileImg;
 
-    public User(SignupRequestDto requestDto, String password, UserRoleEnum role) {
+    public User(SignupRequestDto requestDto, String password, UserRoleEnum role, String IMAGE_URL) {
         this.email = requestDto.getEmail();
         this.password = password;
         this.nickname = requestDto.getNickname();
@@ -60,6 +60,7 @@ public class User {
         this.gender = requestDto.getGender();
         this.birthdate = requestDto.getBirthdate();
         this.role = role;
+        this.profileImg = IMAGE_URL;
     }
 
     public void update(MypageRequestDto mypageRequestDto, String newpassword, String profileImg) {
