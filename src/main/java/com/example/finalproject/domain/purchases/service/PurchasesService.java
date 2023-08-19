@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,9 @@ public class PurchasesService {
         return ok(PURCHASES_CREATE_SUCCESS);
     }
 
+
     // 차량 신청 내역 수정
+    @Transactional
     public PurchasesPatchResponseDto updatePurchases(Long purchaseId, PurchasesRequestDto purchasesRequestDto, User user) {
         Purchase purchase = findPurchases(purchaseId);
         checkUsername(purchaseId, user);

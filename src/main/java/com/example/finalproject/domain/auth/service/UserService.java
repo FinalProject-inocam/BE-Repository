@@ -37,7 +37,7 @@ public class UserService {
             throw new IllegalArgumentException("중복되는 이메일이 있습니다.");
         }
         // 닉네임 중복확인
-        if (validateEmail(nickname)) {
+        if (validateNickname(nickname)) {
             log.error("닉네임 중복");
             throw new IllegalArgumentException("중복되는 닉네임이 있습니다.");
         }

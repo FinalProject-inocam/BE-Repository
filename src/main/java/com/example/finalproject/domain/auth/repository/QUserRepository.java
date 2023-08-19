@@ -65,15 +65,15 @@ public class QUserRepository {
 
         List<Tuple> result = queryFactory
                 .select(
-                        qUser.gender,
-                        qUser.gender.count()
+                        qUser.gender.stringValue().coalesce("UNKNOWN"),
+                        qUser.gender.stringValue().coalesce("UNKNOWN").count()
                 )
                 .from(qUser)
                 .where(
                         qUser.createdAt.year().eq(year)
                 )
-                .groupBy(qUser.gender)
-                .orderBy(qUser.gender.asc())
+                .groupBy(qUser.gender.stringValue().coalesce("UNKNOWN"))
+                .orderBy(qUser.gender.stringValue().coalesce("UNKNOWN").asc())
                 .fetch();
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
@@ -91,9 +91,9 @@ public class QUserRepository {
         // 결과를 맵에 저장
         for (Tuple tuple : result) {
             // get시에 null값이 문제가 될것 같은데...
-            String gender = tuple.get(qUser.gender.stringValue());
-            long count = tuple.get(qUser.gender.count());
-            resultMap.put(gender == null ? "UNKNOWN" : gender, count);
+            String gender = tuple.get(qUser.gender.stringValue().coalesce("UNKNOWN"));
+            Long count = tuple.get(qUser.gender.stringValue().coalesce("UNKNOWN").count());
+            resultMap.put(gender, count);
             sum += count;
         }
 

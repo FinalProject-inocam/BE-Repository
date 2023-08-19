@@ -22,13 +22,13 @@ public class SignupRequestDto {
     private String nickname;
 
 //    @NotBlank(message = "성별은 필수입니다.", groups = NotBlankGroup.class)
-    private String gender;
+    private String gender = null;
 
 //    @NotNull(message = "출생년도는 필수입니다.", groups = NotNullGroup.class)
-    private Integer birthYear;
+    private Integer birthYear = null;
 
 //    @NotBlank(message = "휴대전화번호는 필수입니다.", groups = NotBlankGroup.class)
-    private String phoneNumber;
+    private String phoneNumber = null;
 
     private boolean admin = false;
 
