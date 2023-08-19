@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/posts/{postId}/comments")
 public class CommentsController {
     private final CommentsService commentsService;
+
     @PostMapping
-    public ApiResponse<?> createComments(
-            @PathVariable(name = "postId") Long postId,
-            @RequestBody CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ApiResponse<?> createComments(@PathVariable(name = "postId") Long postId,
+                                         @RequestBody CommentRequestDto commentRequestDto,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = commentsService.createService(postId, commentRequestDto, userDetails.getNickname());
         return ResponseUtils.ok(successCode);
     }
@@ -42,7 +42,8 @@ public class CommentsController {
     }
 
     @PostMapping("/{commentId}/like")
-    public ApiResponse<?> likeComment(@PathVariable("commentId") Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ApiResponse<?> likeComment(@PathVariable("commentId") Long commentId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = commentsService.likePost(commentId, userDetails.getUser().getUserId());
         return ResponseUtils.ok(successCode);
     }
