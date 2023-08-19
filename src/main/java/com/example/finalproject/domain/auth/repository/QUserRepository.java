@@ -118,6 +118,7 @@ public class QUserRepository {
         List<Integer> result = queryFactory
                 .select(
                         qUser.birthYear
+                                .coalesce(0)
                 )
                 .from(qUser)
                 .where(
@@ -129,10 +130,11 @@ public class QUserRepository {
         Map<String, Long> resultMap = new HashMap<>();
         Map<String, Integer> ratioMap = new HashMap<>();
 
-        for (int i = 10; i < 80; i += 10) {
+        for (int i = 10; i < 70; i += 10) {
             resultMap.put(Integer.toString(i), 0l);
         }
         resultMap.put("70+", 0l);
+        resultMap.put("unknown", 0l);
 
         ageMap.put("byAge", resultMap);
         ageMap.put("ratio", ratioMap);
@@ -142,12 +144,19 @@ public class QUserRepository {
         // 결과를 맵에 저장
         for (Integer birthYear : result) { // 사실 별로 안좋은 해결책인것 같은데...
             Integer age = (LocalDate.now().getYear() - birthYear) / 10 * 10;
+            sum++;
+            if (age > 1000) {
+                Long value = resultMap.get("unknown");
+                resultMap.put("unknown", value + 1);
+                continue;
+            }
             if (age > 60) {
-                resultMap.put("70+", resultMap.get("70+") + 1);
+                Long value = resultMap.get("70+");
+                resultMap.put("70+", value + 1);
+                continue;
             }
             String ageToString = Integer.toString(age);
             resultMap.put(ageToString, resultMap.get(ageToString) + 1);
-            sum++;
         }
 
         for (String age : resultMap.keySet()) {
