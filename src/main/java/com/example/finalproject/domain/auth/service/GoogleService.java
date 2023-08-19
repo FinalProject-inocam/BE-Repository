@@ -42,7 +42,7 @@ public class GoogleService {
     private String clientId;
     @Value("${security.oauth2.google.client-secret}")
     private String clientSecret;
-    @Value("${security.oauth2.google.redirect-uri}")
+    @Value("${security.oauth2.google.redirect-uri2}")
     private String redirectUri;
     @Value("${security.oauth2.google.token-uri}")
     String tokenUri;
