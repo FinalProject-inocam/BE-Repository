@@ -150,7 +150,7 @@ public class NaverService {
         String id = jsonNode.get("response").get("id").asText();
 
         // DB 에 중복된 naver Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
-        String nickname = jsonNode.get("response").get("nickname").asText() + id;// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
+        String nickname = jsonNode.get("response").get("nickname").asText();// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
         String email = jsonNode.get("response").get("email").asText();
         String naverId = id; // naver.com
 
