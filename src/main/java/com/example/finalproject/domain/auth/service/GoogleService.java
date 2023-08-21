@@ -115,8 +115,18 @@ public class GoogleService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
-
-                googleUser = new User(googleId, email, nickname, encodedPassword, UserRoleEnum.USER);
+                String name=nickname;
+                int num=1;
+                while(true){
+                    if(userRepository.existsByNickname(name)){
+                        name=nickname+String.valueOf(num);
+                        num++;
+                    }
+                    else{
+                     break;
+                    }
+                }
+                googleUser = new User(googleId, email, name, encodedPassword, UserRoleEnum.USER);
             }
 
             userRepository.save(googleUser);
