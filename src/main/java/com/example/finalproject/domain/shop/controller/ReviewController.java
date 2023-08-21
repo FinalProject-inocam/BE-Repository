@@ -4,6 +4,7 @@ import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.service.ReviewService;
+import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
@@ -29,6 +30,9 @@ public class ReviewController {
                                        @RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                        @RequestPart(value = "data") @Validated(ValidationSequence.class) ReviewRequestDto requestDto,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        if (multipartFile != null && multipartFile.size() > 4) {
+            return ResponseUtils.error(ErrorCode.LIMIT_MAX_IMAGE);
+        }
         User user = userDetails.getUser();
         log.info(user.getEmail());
         SuccessCode successCode = reviewService.createReview(shopId, multipartFile, requestDto, user);
