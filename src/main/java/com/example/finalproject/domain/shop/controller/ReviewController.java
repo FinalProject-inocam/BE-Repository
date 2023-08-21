@@ -25,6 +25,12 @@ import java.util.List;
 public class ReviewController {
     private final ReviewService reviewService;
 
+    @GetMapping
+    public ApiResponse<?> reviewList(@RequestParam("page") int page,
+                                     @RequestParam("size") int size,
+                                     @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseUtils.ok(reviewService.reviewList(size,page,userDetails));
+    }
     @PostMapping()
     public ApiResponse<?> createReview(@PathVariable String shopId,
                                        @RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
