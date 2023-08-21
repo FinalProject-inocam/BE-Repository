@@ -18,4 +18,8 @@ public class KakaoUserInfoDto {
 //        this.gender = gender;
 //        this.birthday = birthday;
     }
+
+    public void updateNickname(String name) {
+        this.nickname=name;
+    }
 }

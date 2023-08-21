@@ -170,7 +170,20 @@ public class NaverService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
-                NaverUserInfoDto naverUserInfoDto = new NaverUserInfoDto(id, nickname, email);
+
+                String name=nickname;                // 닉네임이 중복 될 시 닉네임 옆에 숫자 붙여주기
+                int num=1;
+                while(true){
+                    if(userRepository.existsByNickname(name)){
+                        name=nickname+String.valueOf(num);
+                        num++;
+                    }
+                    else{
+                        break;
+                    }
+                }
+
+                NaverUserInfoDto naverUserInfoDto = new NaverUserInfoDto(id, name, email);
                 naverUser = new User(naverUserInfoDto, encodedPassword, UserRoleEnum.USER);
             }
             userRepository.save(naverUser);
