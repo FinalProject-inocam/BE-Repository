@@ -33,6 +33,7 @@ public enum ErrorCode {
     NOT_FOUND_DATA(NOT_FOUND, "해당 게시물을 찾을 수 없습니다."),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
     SHOP_NOT_FOUND(NOT_FOUND, "해당 가게를 찾을 수 없습니다."),
+    NOT_FOUND_EMAIL(NOT_FOUND,"등록되지않은 이메일입니다"),
 
     /* 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재 */
     DUPLICATE_RESOURCE(CONFLICT, "데이터가 이미 존재합니다");
