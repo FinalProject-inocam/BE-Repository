@@ -54,18 +54,13 @@ public class PostService {
         long total = postPage.getTotalElements();
 
         for (Post post : postPage) {
-            Boolean is_like;
-            if (userDetails == null) {
-                is_like = false;
-            } else {
-                is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(), userDetails.getUser().getUserId());
-            }
+            Boolean is_like = getaBoolean(userDetails, post);
             Long comment_count = Long.valueOf(post.getCommentList().size());
             Long like_count = postLikeRepository.countByPostId(post.getId());
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
             postsList.add(postAllResponseDto);
         }
-        return new PageResponse(postsList, pageable, total);
+        return new PageResponse<>(postsList, pageable, total);
     }
 
     @Transactional
@@ -73,19 +68,16 @@ public class PostService {
         Post post = postRepository.findById(postid).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
+
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         List<Comments> commentList = post.getCommentList();
+
         for (Comments cmt : commentList) {
             CommentResponseDto commentResponseDto = new CommentResponseDto(cmt);
             commentResponseDtoList.add(commentResponseDto);
         }
         Long like_count = postLikeRepository.countByPostId(post.getId());
-        Boolean is_like;
-        if (userDetails == null) {
-            is_like = false;
-        } else {
-            is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(), userDetails.getUser().getUserId());
-        }
+        Boolean is_like = getaBoolean(userDetails, post);
 
         PostOneResponseDto postOneResponseDto = new PostOneResponseDto(post, commentResponseDtoList, like_count, is_like);
         return postOneResponseDto;
@@ -94,12 +86,8 @@ public class PostService {
     @Transactional
     public SuccessCode createPost(PostRequestDto postRequestDto, User user, List<MultipartFile> multipartFile) {
         Post post = new Post(postRequestDto, user);
-
         validateMultipartFile(multipartFile, post);
-
-        for (Image image : post.getImageList()) {
-            postImageRepository.save(image);
-        }
+        savePost(post);
         postRepository.save(post);
         return POST_CREATE_SUCCESS;
     }
@@ -108,15 +96,9 @@ public class PostService {
     public SuccessCode updatePost(List<MultipartFile> multipartFile, PostRequestDto postRequestDto, Long postId, String nickname) {
         Post post = validateAuthority(postId, nickname);
         List<Image> images = new ArrayList<>(post.getImageList()); // 복사본 사용
-        for (Image image : images) {
-            post.getImageList().remove(image); // 연관관계 끊기
-            postImageRepository.delete(image);
-        }
+        imgeUpdate(post, images);
         validateMultipartFile(multipartFile, post);
-
-        for (Image image : post.getImageList()) {
-            postImageRepository.save(image);
-        }
+        savePost(post);
         post.setTitle(postRequestDto.getTitle());
         post.setContent(postRequestDto.getContent());
         return POST_UPDATE_SUCCESS;
@@ -126,26 +108,11 @@ public class PostService {
     public SuccessCode deletePost(Long postId, String nickname) {
         Post post = validateAuthority(postId, nickname);
         List<Image> images = new ArrayList<>(post.getImageList()); // 복사본 사용
-        for (Image image : images) {
-            post.getImageList().remove(image); // 연관관계 끊기
-            postImageRepository.delete(image);
-        }
+        imgeUpdate(post, images);
         User user = userRepository.findByNickname(nickname);
         postLikeRepository.deleteByPostIdAndUserUserId(postId, user.getUserId()).orElseThrow(null);
-
         postRepository.delete(post);
-
         return POST_DELETE_SUCCESS;
-    }
-
-    private void validateMultipartFile(List<MultipartFile> multipartFile, Post post) {
-        if (s3Utils.isFile(multipartFile)) {
-            List<String> imageUrls = s3Utils.uploadFile(multipartFile);
-            for (String imageUrl : imageUrls) {
-                Image postImage = new Image(imageUrl);
-                post.getImageList().add(postImage);
-            }
-        }
     }
 
     @Transactional
@@ -176,5 +143,41 @@ public class PostService {
             throw new PostsNotFoundException(NO_AUTHORITY_TO_DATA);
         }
         return post;
+    }
+
+    // 좋아요 선택?
+    private Boolean getaBoolean(UserDetailsImpl userDetails, Post post) {
+        Boolean is_like;
+        if (userDetails == null) {
+            is_like = false;
+        } else {
+            is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(), userDetails.getUser().getUserId());
+        }
+        return is_like;
+    }
+
+    // 이미지 올리기
+    private void imgeUpdate(Post post, List<Image> images) {
+        for (Image image : images) {
+            post.getImageList().remove(image); // 연관관계 끊기
+            postImageRepository.delete(image);
+        }
+    }
+
+    private void validateMultipartFile(List<MultipartFile> multipartFile, Post post) {
+        if (s3Utils.isFile(multipartFile)) {
+            List<String> imageUrls = s3Utils.uploadFile(multipartFile);
+            for (String imageUrl : imageUrls) {
+                Image postImage = new Image(imageUrl);
+                post.getImageList().add(postImage);
+            }
+        }
+    }
+
+    // 포스트 저장하기
+    private void savePost(Post post) {
+        for (Image image : post.getImageList()) {
+            postImageRepository.save(image);
+        }
     }
 }

@@ -12,18 +12,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/posts/{postId}/comments")
+@RequestMapping("/api/communities/{postId}/comments")
 public class CommentsController {
     private final CommentsService commentsService;
+
+    // 댓글 생성
     @PostMapping
-    public ApiResponse<?> createComments(
-            @PathVariable(name = "postId") Long postId,
-            @RequestBody CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ApiResponse<?> createComments(@PathVariable(name = "postId") Long postId,
+                                         @RequestBody CommentRequestDto commentRequestDto,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = commentsService.createService(postId, commentRequestDto, userDetails.getNickname());
         return ResponseUtils.ok(successCode);
     }
 
+    // 댓글 수정
     @PatchMapping("/{commentId}")
     public ApiResponse<?> updateComments(@PathVariable(name = "postId") Long postId,
                                          @PathVariable(name = "commentId") Long commentId,
@@ -33,6 +35,7 @@ public class CommentsController {
         return ResponseUtils.ok(successCode);
     }
 
+    // 댓글 삭제
     @DeleteMapping("/{commentId}")
     public ApiResponse<?> deleteComments(@PathVariable(name = "postId") Long postId,
                                          @PathVariable(name = "commentId") Long commentId,
@@ -41,8 +44,10 @@ public class CommentsController {
         return ResponseUtils.ok((successCode));
     }
 
-    @PostMapping("/{commentId}/like")
-    public ApiResponse<?> likeComment(@PathVariable("commentId") Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    // 댓글 좋아요
+    @PatchMapping("/{commentId}/like")
+    public ApiResponse<?> likeComment(@PathVariable("commentId") Long commentId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = commentsService.likePost(commentId, userDetails.getUser().getUserId());
         return ResponseUtils.ok(successCode);
     }
