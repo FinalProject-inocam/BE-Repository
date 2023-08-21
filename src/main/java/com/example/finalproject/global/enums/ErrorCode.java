@@ -15,6 +15,7 @@ public enum ErrorCode {
     DUPLICATE_EMAIL(BAD_REQUEST, "이미 등록된 email입니다"),
     INVALID_CODE(BAD_REQUEST, "유효하지 않은 code입니다"),
     DIFFIRENT_USER(BAD_REQUEST, "후기작성자가 아닙니다"),
+    LIMIT_MAX_IMAGE(BAD_REQUEST, "최대 4개까지 업로드 가능합니다"),
     /* 401 UNAUTHORIZED : 인증되지 않았다는 의미입니다. */
     INVALID_ADMIN_NUMBER(UNAUTHORIZED, "관리자 번호가 유효하지 않습니다."),
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
