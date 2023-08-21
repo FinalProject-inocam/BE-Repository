@@ -26,4 +26,9 @@ public class MailController {
                                     @RequestParam (name = "code") String code) {
         return ResponseUtils.ok(mailService.checkCode(email, code));
     }
+
+    @GetMapping("/findPass")
+    public ApiResponse<?> findCode(@RequestParam (name = "email") String email) {
+        return ResponseUtils.ok(mailService.findPass(email));
+    }
 }

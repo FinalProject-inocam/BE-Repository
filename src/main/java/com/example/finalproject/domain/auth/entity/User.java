@@ -118,4 +118,8 @@ public class User extends Timestamped {
         this.naverId = naverId;
         return this;
     }
+
+    public void updatePass(String password) {
+        this.password=password;
+    }
 }
