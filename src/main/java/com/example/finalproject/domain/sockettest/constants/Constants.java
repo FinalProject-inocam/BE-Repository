@@ -5,4 +5,11 @@ public class Constants {
     public static final String WELCOME_MESSAGE = "%s joined to chat";
     public static final String DISCONNECT_MESSAGE = "%s disconnected";
 
+    public static final String READ_MESSAGE = "readMsg";
+    public static final String SEND_MESSAGE = "sendMsg";
+    public static final String JOIN_USER = "joinUser";
+    public static final String LEAVE_USER = "leaveUser";
+
+    public static final String PREVIOUS_MESSAGE = "previousMsg";
+
 }
