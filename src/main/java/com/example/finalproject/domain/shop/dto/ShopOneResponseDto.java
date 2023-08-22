@@ -53,10 +53,7 @@ public class ShopOneResponseDto {
                 .average()
                 .orElse(0);
         //comment전체값 출력
-        for(Review review : reviews){
-            ReviewResponseDto reviewResponseDto=new ReviewResponseDto(review,user);
-            this.reviews.add(reviewResponseDto);
-        }
+
         this.banner=banner;
         this.reviewImageSize = reviewImageSize;
         this.detail="안녕하세요, 랩핑/PPF 전문 "+itemJson.getString("bizesNm")+"입니다. 랩핑 PPF는 철저한 사후관리가 필수입니다. 맡겨 주시는 만큼 최선을 다해 시공하고, 좋은 품질의 자재와 정확한 기술로 오랜 시간동안 깨끗하고 선명한 상태를 유지하도록 도와드립니다.";
