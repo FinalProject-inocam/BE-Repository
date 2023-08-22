@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.shop.dto.ShopBannerDto;
 import com.example.finalproject.domain.shop.dto.ShopDto;
 import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
 import com.example.finalproject.domain.shop.dto.ShopsResponseDto;
@@ -8,7 +9,6 @@ import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.ShopLike;
 import com.example.finalproject.domain.shop.exception.ShopNoContentException;
-import com.example.finalproject.domain.shop.repository.ReviewImageRepository;
 import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.domain.shop.repository.ShopLikeRepository;
@@ -26,6 +26,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j(topic = "openApi shop 조회")
@@ -152,32 +153,49 @@ public class ShopService {
     public List<String> getBanner(String shopId) {
         // 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
         // 그래서 일단 별점 순으로 정렬해서 가져옴
-        List<Review> reviews = reviewRepository.findAllByShopIdOrderByStarDesc(shopId);
+        List<Review> reviews = reviewRepository.findAllByShopId(shopId);
 
-        Integer imageSize = 5;
+        Integer imageSize = 4;
         List<String> imageList = new ArrayList<>();
-        reviewImageLoop:
-        for (Review review : reviews) {
-//            if (imageList.size() == imageSize) {
-//                break;
-//            }
-            if (review.getImageUrls().size() == 0) {
-                continue;
+        List<ShopBannerDto> bannerList = new ArrayList<>();
+
+        for (Review review : reviews) { // reviews 리스트 각 Review 객체 순회
+            if (review.getImageUrls().size() == 0) {    // review 객체 이미지 URL 목록 크기가 0인지 확인
+                continue;   // 이미지 없으면 다음 리뷰 진행
             }
-//            Review review = reviews.get(i);
-            List<ReviewImage> reviewImages = review.getImageUrls();
-            for (ReviewImage reviewImage : reviewImages) {
-                imageList.add(reviewImage.getImage());
-                if (imageList.size() == imageSize) {
-                    break reviewImageLoop;
-                }
-            }
-//            imageList.add(review.getImageUrls().get(0).getImage());
+            Long count = reviewLikeRepository.countByReviewId(review.getId()); // 리뷰 개수 세알리기
+
+            // 현재 리뷰 이미지 URL 목록 스트림 변환 후, 각 이미지 실제 이미지 데이터 매핑 후 imageList에 저장
+            imageList = review.getImageUrls()
+                    .stream()
+                    .map(ReviewImage::getImage)
+                    .toList();
+
+            // 좋아요 개수를 ShopBannerDto 객체 생성
+            ShopBannerDto shopBannerDto = new ShopBannerDto(count, imageList);
+            // shopBannerDto 객체를 bannerList에 추가
+            bannerList.add(shopBannerDto);
         }
-        while (imageList.size() < imageSize) {
+
+        // 람다 표현식 사용해 o2 객체 좋아요 수와 o1 객체 좋아요 수 비교 후 정렬
+        // 좋아요 개수가 높은 순서대로 정렬된 리스트 생성
+        Collections.sort(bannerList, (o1, o2) -> Long.compare(o2.getLikeCount(), o1.getLikeCount()));
+
+        // ArrayList 객체인 imageList 생성, 이미지 URL 저장하는 용도
+        imageList = new ArrayList<>();
+        // banner 객체 이미지 URL들을 순회하는 반복문 시작
+        for (ShopBannerDto banner : bannerList) {
+            for (String url : banner.getImgUrls()) {
+                // url을 앞서 생성한 imageList에 추가한다. banner에 속한 이미지 URL들이 imageList 순차적 추가
+                imageList.add(url);
+            }
+        }
+
+        while (imageList.size() < imageSize) {  // imageList 크기를 imageSize와 같거나 크게 만드는 작업
+            // 빈 공백 문자열 imageList에 추가해 이미지 URL이 없는 부분은 빈 문자열로 채움
             imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
         }
+        // 최종적으로 imageList 반환
         return imageList;
     }
-
 }
