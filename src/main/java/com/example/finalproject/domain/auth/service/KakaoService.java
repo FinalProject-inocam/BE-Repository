@@ -212,7 +212,18 @@ public class KakaoService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
-
+                String name=kakaoUserInfo.getNickname();
+                int num=1;
+                while(true){
+                    if(userRepository.existsByNickname(name)){
+                        name=kakaoUserInfo.getNickname()+String.valueOf(num);
+                        num++;
+                    }
+                    else{
+                        break;
+                    }
+                }
+                kakaoUserInfo.updateNickname(name);
                 kakaoUser = new User(kakaoUserInfo, encodedPassword, UserRoleEnum.USER);
             }
 

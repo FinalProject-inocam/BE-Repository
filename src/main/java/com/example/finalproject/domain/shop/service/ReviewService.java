@@ -2,10 +2,14 @@ package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
+import com.example.finalproject.domain.auth.security.UserDetailsImpl;
+import com.example.finalproject.domain.post.dto.PostAllResponseDto;
 import com.example.finalproject.domain.post.entity.Post;
 import com.example.finalproject.domain.post.entity.PostLike;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
+import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
+import com.example.finalproject.domain.shop.dto.ReviewResponseDto;
 import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
@@ -16,9 +20,15 @@ import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
+import com.example.finalproject.global.responsedto.PageResponse;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -162,5 +172,31 @@ public class ReviewService {
             review.getReviewLikes().add(newReviewLike);
             return LIKE_SUCCESS;
         }
+    }
+
+    public Page<ReviewResponseDto> reviewList(int size, int page, UserDetailsImpl userDetails) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Review> reviewPage = reviewRepository.findAll(pageable);
+
+        List<ReviewResponseDto> reviewList = new ArrayList<>();
+        long total = reviewPage.getTotalElements();
+
+        for (Review review : reviewPage) {
+            Boolean is_like = getaBoolean(userDetails, review);
+            Long like_count = reviewLikeRepository.countByReviewId(review.getId());
+            ReviewResponseDto reviewResponseDto = new ReviewResponseDto(review,like_count, is_like);
+            reviewList.add(reviewResponseDto);
+        }
+        return new PageResponse<>(reviewList, pageable, total);
+    }
+
+    private Boolean getaBoolean(UserDetailsImpl userDetails, Review review) {
+        Boolean is_like;
+        if (userDetails == null) {
+            is_like = false;
+        } else {
+            is_like = reviewLikeRepository.existsByReviewIdAndUserUserId(review.getId(), userDetails.getUser().getUserId());
+        }
+        return is_like;
     }
 }

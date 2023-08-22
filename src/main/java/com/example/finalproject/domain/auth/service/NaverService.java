@@ -150,7 +150,7 @@ public class NaverService {
         String id = jsonNode.get("response").get("id").asText();
 
         // DB 에 중복된 naver Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
-        String nickname = jsonNode.get("response").get("nickname").asText() + id;// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
+        String nickname = jsonNode.get("response").get("nickname").asText();// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
         String email = jsonNode.get("response").get("email").asText();
         String naverId = id; // naver.com
 
@@ -170,7 +170,20 @@ public class NaverService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
-                NaverUserInfoDto naverUserInfoDto = new NaverUserInfoDto(id, nickname, email);
+
+                String name=nickname;                // 닉네임이 중복 될 시 닉네임 옆에 숫자 붙여주기
+                int num=1;
+                while(true){
+                    if(userRepository.existsByNickname(name)){
+                        name=nickname+String.valueOf(num);
+                        num++;
+                    }
+                    else{
+                        break;
+                    }
+                }
+
+                NaverUserInfoDto naverUserInfoDto = new NaverUserInfoDto(id, name, email);
                 naverUser = new User(naverUserInfoDto, encodedPassword, UserRoleEnum.USER);
             }
             userRepository.save(naverUser);

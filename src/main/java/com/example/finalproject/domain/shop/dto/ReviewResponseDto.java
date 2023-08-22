@@ -21,6 +21,7 @@ public class ReviewResponseDto {
     private LocalDateTime createAt;
     private LocalDateTime modifiedAt;
     private Boolean isLike;
+    private Long likeCount;
     public ReviewResponseDto(Review review, User user) {
         this.reviewId = review.getId();
         this.nickname = review.getUser().getNickname();
@@ -37,5 +38,20 @@ public class ReviewResponseDto {
                 .map(ReviewLike::getUser)
                 .map(User::getUserId)
                 .anyMatch(userId -> userId.equals(user.getUserId()));
+    }
+    public ReviewResponseDto(Review review,Long likeCount,Boolean isLike ) {
+        this.reviewId = review.getId();
+        this.nickname = review.getUser().getNickname();
+        this.review = review.getReview();
+        this.star = review.getStar();
+        this.revisit = review.getRevisit();
+        this.imageUrls = review.getImageUrls()
+                .stream()
+                .map(ReviewImage::getImage)
+                .toList();
+        this.createAt=review.getCreatedAt();
+        this.modifiedAt=review.getModifiedAt();
+        this.isLike=isLike;
+        this.likeCount=likeCount;
     }
 }
