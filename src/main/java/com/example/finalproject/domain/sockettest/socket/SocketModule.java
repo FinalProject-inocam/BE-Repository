@@ -49,13 +49,13 @@ public class SocketModule {
         };
     }
 
-    private DataListener<Message> connectSocket() {
-        return (senderClient, data, ackSender) -> {
-            senderClient.joinRoom("roomList");
-            socketService.requestPreviousChat(senderClient, room);
-            log.info("previousChat 발송완료");
-        };
-    }
+//    private DataListener<Message> connectSocket() {
+//        return (senderClient, data, ackSender) -> {
+//            senderClient.joinRoom("roomList");
+//            socketService.requestPreviousChat(senderClient, room);
+//            log.info("previousChat 발송완료");
+//        };
+//    }
 
 
     private ConnectListener onConnected() {
