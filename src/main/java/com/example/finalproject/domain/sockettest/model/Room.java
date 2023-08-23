@@ -33,4 +33,10 @@ public class Room {
         this.peer1 = username.equals(peer1) ? null : peer1;
         this.peer2 = username.equals(peer2) ? null : peer2;
     }
+
+    public void rejoinPeer(String roomName) {
+        String[] peerList = roomName.split("!");
+        this.peer1 = peerList[0];
+        this.peer2 = peerList[1];
+    }
 }
