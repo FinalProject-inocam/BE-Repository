@@ -3,6 +3,7 @@ package com.example.finalproject.domain.sockettest.socket;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.example.finalproject.domain.sockettest.constants.Constants;
 import com.example.finalproject.domain.sockettest.dto.CandidateDto;
+import com.example.finalproject.domain.sockettest.dto.OfferAndAnswerDto;
 import com.example.finalproject.domain.sockettest.dto.RoomResponseDto;
 import com.example.finalproject.domain.sockettest.model.Message;
 import com.example.finalproject.domain.sockettest.service.MessageService;
@@ -124,5 +125,17 @@ public class SocketService {
                 .stream()
                 .filter(client -> !client.getSessionId().equals(senderClient.getSessionId()))
                 .toList();
+    }
+
+    public void sendAnswer(SocketIOClient senderClient, OfferAndAnswerDto offerAndAnswerDto, String room) {
+        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, room)) {
+            client.sendEvent("getAnswer", offerAndAnswerDto);
+        }
+    }
+
+    public void sendOffer(SocketIOClient senderClient, OfferAndAnswerDto offerAndAnswerDto, String room) {
+        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, room)) {
+            client.sendEvent("getOffer", offerAndAnswerDto);
+        }
     }
 }

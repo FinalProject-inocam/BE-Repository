@@ -40,13 +40,20 @@ public class SocketModule {
     }
 
     private DataListener<OfferAndAnswerDto> getOffer() {
-        return null;
+        return (senderClient, data, ackSender) -> {
+            log.info(data.toString());
+            socketService.sendOffer(senderClient, data, data.getRoom());
+        };
     }
 
     private DataListener<OfferAndAnswerDto> getAnswer() {
-        return null;
+        return (senderClient, data, ackSender) -> {
+            log.info(data.toString());
+            socketService.sendAnswer(senderClient, data, data.getRoom());
+        };
     }
 
+    //room 방법 이게 최선인가...
     private DataListener<CandidateDto> getCandidate() {
         return (senderClient, data, ackSender) -> {
             log.info(data.toString());
