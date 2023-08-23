@@ -93,7 +93,6 @@ public class ShopService {
                 .queryParam("type", "json")
                 .build()
                 .toUriString());
-
         ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 
         return fromJSONtoShop(responseEntity.getBody(), user);

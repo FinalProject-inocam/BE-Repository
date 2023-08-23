@@ -5,6 +5,7 @@ import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
 import com.example.finalproject.domain.shop.dto.ShopsResponseDto;
 import com.example.finalproject.domain.shop.service.ShopService;
+import com.example.finalproject.domain.shop.service.ShopdbService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
@@ -23,7 +24,7 @@ import java.util.List;
 public class ShopController {
 
     private final ShopService shopService;
-
+    private final ShopdbService shopdbService;
     @GetMapping
     public ApiResponse<?> getShops(String longitude, String latitude,
                                    Integer page, Integer size,
@@ -33,7 +34,10 @@ public class ShopController {
         return ResponseUtils.pageOk(shopsResponseDtos.getSize(), shopsResponseDtos.getPage(),
                 shopsResponseDtos.getTotalCount(), shopsResponseDtos.getTotalPages(), shopsResponseDtos.getShopList());
     }
-
+    @GetMapping("/db")
+    public ApiResponse<?> shopdb() {
+        return ResponseUtils.ok( shopdbService.getSelectedShop());
+    }
     @GetMapping("/{shopId}")
     public ApiResponse<?> getSelectedShop(@PathVariable String shopId,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
