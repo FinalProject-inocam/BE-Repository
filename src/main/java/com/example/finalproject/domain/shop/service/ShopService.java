@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -28,6 +29,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Slf4j(topic = "openApi shop 조회")
 @Service
@@ -52,6 +55,8 @@ public class ShopService {
     private URI SERVICE_KEY;
 
     public ShopsResponseDto getShopList(String longitude, String latitude, User user, Integer page, Integer size) {
+        StopWatch stopWatch = new StopWatch("speed test");
+        stopWatch.start("find shop");
         log.info("반경내의 shop 조회");
         URI uri = URI.create(UriComponentsBuilder
                 .fromUriString("http://apis.data.go.kr")
@@ -67,8 +72,14 @@ public class ShopService {
                 .build()
                 .toUriString());
 
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
+        stopWatch.stop();
 
+        stopWatch.start("entity");
+        ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
+        stopWatch.stop();
+
+        System.out.println("실행 시간(ms): " + stopWatch.getTotalTimeMillis());
+        System.out.println(stopWatch.prettyPrint());
         return fromJSONtoShopList(responseEntity.getBody(), user);
     }
 
@@ -126,17 +137,45 @@ public class ShopService {
     }
 
     private ShopOneResponseDto fromJSONtoShop(String responseEntity, User user) {
+
         JSONObject jsonObject = new JSONObject(responseEntity);
         JSONObject itemToJsonObj = jsonObject.getJSONObject("body")
                 .getJSONArray("items")
                 .getJSONObject(0);
-
         String shopId = itemToJsonObj.getString("bizesId");
+
         // 댓글 최신순
-        List<Review> reviews = reviewRepository.findAllByShopIdOrderByCreatedAtDesc(shopId);
-        List<ShopLike> shopLikes = shopLikeRepository.findAllByShopId(shopId);
-        List<String> banner = getBanner(shopId);
-        Integer reviewImageSize = getImageSize(reviews);
+        CompletableFuture<List<Review>> reviewsFuture = CompletableFuture.supplyAsync(() -> {
+            List<Review> reviews = reviewRepository.findAllByShopId(shopId);
+            return reviews;
+        });
+
+        CompletableFuture<List<ShopLike>> shopLikesFuture = CompletableFuture.supplyAsync(() -> {
+            List<ShopLike> shopLikes = shopLikeRepository.findAllByShopId(shopId);
+            return shopLikes;
+        });
+
+// 모든 CompletableFuture 작업이 완료되었는지 확인
+        CompletableFuture.allOf(reviewsFuture, shopLikesFuture).join();
+        List<Review> reviews = reviewsFuture.join();
+        List<ShopLike> shopLikes = shopLikesFuture.join();
+
+        CompletableFuture<List<String>> bannerFuture = CompletableFuture.supplyAsync(() -> {
+            List<String> result = getBanner(reviews);
+            return result;
+        });
+
+        CompletableFuture<Integer> imageSizeFuture = CompletableFuture.supplyAsync(() -> {
+            Integer size = getImageSize(reviews);
+            return size;
+        });
+
+// 모든 CompletableFuture 작업이 완료되었는지 확인
+        CompletableFuture.allOf(bannerFuture, imageSizeFuture).join();
+
+        List<String> banner = bannerFuture.join();
+        Integer reviewImageSize = imageSizeFuture.join();
+
         ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(itemToJsonObj, reviews, shopLikes, user, banner, reviewImageSize);
 
         return shopOneResponseDto;
@@ -150,52 +189,37 @@ public class ShopService {
         return count;
     }
 
-    public List<String> getBanner(String shopId) {
-        // 좋아요 순서대로 정렬해서 가져오기<- 이거 리뷰에 좋아요하는 기능이 없어서 안됨 샵에 좋아요하는 기능이 있음
-        // 그래서 일단 별점 순으로 정렬해서 가져옴
-        List<Review> reviews = reviewRepository.findAllByShopId(shopId);
+    public List<String> getBanner(List<Review> reviews) {
+        int imageSize = 4;
+        String defaultImageUrl = "https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
 
-        Integer imageSize = 4;
-        List<String> imageList = new ArrayList<>();
         List<ShopBannerDto> bannerList = new ArrayList<>();
 
-        for (Review review : reviews) { // reviews 리스트 각 Review 객체 순회
-            if (review.getImageUrls().size() == 0) {    // review 객체 이미지 URL 목록 크기가 0인지 확인
-                continue;   // 이미지 없으면 다음 리뷰 진행
+        for (Review review : reviews) {
+            if (review.getImageUrls().isEmpty()) {
+                continue;
             }
-            Long count = reviewLikeRepository.countByReviewId(review.getId()); // 리뷰 개수 세알리기
-
-            // 현재 리뷰 이미지 URL 목록 스트림 변환 후, 각 이미지 실제 이미지 데이터 매핑 후 imageList에 저장
-            imageList = review.getImageUrls()
+            Long count = reviewLikeRepository.countByReviewId(review.getId());
+            List<String> imageList = review.getImageUrls()
                     .stream()
                     .map(ReviewImage::getImage)
-                    .toList();
+                    .collect(Collectors.toList());
 
-            // 좋아요 개수를 ShopBannerDto 객체 생성
-            ShopBannerDto shopBannerDto = new ShopBannerDto(count, imageList);
-            // shopBannerDto 객체를 bannerList에 추가
-            bannerList.add(shopBannerDto);
+            bannerList.add(new ShopBannerDto(count, imageList));
         }
 
-        // 람다 표현식 사용해 o2 객체 좋아요 수와 o1 객체 좋아요 수 비교 후 정렬
-        // 좋아요 개수가 높은 순서대로 정렬된 리스트 생성
-        Collections.sort(bannerList, (o1, o2) -> Long.compare(o2.getLikeCount(), o1.getLikeCount()));
+        // Sort by like count
+        bannerList.sort((o1, o2) -> Long.compare(o2.getLikeCount(), o1.getLikeCount()));
 
-        // ArrayList 객체인 imageList 생성, 이미지 URL 저장하는 용도
-        imageList = new ArrayList<>();
-        // banner 객체 이미지 URL들을 순회하는 반복문 시작
-        for (ShopBannerDto banner : bannerList) {
-            for (String url : banner.getImgUrls()) {
-                // url을 앞서 생성한 imageList에 추가한다. banner에 속한 이미지 URL들이 imageList 순차적 추가
-                imageList.add(url);
-            }
+        List<String> sortedImages = bannerList.stream()
+                .flatMap(b -> b.getImgUrls().stream())
+                .collect(Collectors.toList());
+
+        // Fill up to imageSize
+        while (sortedImages.size() < imageSize) {
+            sortedImages.add(defaultImageUrl);
         }
 
-        while (imageList.size() < imageSize) {  // imageList 크기를 imageSize와 같거나 크게 만드는 작업
-            // 빈 공백 문자열 imageList에 추가해 이미지 URL이 없는 부분은 빈 문자열로 채움
-            imageList.add("https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842");
-        }
-        // 최종적으로 imageList 반환
-        return imageList;
+        return sortedImages;
     }
 }

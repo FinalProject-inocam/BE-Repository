@@ -174,9 +174,9 @@ public class ReviewService {
         }
     }
 
-    public Page<ReviewResponseDto> reviewList(int size, int page, UserDetailsImpl userDetails) {
+    public Page<ReviewResponseDto> reviewList(int size, int page, UserDetailsImpl userDetails,String shopId) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Review> reviewPage = reviewRepository.findAll(pageable);
+        Page<Review> reviewPage = reviewRepository.findByShopIdUsingQuery(shopId,pageable);
 
         List<ReviewResponseDto> reviewList = new ArrayList<>();
         long total = reviewPage.getTotalElements();

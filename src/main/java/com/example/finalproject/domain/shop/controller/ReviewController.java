@@ -28,8 +28,9 @@ public class ReviewController {
     @GetMapping
     public ApiResponse<?> reviewList(@RequestParam("page") int page,
                                      @RequestParam("size") int size,
-                                     @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseUtils.ok(reviewService.reviewList(size,page,userDetails));
+                                     @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                     @PathVariable String shopId){
+        return ResponseUtils.ok(reviewService.reviewList(size,page,userDetails,shopId));
     }
     @PostMapping()
     public ApiResponse<?> createReview(@PathVariable String shopId,
