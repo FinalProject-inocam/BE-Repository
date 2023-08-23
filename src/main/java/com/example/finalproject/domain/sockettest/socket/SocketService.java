@@ -81,6 +81,9 @@ public class SocketService {
         if(!roomService.isRoom(room)) {
             log.info("새로운 방 생성");
             roomService.createRoom(room);
+        } else {
+            log.info("peer 다시 등록");
+            roomService.rejoinRoom(room);
         }
     }
 

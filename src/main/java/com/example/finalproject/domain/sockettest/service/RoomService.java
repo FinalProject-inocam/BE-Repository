@@ -50,6 +50,12 @@ public class RoomService {
         room.leavePeer(username);
     }
 
+    @Transactional
+    public void rejoinRoom(String roomName) {
+        Room room = validateRoom(roomName);
+        room.rejoinPeer(roomName);
+    }
+
     private Room validateRoom(String roomName) {
         Room room = roomRepository.findByRoomName(roomName).orElseThrow(() ->
                 new NullPointerException("존재하지 않는 후기입니다.")
