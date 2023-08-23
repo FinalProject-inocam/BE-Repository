@@ -2,6 +2,7 @@ package com.example.finalproject.domain.shop.dto;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.shop.entity.Review;
+import com.example.finalproject.domain.shop.entity.Shop;
 import com.example.finalproject.domain.shop.entity.ShopLike;
 import lombok.Getter;
 import org.json.JSONObject;
@@ -29,17 +30,17 @@ public class ShopOneResponseDto {
     private String detail;
     private List<String> tag = Arrays.asList("자동차랩핑", "디테일링 세차","디테일링 광택","자동차 튜닝","자동차 썬팅");
 
-    public ShopOneResponseDto(JSONObject itemJson, List<Review> reviews,
+    public ShopOneResponseDto(Shop shop, List<Review> reviews,
                               List<ShopLike> shopLikes, User user,
                               List<String>banner, Integer reviewImageSize) {
-        this.shopId = itemJson.getString("bizesId");
-        this.shopName = itemJson.getString("bizesNm");
-        this.address = itemJson.getString("rdnmAdr");
-        if (this.address.isEmpty()) {
-            this.address = itemJson.getString("lnoAdr");
-        }
-        this.longitude = itemJson.getDouble("lon");
-        this.latitude = itemJson.getDouble("lat");
+        this.shopId = shop.getShopId();
+        this.shopName = shop.getShopName();
+        this.address = shop.getAddress();
+//        if (this.address.isEmpty()) {
+//            this.address = itemJson.getString("lnoAdr");
+//        }
+        this.longitude = shop.getLongitude();
+        this.latitude = shop.getLatitude();
         //shoplike 전체중 user가 쓴글 찾기 기본값 false
         this.isLike = user != null && shopLikes.stream()
                 .map(ShopLike::getUser)
@@ -56,6 +57,6 @@ public class ShopOneResponseDto {
 
         this.banner=banner;
         this.reviewImageSize = reviewImageSize;
-        this.detail="안녕하세요, 랩핑/PPF 전문 "+itemJson.getString("bizesNm")+"입니다. 랩핑 PPF는 철저한 사후관리가 필수입니다. 맡겨 주시는 만큼 최선을 다해 시공하고, 좋은 품질의 자재와 정확한 기술로 오랜 시간동안 깨끗하고 선명한 상태를 유지하도록 도와드립니다.";
+        this.detail="안녕하세요, 랩핑/PPF 전문 "+shop.getShopName()+"입니다. 랩핑 PPF는 철저한 사후관리가 필수입니다. 맡겨 주시는 만큼 최선을 다해 시공하고, 좋은 품질의 자재와 정확한 기술로 오랜 시간동안 깨끗하고 선명한 상태를 유지하도록 도와드립니다.";
     }
 }

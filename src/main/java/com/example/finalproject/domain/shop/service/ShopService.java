@@ -7,11 +7,13 @@ import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
 import com.example.finalproject.domain.shop.dto.ShopsResponseDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
+import com.example.finalproject.domain.shop.entity.Shop;
 import com.example.finalproject.domain.shop.entity.ShopLike;
 import com.example.finalproject.domain.shop.exception.ShopNoContentException;
 import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.domain.shop.repository.ShopLikeRepository;
+import com.example.finalproject.domain.shop.repository.ShopRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
@@ -40,14 +42,16 @@ public class ShopService {
     private final ReviewRepository reviewRepository;
     private final ShopLikeRepository shopLikeRepository;
     private final ReviewLikeRepository reviewLikeRepository;
+    private final ShopRepository shopRepository;
 
     // RestTemplateBuilder의 build()를 사용하여 RestTemplate을 생성합니다.
     public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository,
-                       ShopLikeRepository shopLikeRepository, ReviewLikeRepository reviewLikeRepository) {
+                       ShopLikeRepository shopLikeRepository, ReviewLikeRepository reviewLikeRepository,ShopRepository shopRepository) {
         this.restTemplate = builder.build();
         this.reviewRepository = reviewRepository;
         this.shopLikeRepository = shopLikeRepository;
         this.reviewLikeRepository = reviewLikeRepository;
+        this.shopRepository=shopRepository;
     }
 
     // openApi 사용시 필요한 servicekey
@@ -85,17 +89,19 @@ public class ShopService {
 
     public ShopOneResponseDto getSelectedShop(String shopId, User user) {
         log.info("특정 shop 상세 조회");
-        URI uri = URI.create(UriComponentsBuilder
-                .fromUriString("http://apis.data.go.kr")
-                .path("/B553077/api/open/sdsc2/storeOne")
-                .queryParam("serviceKey", SERVICE_KEY)
-                .queryParam("key", shopId)
-                .queryParam("type", "json")
-                .build()
-                .toUriString());
-        ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
+//        URI uri = URI.create(UriComponentsBuilder
+//                .fromUriString("http://apis.data.go.kr")
+//                .path("/B553077/api/open/sdsc2/storeOne")
+//                .queryParam("serviceKey", SERVICE_KEY)
+//                .queryParam("key", shopId)
+//                .queryParam("type", "json")
+//                .build()
+//                .toUriString());
+//        ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 
-        return fromJSONtoShop(responseEntity.getBody(), user);
+//        return fromJSONtoShop(responseEntity.getBody(), user);
+        return fromJSONtoShop(shopId, user);
+
     }
 
     public SuccessCode likeShop(String shopId, User user) {
@@ -135,14 +141,14 @@ public class ShopService {
         }
     }
 
-    private ShopOneResponseDto fromJSONtoShop(String responseEntity, User user) {
+    private ShopOneResponseDto fromJSONtoShop(String shopId, User user) {
 
-        JSONObject jsonObject = new JSONObject(responseEntity);
-        JSONObject itemToJsonObj = jsonObject.getJSONObject("body")
-                .getJSONArray("items")
-                .getJSONObject(0);
-        String shopId = itemToJsonObj.getString("bizesId");
-
+//        JSONObject jsonObject = new JSONObject(responseEntity);
+//        JSONObject itemToJsonObj = jsonObject.getJSONObject("body")
+//                .getJSONArray("items")
+//                .getJSONObject(0);
+//        String shopId = itemToJsonObj.getString("bizesId");
+        Shop shop=shopRepository.findByShopId(shopId);
         // 댓글 최신순
         CompletableFuture<List<Review>> reviewsFuture = CompletableFuture.supplyAsync(() -> {
             List<Review> reviews = reviewRepository.findAllByShopId(shopId);
@@ -175,7 +181,7 @@ public class ShopService {
         List<String> banner = bannerFuture.join();
         Integer reviewImageSize = imageSizeFuture.join();
 
-        ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(itemToJsonObj, reviews, shopLikes, user, banner, reviewImageSize);
+        ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(shop, reviews, shopLikes, user, banner, reviewImageSize);
 
         return shopOneResponseDto;
     }
