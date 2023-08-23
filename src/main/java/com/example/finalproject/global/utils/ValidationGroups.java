@@ -10,5 +10,7 @@ public class ValidationGroups {
     public interface MaxGroup {}
 
     public interface NotNullGroup {}
+
+    public interface PastGroup {}
 }
 

@@ -1,9 +1,11 @@
 package com.example.finalproject.domain.sockettest.socket;
 
+import com.corundumstudio.socketio.SocketConfig;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.example.finalproject.domain.sockettest.constants.Constants;
 import com.example.finalproject.domain.sockettest.model.Message;
 import com.example.finalproject.domain.sockettest.model.MessageType;
+import com.example.finalproject.domain.sockettest.model.Room;
 import com.example.finalproject.domain.sockettest.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,4 +66,10 @@ public class SocketService {
             }
         }
     }
+
+//    public void roomList(SocketIOClient senderClient) {
+//        log.info("roomList test");
+//        List<Room> roomList = roomService.getRoomList(senderClient);
+//
+//    }
 }

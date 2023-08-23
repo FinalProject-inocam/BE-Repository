@@ -25,6 +25,9 @@ public class SocketModule {
         server.addConnectListener(onConnected());
         server.addDisconnectListener(onDisconnected());
         server.addEventListener("sendMsg", Message.class, onChatReceived());
+        // 테스트
+        server.addEventListener("joinRoom", Message.class, joinRoomReceived());
+        server.addEventListener("connected", Message.class, joinRoomReceived());
 
     }
 
@@ -33,6 +36,24 @@ public class SocketModule {
         return (senderClient, data, ackSender) -> {
             log.info(data.toString());
             socketService.saveMessage(senderClient, data);
+        };
+    }
+
+    private DataListener<Message> joinRoomReceived() {
+        return (senderClient, data, ackSender) -> {
+            String room = data.getRoom();
+            log.info(room + "+" + data.getUsername());
+            senderClient.joinRoom(room);
+            socketService.requestPreviousChat(senderClient, room);
+            log.info("previousChat 발송완료");
+        };
+    }
+
+    private DataListener<Message> connectSocket() {
+        return (senderClient, data, ackSender) -> {
+            senderClient.joinRoom("roomList");
+            socketService.requestPreviousChat(senderClient, room);
+            log.info("previousChat 발송완료");
         };
     }
 

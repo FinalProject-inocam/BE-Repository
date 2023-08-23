@@ -7,9 +7,11 @@ import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.service.PurchasesService;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
+import com.example.finalproject.global.utils.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,7 +32,7 @@ public class PurchasesController {
 
     // 차량 출고 신청
     @PostMapping
-    public ApiResponse<?> createPurchases(@RequestBody PurchasesRequestDto purchasesRequestDto,
+    public ApiResponse<?> createPurchases(@RequestBody @Validated(ValidationSequence.class) PurchasesRequestDto purchasesRequestDto,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return purchasesService.createPurchases(purchasesRequestDto, userDetails.getUser());
     }
@@ -38,7 +40,7 @@ public class PurchasesController {
     // 차량 신청 내역 수정
     @PatchMapping("/{purchaseId}")
     public ApiResponse<?> updatePurchases(@PathVariable Long purchaseId,
-                                          @RequestBody PurchasesRequestDto purchasesRequestDto,
+                                          @RequestBody @Validated(ValidationSequence.class) PurchasesRequestDto purchasesRequestDto,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseUtils.ok(purchasesService.updatePurchases(purchaseId, purchasesRequestDto, userDetails.getUser()));
     }
