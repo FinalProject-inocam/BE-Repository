@@ -21,7 +21,7 @@ public class ShopOneResponseDto {
     private Boolean isLike;
     private Integer likeCount;
     private Double avgStar;
-    private List<ReviewResponseDto> reviews = new ArrayList<>();
+    private Long reviewCount;
     private List<String> banner;
     private Integer reviewImageSize;
     private String bussinessHour="08:00~16:00";
@@ -39,6 +39,7 @@ public class ShopOneResponseDto {
 //        if (this.address.isEmpty()) {
 //            this.address = itemJson.getString("lnoAdr");
 //        }
+        reviewCount=Long.valueOf(reviews.size());
         this.longitude = shop.getLongitude();
         this.latitude = shop.getLatitude();
         //shoplike 전체중 user가 쓴글 찾기 기본값 false
