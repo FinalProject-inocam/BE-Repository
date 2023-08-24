@@ -2,9 +2,7 @@ package com.example.finalproject.domain.sockettest.socket;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.example.finalproject.domain.sockettest.constants.Constants;
-import com.example.finalproject.domain.sockettest.dto.CandidateDto;
-import com.example.finalproject.domain.sockettest.dto.OfferAndAnswerDto;
-import com.example.finalproject.domain.sockettest.dto.RoomResponseDto;
+import com.example.finalproject.domain.sockettest.dto.*;
 import com.example.finalproject.domain.sockettest.model.Message;
 import com.example.finalproject.domain.sockettest.service.MessageService;
 import com.example.finalproject.domain.sockettest.service.RoomService;
@@ -109,15 +107,30 @@ public class SocketService {
         return storedMessage;
     }
 
-    public void sendLeaveMessage(SocketIOClient senderClient, Message message, String room) {
-        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, room)) {
+    public void sendLeaveMessage(SocketIOClient senderClient, Message message) {
+        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, message.getRoom())) {
                 client.sendEvent("peerOut", message);
         }
     }
 
-    public void sendCandidate(SocketIOClient senderClient, CandidateDto candidateDto, String room) {
-        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, room)) {
-            client.sendEvent("getCandidate", candidateDto);
+    public void sendCandidate(SocketIOClient senderClient, CandidateRoomDto candidateRoomDto) {
+        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, candidateRoomDto.getRoom())) {
+            log.info("candidate check : " + candidateRoomDto.toString());
+            client.sendEvent("getCandidate", candidateRoomDto.getCandidate());
+        }
+    }
+
+    public void sendAnswer(SocketIOClient senderClient, AnswerRoomDto answerRoomDto) {
+        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, answerRoomDto.getRoom())) {
+            log.info("send check : " + answerRoomDto.toString());
+            client.sendEvent("getAnswer", answerRoomDto.getAnswer());
+        }
+    }
+
+    public void sendOffer(SocketIOClient senderClient, OfferRoomDto offerRoomDto) {
+        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, offerRoomDto.getRoom())) {
+            log.info("offer check : " + offerRoomDto.toString());
+            client.sendEvent("getOffer", offerRoomDto.getOffer());
         }
     }
 
@@ -130,15 +143,11 @@ public class SocketService {
                 .toList();
     }
 
-    public void sendAnswer(SocketIOClient senderClient, OfferAndAnswerDto offerAndAnswerDto, String room) {
-        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, room)) {
-            client.sendEvent("getAnswer", offerAndAnswerDto);
+    public void joinedRTC(SocketIOClient senderClient, Message message) {
+        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, message.getRoom())) {
+            log.info("joinedRTC발송");
+            client.sendEvent("joinedRTC", "상대방이 접속했습니다.");
         }
     }
 
-    public void sendOffer(SocketIOClient senderClient, OfferAndAnswerDto offerAndAnswerDto, String room) {
-        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, room)) {
-            client.sendEvent("getOffer", offerAndAnswerDto);
-        }
-    }
 }

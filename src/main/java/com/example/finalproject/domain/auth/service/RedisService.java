@@ -29,6 +29,7 @@ public class RedisService {
         UserRoleEnum role = user.getRole();
 
         String accessToken = jwtUtil.createAccessToken(email, nickname, role);
+        log.info("expired test2");
         response.addHeader(JwtUtil.ACCESS_TOKEN, accessToken);
 
         // 중복 로그인 가능한 계정 수를 제한시키기
@@ -36,7 +37,7 @@ public class RedisService {
             log.info("접속수 제한 초과");
             deleteOldRefreshToken(nickname);
         }
-
+        log.info("333");
         String newRefreshToken = jwtUtil.createRefreshToken(email, nickname, role);
         response.addHeader(JwtUtil.REFRESH_TOKEN, newRefreshToken);
         // redis에 저장
@@ -83,6 +84,7 @@ public class RedisService {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         int count = 0;
 // Redis에서 key를 찾기 위해 모든 키를 순회합니다.
+        // 확인해보기이이이이잉
         Set<String> keys = redisTemplate.keys("*");
         for (String key : keys) {
             String refreshToken = key.substring(7);

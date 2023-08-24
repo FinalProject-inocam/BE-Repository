@@ -21,11 +21,10 @@ public class CandidateDto {
     private String tcpType;
     private String type;
     private String usernameFragment;
-    // 룸을 추가로 어떻게 받지...?
-    private String room;
+
 
     @Builder
-    public CandidateDto(String address, String candidate, String component, String foundation, String port, String priority, String protocol, String relatedAddress, String relatedPort, Long sdpMLineIndex, String sdpMid, String tcpType, String type, String usernameFragment, String room) {
+    public CandidateDto(String address, String candidate, String component, String foundation, String port, String priority, String protocol, String relatedAddress, String relatedPort, Long sdpMLineIndex, String sdpMid, String tcpType, String type, String usernameFragment) {
         this.address = address;
         this.candidate = candidate;
         this.component = component;
@@ -40,7 +39,5 @@ public class CandidateDto {
         this.tcpType = tcpType;
         this.type = type;
         this.usernameFragment = usernameFragment;
-        // 룸을 추가로 어떻게 받지이...?
-        this.room = room;
     }
 }
