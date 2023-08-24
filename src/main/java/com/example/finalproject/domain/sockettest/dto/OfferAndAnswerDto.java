@@ -9,10 +9,14 @@ import lombok.NoArgsConstructor;
 public class OfferAndAnswerDto {
     private String type;
     private String sdp;
+    // room
+    private String room;
 
     @Builder
-    public OfferAndAnswerDto(String type, String sdp) {
+    public OfferAndAnswerDto(String type, String sdp, String room) {
         this.type = type;
         this.sdp = sdp;
+        // room
+        this.room = room;
     }
 }
