@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SocketIOConfig {
 
-    @Value("${socket-server.host}")
-    private String host;
+    @Value("${socket-client.origin}")
+    private String origin;
 
     @Value("${socket-server.port}")
     private Integer port;
@@ -19,7 +19,7 @@ public class SocketIOConfig {
         com.corundumstudio.socketio.Configuration config = new com.corundumstudio.socketio.Configuration();
 //        config.setHostname(host);
         config.setPort(port);
-        config.setOrigin("http://localhost:3000");
+        config.setOrigin(origin);
         //  config.setContext("/socket.io");
         return new SocketIOServer(config);
     }
