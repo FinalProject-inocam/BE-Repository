@@ -130,9 +130,10 @@ public class QUserRepository {
         Map<String, Long> resultMap = new HashMap<>();
         Map<String, Integer> ratioMap = new HashMap<>();
 
-        for (int i = 10; i < 70; i += 10) {
+        for (int i = 20; i < 70; i += 10) {
             resultMap.put(Integer.toString(i), 0l);
         }
+        resultMap.put("10-", 0l);
         resultMap.put("70+", 0l);
         resultMap.put("unknown", 0l);
 
@@ -153,6 +154,11 @@ public class QUserRepository {
             if (age > 60) {
                 Long value = resultMap.get("70+");
                 resultMap.put("70+", value + 1);
+                continue;
+            }
+            if (age < 20) {
+                Long value = resultMap.get("10-");
+                resultMap.put("10-", value + 1);
                 continue;
             }
             String ageToString = Integer.toString(age);
