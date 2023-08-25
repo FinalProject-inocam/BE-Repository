@@ -50,7 +50,7 @@ public class PurchasesService {
             PurchasesResponseDto purchasesResponseDto = new PurchasesResponseDto(purchase);
             purchasesResponseDtoList.add(purchasesResponseDto);
         }
-        return new PageResponse(purchasesResponseDtoList, pageable, purchasesPage.getTotalElements());
+        return new PageResponse<>(purchasesResponseDtoList, pageable, purchasesPage.getTotalElements());
     }
 
     // 차량 출고 신청

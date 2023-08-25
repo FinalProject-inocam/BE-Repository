@@ -10,12 +10,13 @@ public class ReviewStarResponseDto {
     private Long three;
     private Long four;
     private Long five;
-    public ReviewStarResponseDto(int[] countStar){
-        this.zero=Long.valueOf(countStar[0]);
-        this.one=Long.valueOf(countStar[1]);
-        this.two=Long.valueOf(countStar[2]);
-        this.three=Long.valueOf(countStar[3]);
-        this.four=Long.valueOf(countStar[4]);
-        this.five=Long.valueOf(countStar[5]);
+
+    public ReviewStarResponseDto(int[] countStar) {
+        this.zero = Long.valueOf(countStar[0]);
+        this.one = Long.valueOf(countStar[1]);
+        this.two = Long.valueOf(countStar[2]);
+        this.three = Long.valueOf(countStar[3]);
+        this.four = Long.valueOf(countStar[4]);
+        this.five = Long.valueOf(countStar[5]);
     }
 }

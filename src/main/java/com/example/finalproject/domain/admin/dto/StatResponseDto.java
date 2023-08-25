@@ -6,7 +6,4 @@ import java.util.Map;
 public class StatResponseDto {
     private Map<String, List<Integer>> total;
     private Map<String, List<Integer>> model1;
-
-
-
 }

@@ -33,7 +33,6 @@ public class UserDetailsImpl implements UserDetails {
     }
 
 
-
     public String getNickname() {
         return user.getNickname();
     }

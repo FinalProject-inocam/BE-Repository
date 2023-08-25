@@ -15,8 +15,9 @@ import java.util.List;
 @RequestMapping("/api")
 public class CarController {
     private final CarService carService;
+
     @PostMapping("/car")
-    public void car(){
+    public void car() {
         carService.create();
     }
 

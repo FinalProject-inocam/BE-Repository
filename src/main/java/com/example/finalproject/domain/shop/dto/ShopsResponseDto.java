@@ -18,7 +18,7 @@ public class ShopsResponseDto {
         this.size = jsonObject.getJSONObject("body").getInt("numOfRows");
         this.page = jsonObject.getJSONObject("body").getInt("pageNo");
         this.totalCount = jsonObject.getJSONObject("body").getInt("totalCount");
-        this.totalPages = (int) Math.ceil((double) totalCount/size);
+        this.totalPages = (int) Math.ceil((double) totalCount / size);
         //각 shop에 대해서 받아온 값
         this.shopList = shopList;
     }
