@@ -55,16 +55,6 @@ public class GlobalExceptionHandler {
         log.info("존재하지 않는 메일 : " + e.getMessage());
         return ResponseUtils.error(e.getErrorCode());
     }
-//     // request 입력시 올바르지 않은 값일 경우 (valid 관련)
-//     @ExceptionHandler(MethodArgumentNotValidException.class)
-//     public ApiResponse<?> handleException(MethodArgumentNotValidException e){
-//         StringBuilder sb = new StringBuilder();
-//         e.getFieldErrors().forEach((ex) -> {
-//             sb.append(ex.getDefaultMessage()).append("/");
-//         });
-//         sb.setLength(sb.length() - 1);
-//         return ResponseUtils.error(HttpStatus.BAD_REQUEST, sb.toString());
-//     }
 
     // 권한 요청이 잘못들어왔을 경우(게시글의 생성은 host만)
     @ExceptionHandler(AccessDeniedException.class)
@@ -74,22 +64,10 @@ public class GlobalExceptionHandler {
         return ResponseUtils.error(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
-//    @ExceptionHandler(PostsNotFoundException.class)
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    public ApiResponse<?> handleNewsNotFoundException(PostsNotFoundException e) {
-//        log.info(e.getMessage());
-//        return ResponseUtils.error(e.getErrorCode());
-//    }
-
     // valid를 만족하지 못했을때
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<?> validationExceptionHandler(MethodArgumentNotValidException e) {
-//        Map<String, String> errors = new LinkedHashMap<>();
-//        e.getBindingResult().getFieldErrors()
-//                .forEach(error -> errors.put(
-//                        error.getField(), error.getDefaultMessage()
-//                ));
         String error = e.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
         log.error("valid를 만족하지 못했을때 : " + error);
         return ResponseUtils.error(HttpStatus.BAD_REQUEST, error);

@@ -8,7 +8,7 @@ import com.example.finalproject.domain.auth.service.UserService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
-import com.example.finalproject.global.utils.ValidationSequence;
+import com.example.finalproject.global.validation.ValidationSequence;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

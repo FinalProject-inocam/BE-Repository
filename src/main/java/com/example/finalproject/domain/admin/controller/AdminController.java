@@ -41,13 +41,6 @@ public class AdminController {
     }
     /*---------------------------------------------------------------------------------------------------*/
 
-//    @GetMapping("/stats/purchases/chart")
-//    public ApiResponse<?> getStatTest(@RequestParam String cal,
-//                                      @RequestParam String term) {
-//        Map<String, Object> statMap = adminService.checkStat(cal, term);
-//        return ResponseUtils.ok(statMap);
-//    }
-
     @GetMapping("/stats/purchases/years")
     public ApiResponse<?> getStatYears(@RequestParam String startCal,
                                        @RequestParam String endCal) {
@@ -73,7 +66,7 @@ public class AdminController {
         return ResponseUtils.ok(statMap);
     }
 
-    /*----------------------*/
+    /*----------------------------------------------------------------------------*/
     @GetMapping("/stats/users/year")
     public ApiResponse<?> getUserYear(@RequestParam String cal) {
         Map<String, Object> statMap = adminService.userStat(cal);

@@ -1,6 +1,5 @@
 package com.example.finalproject.domain.shop.controller;
 
-import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
@@ -9,7 +8,7 @@ import com.example.finalproject.domain.shop.service.ReviewService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
-import com.example.finalproject.global.utils.ValidationSequence;
+import com.example.finalproject.global.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +39,7 @@ public class ReviewController {
                                        @RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                        @RequestPart(value = "data") @Validated(ValidationSequence.class) ReviewRequestDto requestDto,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = reviewService.createReview(shopId, multipartFile, requestDto, userDetails.getUser());
+        SuccessCode successCode = reviewService.createReview(shopId, multipartFile, requestDto, userDetails);
         return ResponseUtils.ok(successCode);
     }
 
@@ -50,7 +49,7 @@ public class ReviewController {
                                        @RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                        @RequestPart(value = "data") @Validated(ValidationSequence.class) ReviewRequestDto requestDto,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = reviewService.updateReview(shopId, multipartFile, reviewId, requestDto, userDetails.getUser());
+        SuccessCode successCode = reviewService.updateReview(shopId, multipartFile, reviewId, requestDto, userDetails);
         return ResponseUtils.ok(successCode);
     }
 
@@ -58,7 +57,7 @@ public class ReviewController {
     public ApiResponse<?> deleteReview(@PathVariable String shopId,
                                        @PathVariable Long reviewId,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = reviewService.deleteReview(shopId, reviewId, userDetails.getUser());
+        SuccessCode successCode = reviewService.deleteReview(shopId, reviewId, userDetails);
         return ResponseUtils.ok(successCode);
     }
 
@@ -70,18 +69,10 @@ public class ReviewController {
     }
 
     @PatchMapping("/{reviewId}/like")
-    public ApiResponse<?> getlike(@PathVariable String shopId, @PathVariable Long reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = reviewService.getlike(shopId, reviewId, userDetails.getUser());
+    public ApiResponse<?> getlike(@PathVariable String shopId,
+                                  @PathVariable Long reviewId,
+                                  @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        SuccessCode successCode = reviewService.getlike(shopId, reviewId, userDetails);
         return ResponseUtils.ok(successCode);
-    }
-
-    private User checkGuest(UserDetailsImpl userDetails) {
-        User user = null;
-        try {
-            user = userDetails.getUser();
-        } catch (NullPointerException e) {
-            log.info("게스트 사용자 입니다.");
-        }
-        return user;
     }
 }

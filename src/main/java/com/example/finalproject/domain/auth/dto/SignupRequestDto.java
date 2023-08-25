@@ -1,7 +1,7 @@
 package com.example.finalproject.domain.auth.dto;
 
-import com.example.finalproject.global.utils.ValidationGroups.NotBlankGroup;
-import com.example.finalproject.global.utils.ValidationGroups.PatternGroup;
+import com.example.finalproject.global.validation.ValidationGroups.NotBlankGroup;
+import com.example.finalproject.global.validation.ValidationGroups.PatternGroup;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;

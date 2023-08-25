@@ -1,4 +1,4 @@
-package com.example.finalproject.global.utils;
+package com.example.finalproject.global.validation;
 
 public class ValidationGroups {
     public interface NotBlankGroup {}
@@ -15,6 +15,6 @@ public class ValidationGroups {
 
     public interface PastGroup {}
 
-    public interface ChaeckCaseGroup {}
+    public interface BirthYearLimitGroup {}
 }
 

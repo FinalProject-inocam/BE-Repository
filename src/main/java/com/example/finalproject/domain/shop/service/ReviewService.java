@@ -18,6 +18,7 @@ import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.PageResponse;
+import com.example.finalproject.global.utils.GuestUtil;
 import com.example.finalproject.global.utils.ResponseUtils;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,15 +49,18 @@ public class ReviewService {
     private final S3Utils s3Utils;
     private final ReviewImageRepository reviewImageRepository;
     private final ReviewLikeRepository reviewLikeRepository;
+    private final GuestUtil guestUtil;
 
     @Transactional
-    public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile, ReviewRequestDto requestDto, User user) {
+    public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile,
+                                    ReviewRequestDto requestDto, UserDetailsImpl userDetails) {
         // image 등록 4개 제한
         if (multipartFile != null && multipartFile.size() > 4) {
             throw new ReviewImageLimitException(ErrorCode.LIMIT_MAX_IMAGE);
         }
         // shopId가 있는지 확인
-        shopService.getSelectedShop(shopId, user);
+        shopService.getSelectedShop(shopId, userDetails);
+        User user = guestUtil.checkGuest(userDetails);
         Review review = new Review(requestDto, shopId, user);
         // image가 없을 때 빈 url생성 방지
         if (s3Utils.isFile(multipartFile)) {
@@ -67,9 +72,11 @@ public class ReviewService {
 
     // 나중에 custom exception을 쓰게 되면 throw 문 지울것
     @Transactional
-    public SuccessCode updateReview(String shopId, List<MultipartFile> multipartFile, Long reviewId, ReviewRequestDto requestDto, User user) {
+    public SuccessCode updateReview(String shopId, List<MultipartFile> multipartFile,
+                                    Long reviewId, ReviewRequestDto requestDto, UserDetailsImpl userDetails) {
         // shopId가 있는지 확인
-        shopService.getSelectedShop(shopId, user);
+        shopService.getSelectedShop(shopId, userDetails);
+        User user = guestUtil.checkGuest(userDetails);
         Review review = findReview(reviewId);
         checkAuthority(review, user);
         review.update(requestDto);
@@ -81,9 +88,10 @@ public class ReviewService {
         return SuccessCode.COMMENT_UPDATE_SUCCESS;
     }
 
-    public SuccessCode deleteReview(String shopId, Long reviewId, User user) {
+    public SuccessCode deleteReview(String shopId, Long reviewId, UserDetailsImpl userDetails) {
         // shopId가 있는지 확인
-        shopService.getSelectedShop(shopId, user);
+        shopService.getSelectedShop(shopId, userDetails);
+        User user = guestUtil.checkGuest(userDetails);
         Review review = findReview(reviewId);
         checkAuthority(review, user);
         deleteImg(review);
@@ -103,7 +111,8 @@ public class ReviewService {
     }
 
     @Transactional
-    public SuccessCode getlike(String shopId, Long reviewId, User user) {
+    public SuccessCode getlike(String shopId, Long reviewId, UserDetailsImpl userDetails) {
+        User user = guestUtil.checkGuest(userDetails);
         Review review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );

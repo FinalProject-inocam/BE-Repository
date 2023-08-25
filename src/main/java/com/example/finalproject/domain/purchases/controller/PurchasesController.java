@@ -9,7 +9,7 @@ import com.example.finalproject.domain.purchases.service.PurchasesService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
-import com.example.finalproject.global.utils.ValidationSequence;
+import com.example.finalproject.global.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

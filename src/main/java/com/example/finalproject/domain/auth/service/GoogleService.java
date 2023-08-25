@@ -4,15 +4,12 @@ import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
-import com.example.finalproject.global.utils.JwtProvider;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,8 +28,6 @@ import static com.example.finalproject.global.enums.SuccessCode.USER_LOGIN_SUCCE
 @RequiredArgsConstructor
 public class GoogleService {
     private final UserRepository userRepository;
-    private final Environment env;
-    private final JwtProvider jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final RedisService redisService;
 
@@ -94,6 +89,7 @@ public class GoogleService {
         HttpEntity entity = new HttpEntity(headers);
         return restTemplate.exchange(resourceUri, HttpMethod.GET, entity, JsonNode.class).getBody();
     }
+
     private User registerGoogleUserIfNeeded(JsonNode userResourceNode) {
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
@@ -115,15 +111,14 @@ public class GoogleService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
-                String name=nickname;
-                int num=1;
-                while(true){
-                    if(userRepository.existsByNickname(name)){
-                        name=nickname+String.valueOf(num);
+                String name = nickname;
+                int num = 1;
+                while (true) {
+                    if (userRepository.existsByNickname(name)) {
+                        name = nickname + String.valueOf(num);
                         num++;
-                    }
-                    else{
-                     break;
+                    } else {
+                        break;
                     }
                 }
                 googleUser = new User(googleId, email, name, encodedPassword, UserRoleEnum.USER);

@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.shop.controller;
 
+import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
 import com.example.finalproject.domain.shop.dto.ShopsResponseDto;
@@ -26,7 +27,7 @@ public class ShopController {
     public ApiResponse<?> getShops(String longitude, String latitude,
                                    Integer page, Integer size,
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        ShopsResponseDto shopsResponseDtos = shopService.getShopList(longitude, latitude, userDetails.getUser(), page, size);
+        ShopsResponseDto shopsResponseDtos = shopService.getShopList(longitude, latitude, userDetails, page, size);
         return ResponseUtils.pageOk(shopsResponseDtos.getSize(), shopsResponseDtos.getPage(),
                 shopsResponseDtos.getTotalCount(), shopsResponseDtos.getTotalPages(), shopsResponseDtos.getShopList());
     }
@@ -39,14 +40,14 @@ public class ShopController {
     @GetMapping("/{shopId}")
     public ApiResponse<?> getSelectedShop(@PathVariable String shopId,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        ShopOneResponseDto shopOneResponseDto = shopService.getSelectedShop(shopId, userDetails.getUser());
+        ShopOneResponseDto shopOneResponseDto = shopService.getSelectedShop(shopId, userDetails);
         return ResponseUtils.ok(shopOneResponseDto);
     }
 
     @PatchMapping("/{shopId}")
     public ApiResponse<?> likeShop(@PathVariable String shopId,
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = shopService.likeShop(shopId, userDetails.getUser());
+        SuccessCode successCode = shopService.likeShop(shopId, userDetails);
         return ResponseUtils.ok(successCode);
     }
 }
