@@ -23,9 +23,9 @@ public class ReviewLike {
     @JoinColumn(name = "user_Id", nullable = false)
     private User user;
 
-    public ReviewLike(User user,Long reviewId,String shopId){
-        this.reviewId=reviewId;
-        this.user=user;
-        this.shopId=shopId;
+    public ReviewLike(User user, Long reviewId, String shopId) {
+        this.reviewId = reviewId;
+        this.user = user;
+        this.shopId = shopId;
     }
 }

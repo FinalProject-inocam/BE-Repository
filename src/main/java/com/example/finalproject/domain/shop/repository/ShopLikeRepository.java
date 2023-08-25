@@ -9,5 +9,6 @@ import java.util.Optional;
 
 public interface ShopLikeRepository extends JpaRepository<ShopLike, Long> {
     List<ShopLike> findAllByShopId(String shopId);
+
     Optional<ShopLike> findByShopIdAndUser(String shopId, User user);
 }

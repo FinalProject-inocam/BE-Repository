@@ -1,6 +1,9 @@
 package com.example.finalproject.domain.shop.dto;
 
-import com.example.finalproject.global.utils.ValidationGroups.*;
+import com.example.finalproject.global.utils.ValidationGroups.MaxGroup;
+import com.example.finalproject.global.utils.ValidationGroups.MinGroup;
+import com.example.finalproject.global.utils.ValidationGroups.NotBlankGroup;
+import com.example.finalproject.global.utils.ValidationGroups.NotNullGroup;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

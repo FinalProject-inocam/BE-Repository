@@ -1,13 +1,8 @@
 package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
-import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.post.dto.PostAllResponseDto;
-import com.example.finalproject.domain.post.entity.Post;
-import com.example.finalproject.domain.post.entity.PostLike;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
-import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.dto.ReviewResponseDto;
 import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
@@ -29,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +32,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_CLIENT;
 import static com.example.finalproject.global.enums.ErrorCode.NOT_FOUND_DATA;
 import static com.example.finalproject.global.enums.SuccessCode.LIKE_CANCEL;
 import static com.example.finalproject.global.enums.SuccessCode.LIKE_SUCCESS;
@@ -51,7 +44,6 @@ public class ReviewService {
     private final ShopService shopService;
     private final S3Utils s3Utils;
     private final ReviewImageRepository reviewImageRepository;
-    private final UserRepository userRepository;
     private final ReviewLikeRepository reviewLikeRepository;
 
     @Transactional
@@ -126,7 +118,6 @@ public class ReviewService {
         }
     }
 
-
     public ReviewStarResponseDto getStar(String shopId) {
         List<Review> reivewList = reviewRepository.findAllByShopId(shopId);
         int[] countStar = new int[6];
@@ -175,9 +166,9 @@ public class ReviewService {
         }
     }
 
-    public ReviewpageResponseDto reviewList(int size, int page, UserDetailsImpl userDetails,String shopId) {
+    public ReviewpageResponseDto reviewList(int size, int page, UserDetailsImpl userDetails, String shopId) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Review> reviewPage = reviewRepository.findByShopIdUsingQuery(shopId,pageable);
+        Page<Review> reviewPage = reviewRepository.findByShopIdUsingQuery(shopId, pageable);
 
         List<ReviewResponseDto> reviewList = new ArrayList<>();
         long total = reviewPage.getTotalElements();
@@ -185,10 +176,10 @@ public class ReviewService {
         for (Review review : reviewPage) {
             Boolean is_like = getaBoolean(userDetails, review);
             Long like_count = reviewLikeRepository.countByReviewId(review.getId());
-            ReviewResponseDto reviewResponseDto = new ReviewResponseDto(review,like_count, is_like);
+            ReviewResponseDto reviewResponseDto = new ReviewResponseDto(review, like_count, is_like);
             reviewList.add(reviewResponseDto);
         }
-        PageResponse pageResponse= new PageResponse<>(reviewList, pageable, total);
+        PageResponse pageResponse = new PageResponse<>(reviewList, pageable, total);
         return new ReviewpageResponseDto(pageResponse);
 //        return new PageResponse<>(reviewList, pageable, total);
     }
