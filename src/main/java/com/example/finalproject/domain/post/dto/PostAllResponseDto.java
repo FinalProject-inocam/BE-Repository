@@ -12,6 +12,7 @@ public class PostAllResponseDto {
     Boolean isLike;
     Long likeCount;
     Long commentCount;
+
     public PostAllResponseDto(Post post, Long comment_count, Long like_count, Boolean is_like) {
         this.content = post.getContent();
         this.title = post.getTitle();
