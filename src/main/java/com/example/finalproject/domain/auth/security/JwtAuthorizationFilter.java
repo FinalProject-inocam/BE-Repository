@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,28 +31,29 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String accessTokenValueFromHeader = jwtUtil.getAccessTokenFromHeader(req);
         String refreshTokenValueFromHeader = jwtUtil.getRefreshTokenFromHeader(req);
         if (StringUtils.hasText(accessTokenValueFromHeader) || StringUtils.hasText(refreshTokenValueFromHeader)) {
-            String accessTokenValue = "";
-            if (jwtUtil.validateAccessToken(accessTokenValueFromHeader)) {
-                log.info("가지고 있던 accessToken이 유효함");
-                accessTokenValue = accessTokenValueFromHeader;
-            } else {
-                log.info("가지고 있던 accessToken이 유효하지 않음");
-                String newAccessToken = jwtUtil.validateTokens(req, res);
-                accessTokenValue = jwtUtil.substringToken(newAccessToken);
-                log.info("accessTokenValue = " + accessTokenValue);
-                String newRefreshToken = jwtUtil.getRefreshTokenFromHeader(req);
-
-                redisService.setRefreshToken(new RefreshToken(newRefreshToken, newAccessToken));
-            }
-
-            Claims info = jwtUtil.getUserInfoFromToken(accessTokenValue);
-
             try {
+                String accessTokenValue = "";
+                if (jwtUtil.validateAccessToken(accessTokenValueFromHeader)) {
+                    log.info("가지고 있던 accessToken이 유효함");
+                    accessTokenValue = accessTokenValueFromHeader;
+                } else {
+                    log.info("가지고 있던 accessToken이 유효하지 않음");
+                    String newAccessToken = jwtUtil.validateTokens(req, res);
+                    accessTokenValue = jwtUtil.substringToken(newAccessToken);
+                    log.info("accessTokenValue = " + accessTokenValue);
+                    String newRefreshToken = jwtUtil.getRefreshTokenFromHeader(req);
+
+                    redisService.setRefreshToken(new RefreshToken(newRefreshToken, newAccessToken));
+                }
+
+                Claims info = jwtUtil.getUserInfoFromToken(accessTokenValue);
+
+
                 setAuthentication(info.get("email", String.class));
                 // 만일 토큰에 넣어주는 방식을 바꾸게 될경우 여기를 수정
             } catch (Exception e) {
                 log.error(e.getMessage());
-                throw new AuthorizationServiceException(e.getMessage());
+//                throw new AuthorizationServiceException(e.getMessage());
                 // 여기서 걸릴만한 exception이... UsernameNotFoundException 밖에 안보이는데... 이거라도 잡으려면 해야하나...?
             }
         }

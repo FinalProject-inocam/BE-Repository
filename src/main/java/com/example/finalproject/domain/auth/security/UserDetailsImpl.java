@@ -2,6 +2,7 @@ package com.example.finalproject.domain.auth.security;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.global.enums.UserRoleEnum;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Slf4j
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;

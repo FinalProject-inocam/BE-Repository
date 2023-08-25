@@ -37,7 +37,6 @@ public class RedisService {
             log.info("접속수 제한 초과");
             deleteOldRefreshToken(nickname);
         }
-        log.info("333");
         String newRefreshToken = jwtUtil.createRefreshToken(email, nickname, role);
         response.addHeader(JwtUtil.REFRESH_TOKEN, newRefreshToken);
         // redis에 저장
@@ -47,13 +46,13 @@ public class RedisService {
     @Transactional
     public void setRefreshToken(RefreshToken refreshToken) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        Duration expireDuration = Duration.ofSeconds(jwtUtil.REFRESH_TOKEN_TIME);
+        Duration expireDuration = Duration.ofSeconds(jwtUtil.REFRESH_TOKEN_TIME / 1000);
         values.set(refreshToken.getRefreshToken(), String.valueOf(refreshToken.getAccessToken()), expireDuration);
     }
 
     public void deleteOldRefreshToken(String nickname) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        Set<String> keys = redisTemplate.keys("*");
+        Set<String> keys = redisTemplate.keys("^Bearer\\s.+");
         for (String key : keys) {
             String refreshToken = key.substring(7);
             Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
@@ -68,7 +67,7 @@ public class RedisService {
 
     public void deleteAllRefreshToken(String nickname) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
-        Set<String> keys = redisTemplate.keys("*");
+        Set<String> keys = redisTemplate.keys("^Bearer\\s.+");
         for (String key : keys) {
             String refreshToken = key.substring(7);
             Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
@@ -84,7 +83,7 @@ public class RedisService {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         int count = 0;
         // Redis에서 key를 찾기 위해 모든 키를 순회합니다.
-        Set<String> keys = redisTemplate.keys("*");
+        Set<String> keys = redisTemplate.keys("^Bearer\\s.+");
         for (String key : keys) {
             String refreshToken = key.substring(7);
             log.info("expired test1");
