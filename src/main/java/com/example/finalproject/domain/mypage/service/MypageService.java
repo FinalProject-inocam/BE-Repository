@@ -57,7 +57,7 @@ public class MypageService {
         return SuccessCode.MYPAGE_UPDATE_SUCCESS;
     }
 
-    public ApiResponse<MypageResDto> getMypage(User user) {
-        return ok(new MypageResDto(user));
+    public MypageResDto getMypage(User user) {
+        return new MypageResDto(user);
     }
 }
