@@ -2,7 +2,10 @@ package com.example.finalproject.domain.sockettest.socket;
 
 import com.corundumstudio.socketio.SocketIOClient;
 import com.example.finalproject.domain.sockettest.constants.Constants;
-import com.example.finalproject.domain.sockettest.dto.*;
+import com.example.finalproject.domain.sockettest.dto.AnswerRoomDto;
+import com.example.finalproject.domain.sockettest.dto.CandidateRoomDto;
+import com.example.finalproject.domain.sockettest.dto.OfferRoomDto;
+import com.example.finalproject.domain.sockettest.dto.RoomResponseDto;
 import com.example.finalproject.domain.sockettest.model.Message;
 import com.example.finalproject.domain.sockettest.service.MessageService;
 import com.example.finalproject.domain.sockettest.service.RoomService;
@@ -76,7 +79,7 @@ public class SocketService {
 
     public void checkRoom(String room) {
         log.info("room 존재 여부 확인");
-        if(!roomService.isRoom(room)) {
+        if (!roomService.isRoom(room)) {
             log.info("새로운 방 생성");
             roomService.createRoom(room);
         } else {
@@ -109,28 +112,34 @@ public class SocketService {
 
     public void sendLeaveMessage(SocketIOClient senderClient, Message message) {
         for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, message.getRoom())) {
-                client.sendEvent("peerOut", message);
+            client.sendEvent("peerOut", message);
         }
     }
 
     public void sendCandidate(SocketIOClient senderClient, CandidateRoomDto candidateRoomDto) {
         for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, candidateRoomDto.getRoom())) {
             log.info("candidate check : " + candidateRoomDto.toString());
-            client.sendEvent("getCandidate", candidateRoomDto.getCandidate());
+            if (candidateRoomDto.getCandidate() != null) {
+                client.sendEvent("getCandidate", candidateRoomDto.getCandidate());
+            }
         }
     }
 
     public void sendAnswer(SocketIOClient senderClient, AnswerRoomDto answerRoomDto) {
         for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, answerRoomDto.getRoom())) {
             log.info("send check : " + answerRoomDto.toString());
-            client.sendEvent("getAnswer", answerRoomDto.getAnswer());
+            if (answerRoomDto.getAnswer() != null) {
+                client.sendEvent("getAnswer", answerRoomDto.getAnswer());
+            }
         }
     }
 
     public void sendOffer(SocketIOClient senderClient, OfferRoomDto offerRoomDto) {
         for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, offerRoomDto.getRoom())) {
             log.info("offer check : " + offerRoomDto.toString());
-            client.sendEvent("getOffer", offerRoomDto.getOffer());
+            if (offerRoomDto.getOffer() != null) {
+                client.sendEvent("getOffer", offerRoomDto.getOffer());
+            }
         }
     }
 

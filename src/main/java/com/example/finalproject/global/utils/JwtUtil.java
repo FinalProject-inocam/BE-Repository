@@ -63,7 +63,6 @@ public class JwtUtil {
 
     public String createAccessToken(String email, String nickname, UserRoleEnum role) {
         Date date = new Date();
-        log.info("expired test");
 
         return BEARER_PREFIX +
                 Jwts.builder()

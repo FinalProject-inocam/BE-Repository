@@ -29,7 +29,7 @@ public class RedisService {
         UserRoleEnum role = user.getRole();
 
         String accessToken = jwtUtil.createAccessToken(email, nickname, role);
-        log.info("expired test2");
+        log.info("expired error : " + accessToken);
         response.addHeader(JwtUtil.ACCESS_TOKEN, accessToken);
 
         // 중복 로그인 가능한 계정 수를 제한시키기
@@ -83,12 +83,13 @@ public class RedisService {
     public Boolean limitAccess(String nickname) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         int count = 0;
-// Redis에서 key를 찾기 위해 모든 키를 순회합니다.
-        // 확인해보기이이이이잉
+        // Redis에서 key를 찾기 위해 모든 키를 순회합니다.
         Set<String> keys = redisTemplate.keys("*");
         for (String key : keys) {
             String refreshToken = key.substring(7);
+            log.info("expired test1");
             Claims info = jwtUtil.getUserInfoFromToken(refreshToken);
+            log.info("expired test2");
             String usernameFromRefreshToken = info.get("nickname", String.class);
             if (usernameFromRefreshToken.equals(nickname)) {
                 count++;
