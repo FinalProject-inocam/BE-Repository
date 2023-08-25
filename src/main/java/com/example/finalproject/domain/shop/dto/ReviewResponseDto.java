@@ -1,7 +1,6 @@
 package com.example.finalproject.domain.shop.dto;
 
 import com.example.finalproject.domain.auth.entity.User;
-import com.example.finalproject.domain.post.entity.Image;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.ReviewLike;
@@ -22,12 +21,13 @@ public class ReviewResponseDto {
     private LocalDateTime modifiedAt;
     private Boolean isLike;
     private Long likeCount;
+
     public ReviewResponseDto(Review review, User user) {
         this.reviewId = review.getId();
         this.nickname = review.getUser().getNickname();
         this.review = review.getReview();
         this.star = review.getStar();
-        this.revisit=review.getRevisit();
+        this.revisit = review.getRevisit();
         this.imageUrls = review.getImageUrls()
                 .stream()
                 .map(ReviewImage::getImage)
@@ -39,7 +39,8 @@ public class ReviewResponseDto {
                 .map(User::getUserId)
                 .anyMatch(userId -> userId.equals(user.getUserId()));
     }
-    public ReviewResponseDto(Review review,Long likeCount,Boolean isLike ) {
+
+    public ReviewResponseDto(Review review, Long likeCount, Boolean isLike) {
         this.reviewId = review.getId();
         this.nickname = review.getUser().getNickname();
         this.review = review.getReview();
@@ -49,9 +50,9 @@ public class ReviewResponseDto {
                 .stream()
                 .map(ReviewImage::getImage)
                 .toList();
-        this.createAt=review.getCreatedAt();
-        this.modifiedAt=review.getModifiedAt();
-        this.isLike=isLike;
-        this.likeCount=likeCount;
+        this.createAt = review.getCreatedAt();
+        this.modifiedAt = review.getModifiedAt();
+        this.isLike = isLike;
+        this.likeCount = likeCount;
     }
 }

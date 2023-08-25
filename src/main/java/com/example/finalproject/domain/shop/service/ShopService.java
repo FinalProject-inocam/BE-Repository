@@ -29,7 +29,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -46,12 +45,12 @@ public class ShopService {
 
     // RestTemplateBuilder의 build()를 사용하여 RestTemplate을 생성합니다.
     public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository,
-                       ShopLikeRepository shopLikeRepository, ReviewLikeRepository reviewLikeRepository,ShopRepository shopRepository) {
+                       ShopLikeRepository shopLikeRepository, ReviewLikeRepository reviewLikeRepository, ShopRepository shopRepository) {
         this.restTemplate = builder.build();
         this.reviewRepository = reviewRepository;
         this.shopLikeRepository = shopLikeRepository;
         this.reviewLikeRepository = reviewLikeRepository;
-        this.shopRepository=shopRepository;
+        this.shopRepository = shopRepository;
     }
 
     // openApi 사용시 필요한 servicekey
@@ -101,7 +100,6 @@ public class ShopService {
 
 //        return fromJSONtoShop(responseEntity.getBody(), user);
         return fromJSONtoShop(shopId, user);
-
     }
 
     public SuccessCode likeShop(String shopId, User user) {
@@ -148,7 +146,7 @@ public class ShopService {
 //                .getJSONArray("items")
 //                .getJSONObject(0);
 //        String shopId = itemToJsonObj.getString("bizesId");
-        Shop shop=shopRepository.findByShopId(shopId);
+        Shop shop = shopRepository.findByShopId(shopId);
         // 댓글 최신순
         CompletableFuture<List<Review>> reviewsFuture = CompletableFuture.supplyAsync(() -> {
             List<Review> reviews = reviewRepository.findAllByShopId(shopId);

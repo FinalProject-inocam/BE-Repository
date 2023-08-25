@@ -31,7 +31,7 @@ public class Post extends Timestamped {
     private String nickname;
 
     @OneToMany
-    @JoinColumn(name = "post_id") // users 테이블에 food_id 컬럼
+    @JoinColumn(name = "post_id")
     private List<Comments> commentList;
 
     @OneToMany

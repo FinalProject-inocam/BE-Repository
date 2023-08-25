@@ -29,9 +29,10 @@ public class ReviewController {
     public ApiResponse<?> reviewList(@RequestParam("page") int page,
                                      @RequestParam("size") int size,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                     @PathVariable String shopId){
-        return ResponseUtils.ok(reviewService.reviewList(size,page,userDetails,shopId));
+                                     @PathVariable String shopId) {
+        return ResponseUtils.ok(reviewService.reviewList(size, page, userDetails, shopId));
     }
+
     @PostMapping()
     public ApiResponse<?> createReview(@PathVariable String shopId,
                                        @RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
@@ -68,12 +69,12 @@ public class ReviewController {
 
 
     @GetMapping("/star")
-    public ApiResponse<?> getstar(@PathVariable String shopId){
+    public ApiResponse<?> getstar(@PathVariable String shopId) {
         return ResponseUtils.ok(reviewService.getStar(shopId));
     }
 
     @PatchMapping("/{reviewId}/like")
-    public ApiResponse<?> getstar(@PathVariable String shopId,@PathVariable Long reviewId,@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseUtils.ok(reviewService.getlike(shopId,reviewId,userDetails.getUser()));
+    public ApiResponse<?> getstar(@PathVariable String shopId, @PathVariable Long reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseUtils.ok(reviewService.getlike(shopId, reviewId, userDetails.getUser()));
     }
 }

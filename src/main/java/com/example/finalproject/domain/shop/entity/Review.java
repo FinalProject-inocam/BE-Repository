@@ -48,7 +48,7 @@ public class Review extends Timestamped {
         this.star = requestDto.getStar();
         this.user = user;
         this.shopId = shopId;
-        this.revisit=requestDto.getRevisit();
+        this.revisit = requestDto.getRevisit();
     }
 
     public void update(ReviewRequestDto requestDto) {
@@ -57,6 +57,6 @@ public class Review extends Timestamped {
     }
 
     public void updateRevisit(Boolean revisit) {
-        this.revisit=revisit;
+        this.revisit = revisit;
     }
 }

@@ -54,12 +54,6 @@ public class MypageService {
             throw new PurchasesNotFoundException(NO_AUTHORITY_TO_DATA);
         }
 
-//        String nickname = requestDto.getNickname();
-//        // 닉네임 중복확인
-//        if (checkEmail(nickname)) {
-//            log.error("닉네임 중복");
-//            throw new IllegalArgumentException("중복되는 닉네임이 있습니다.");
-//        }
         return SuccessCode.MYPAGE_UPDATE_SUCCESS;
     }
 

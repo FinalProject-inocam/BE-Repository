@@ -45,7 +45,7 @@ public class UserController {
 
     // 네이버 로그인
     @GetMapping("/login/naver")
-    //     https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=unQLi7LeZUDuiJZokZX7&state=STATE_STRING&redirect_uri=http://localhost:8080/api/auth/login/naver
+    // GET https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id={client_id}&state=STATE_STRING&redirect_uri={redirect_uri}
     public ApiResponse<?> naverLogin(@RequestParam String code, @RequestParam String state, HttpServletResponse response) throws JsonProcessingException {
         return naverService.naverLogin(code, state, response);
     }

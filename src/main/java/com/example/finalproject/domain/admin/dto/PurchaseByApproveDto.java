@@ -10,7 +10,7 @@ public class PurchaseByApproveDto {
     private List<Long> approve;
     private List<Long> cancel;
 
-    public PurchaseByApproveDto (List<Long> purchase, List<Long> approve, List<Long> cancel) {
+    public PurchaseByApproveDto(List<Long> purchase, List<Long> approve, List<Long> cancel) {
         this.purchase = purchase;
         this.approve = approve;
         this.cancel = cancel;

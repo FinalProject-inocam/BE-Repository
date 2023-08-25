@@ -19,24 +19,25 @@ public class AdminController {
 
 
     @GetMapping("/totalList")
-    public ApiResponse<?> totalList(){
+    public ApiResponse<?> totalList() {
         return ResponseUtils.ok(adminListService.totalList());
     }
 
     @GetMapping("/allList")
     public ApiResponse<?> allList(@RequestParam int page,
-                                  @RequestParam int size)
-    {
-    return ResponseUtils.ok(adminListService.allList(page,size));
+                                  @RequestParam int size) {
+        return ResponseUtils.ok(adminListService.allList(page, size));
     }
+
     @GetMapping("/purchases/{purchaseId}")
-    public ApiResponse<?> getone(@PathVariable(name = "purchaseId") Long purchaseId){
+    public ApiResponse<?> getone(@PathVariable(name = "purchaseId") Long purchaseId) {
         return ResponseUtils.ok(adminListService.getone(purchaseId));
     }
+
     @PatchMapping("/purchases/{purchaseId}")
     public ApiResponse<?> releaseDecide(@PathVariable(name = "purchaseId") Long purchaseId,
-                                        @RequestBody ReleaseDecidereqDto releaseDecidereqDto){
-        return ResponseUtils.ok(adminListService.releaseDecide(purchaseId,releaseDecidereqDto));
+                                        @RequestBody ReleaseDecidereqDto releaseDecidereqDto) {
+        return ResponseUtils.ok(adminListService.releaseDecide(purchaseId, releaseDecidereqDto));
     }
     /*---------------------------------------------------------------------------------------------------*/
 

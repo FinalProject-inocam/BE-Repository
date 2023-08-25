@@ -1,12 +1,10 @@
 package com.example.finalproject.domain.auth.security;
 
 import com.example.finalproject.domain.auth.dto.LoginRequestDto;
-import com.example.finalproject.domain.auth.entity.RefreshToken;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.service.RedisService;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
-import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.utils.JwtUtil;
 import com.example.finalproject.global.utils.ResponseUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;

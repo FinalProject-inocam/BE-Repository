@@ -18,7 +18,7 @@ public class Car {
     private Long price;
 
     public Car(String type, String i) {
-        this.type=type;
-        this.price=Long.parseLong(i);
+        this.type = type;
+        this.price = Long.parseLong(i);
     }
 }

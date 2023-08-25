@@ -20,7 +20,7 @@ public class ShopDto {
     private Integer likeCount;
     private Double avgStar;
 
-    public ShopDto (JSONObject itemJson, List<Review> reviews, List<ShopLike> shopLikes, User user) {
+    public ShopDto(JSONObject itemJson, List<Review> reviews, List<ShopLike> shopLikes, User user) {
         this.shopId = itemJson.getString("bizesId");
         this.shopName = itemJson.getString("bizesNm");
         this.lnoAdr = itemJson.getString("lnoAdr");
