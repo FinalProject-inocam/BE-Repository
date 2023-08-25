@@ -11,6 +11,7 @@ import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import com.example.finalproject.domain.shop.dto.ReviewResponseDto;
 import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
+import com.example.finalproject.domain.shop.dto.ReviewpageResponseDto;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.ReviewLike;
@@ -174,7 +175,7 @@ public class ReviewService {
         }
     }
 
-    public Page<ReviewResponseDto> reviewList(int size, int page, UserDetailsImpl userDetails,String shopId) {
+    public ReviewpageResponseDto reviewList(int size, int page, UserDetailsImpl userDetails,String shopId) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Review> reviewPage = reviewRepository.findByShopIdUsingQuery(shopId,pageable);
 
@@ -187,7 +188,9 @@ public class ReviewService {
             ReviewResponseDto reviewResponseDto = new ReviewResponseDto(review,like_count, is_like);
             reviewList.add(reviewResponseDto);
         }
-        return new PageResponse<>(reviewList, pageable, total);
+        PageResponse pageResponse= new PageResponse<>(reviewList, pageable, total);
+        return new ReviewpageResponseDto(pageResponse);
+//        return new PageResponse<>(reviewList, pageable, total);
     }
 
     private Boolean getaBoolean(UserDetailsImpl userDetails, Review review) {

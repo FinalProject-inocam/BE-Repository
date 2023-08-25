@@ -40,7 +40,7 @@ public class Review extends Timestamped {
     @JoinColumn
     private List<ReviewLike> reviewLikes = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user;
 
     public Review(ReviewRequestDto requestDto, String shopId, User user) {
