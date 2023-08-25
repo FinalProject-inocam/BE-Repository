@@ -5,33 +5,35 @@ import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Entity
-@NoArgsConstructor
 @Getter
-@Setter
-public class Comments extends Timestamped {
+@NoArgsConstructor
+@Entity
+public class Reply extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
-    private String comment;
+    private String reply;
 
     @Column(nullable = false)
     private String nickname;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", insertable = false, updatable = false)
-    private Post post;
+    @JoinColumn(name = "comment_id", insertable = false, updatable = false)
+    private Comment comment;
 
     @ManyToOne
     private User user;
 
-    public Comments(String nickname, Post post, String comment, User user) {
-        this.nickname = nickname;
+    public Reply(Comment comment, String reply, User user) {
+        this.reply = reply;
         this.comment = comment;
-        this.post = post;
         this.user = user;
+        this.nickname = user.getNickname();
+    }
+    public void updateComment(String reply) {
+        this.reply=reply;
     }
 }

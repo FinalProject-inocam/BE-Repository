@@ -27,8 +27,7 @@ public class ShopController {
     public ApiResponse<?> getShops(String longitude, String latitude,
                                    Integer page, Integer size,
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = checkGuest(userDetails);
-        ShopsResponseDto shopsResponseDtos = shopService.getShopList(longitude, latitude, user, page, size);
+        ShopsResponseDto shopsResponseDtos = shopService.getShopList(longitude, latitude, userDetails.getUser(), page, size);
         return ResponseUtils.pageOk(shopsResponseDtos.getSize(), shopsResponseDtos.getPage(),
                 shopsResponseDtos.getTotalCount(), shopsResponseDtos.getTotalPages(), shopsResponseDtos.getShopList());
     }
@@ -52,15 +51,5 @@ public class ShopController {
         User user = checkGuest(userDetails);
         SuccessCode successCode = shopService.likeShop(shopId, user);
         return ResponseUtils.ok(successCode);
-    }
-
-    private User checkGuest(UserDetailsImpl userDetails) {
-        User user = null;
-        try {
-            user = userDetails.getUser();
-        } catch (NullPointerException e) {
-            log.info("게스트 사용자 입니다.");
-        }
-        return user;
     }
 }

@@ -23,6 +23,4 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r WHERE r.shopId = :shopId")
     Page<Review> findByShopIdUsingQuery(@Param("shopId") String shopId, Pageable pageable);
-//    @Query("SELECT new com.example.finalproject.domain.shop.entity.Review(r.id, r.review, r.star, r.revisit, r.shopId, r.user) FROM Review r WHERE r.shopId = :shopId ORDER BY r.createdAt DESC")
-//    List<Review> findSelectedColumnsByShopId(String shopId);
 }

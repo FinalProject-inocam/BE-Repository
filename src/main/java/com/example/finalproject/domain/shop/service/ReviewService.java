@@ -17,6 +17,7 @@ import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.PageResponse;
+import com.example.finalproject.global.utils.ResponseUtils;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,10 @@ public class ReviewService {
 
     @Transactional
     public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile, ReviewRequestDto requestDto, User user) {
+        // image 등록 4개 제한
+        if (multipartFile != null && multipartFile.size() > 4) {
+            throw new ReviewImageLimitException(ErrorCode.LIMIT_MAX_IMAGE);
+        }
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, user);
         Review review = new Review(requestDto, shopId, user);
@@ -93,9 +98,7 @@ public class ReviewService {
         shopService.getSelectedShop(shopId, user);
         Review review = findReview(reviewId);
         checkAuthority(review, user);
-        // 기존 review에서 이미지 삭제
-        review.getImageUrls().forEach(reviewImageRepository::delete);
-        review.getImageUrls().clear();
+        deleteImg(review);
         reviewRepository.delete(review);
         return SuccessCode.COMMENT_DELETE_SUCCESS;
     }

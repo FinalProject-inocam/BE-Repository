@@ -38,12 +38,7 @@ public class ReviewController {
                                        @RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                        @RequestPart(value = "data") @Validated(ValidationSequence.class) ReviewRequestDto requestDto,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if (multipartFile != null && multipartFile.size() > 4) {
-            return ResponseUtils.error(ErrorCode.LIMIT_MAX_IMAGE);
-        }
-        User user = userDetails.getUser();
-        log.info(user.getEmail());
-        SuccessCode successCode = reviewService.createReview(shopId, multipartFile, requestDto, user);
+        SuccessCode successCode = reviewService.createReview(shopId, multipartFile, requestDto, userDetails.getUser());
         return ResponseUtils.ok(successCode);
     }
 
@@ -74,7 +69,18 @@ public class ReviewController {
     }
 
     @PatchMapping("/{reviewId}/like")
-    public ApiResponse<?> getstar(@PathVariable String shopId, @PathVariable Long reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseUtils.ok(reviewService.getlike(shopId, reviewId, userDetails.getUser()));
+    public ApiResponse<?> getlike(@PathVariable String shopId, @PathVariable Long reviewId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        SuccessCode successCode = reviewService.getlike(shopId, reviewId, userDetails.getUser());
+        return ResponseUtils.ok(successCode);
+    }
+
+    private User checkGuest(UserDetailsImpl userDetails) {
+        User user = null;
+        try {
+            user = userDetails.getUser();
+        } catch (NullPointerException e) {
+            log.info("게스트 사용자 입니다.");
+        }
+        return user;
     }
 }
