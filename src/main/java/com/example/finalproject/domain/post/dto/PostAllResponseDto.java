@@ -3,15 +3,14 @@ package com.example.finalproject.domain.post.dto;
 import com.example.finalproject.domain.post.entity.Post;
 import lombok.Getter;
 
-
 @Getter
 public class PostAllResponseDto {
-    Long postId;
-    String title;
-    String content;
-    Boolean isLike;
-    Long likeCount;
-    Long commentCount;
+    private Long postId;
+    private String title;
+    private String content;
+    private Boolean isLike;
+    private Long likeCount;
+    private Long commentCount;
 
     public PostAllResponseDto(Post post, Long comment_count, Long like_count, Boolean is_like) {
         this.content = post.getContent();

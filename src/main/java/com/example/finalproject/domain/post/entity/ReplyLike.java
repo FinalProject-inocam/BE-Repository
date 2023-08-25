@@ -3,14 +3,10 @@ package com.example.finalproject.domain.post.entity;
 import com.example.finalproject.domain.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@NoArgsConstructor
 @Getter
-@Setter
-public class PostLike {
+public class ReplyLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,11 +16,11 @@ public class PostLike {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    @JoinColumn(name = "reply_id", nullable = false)
+    private Reply reply;
 
-    public PostLike(User user, Post post) {
-        this.user = user;
-        this.post = post;
+    public ReplyLike(User user, Reply reply) {
+        this.user=user;
+        this.reply=reply;
     }
 }

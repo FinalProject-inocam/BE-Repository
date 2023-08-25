@@ -14,15 +14,15 @@ public class CommentLike {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_Id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "post_Id", nullable = false)
-    private Comments comments;
+    @JoinColumn(name = "post_id", nullable = false)
+    private Comment comment;
 
-    public CommentLike(User user, Comments comments) {
+    public CommentLike(User user, Comment comments) {
         this.user = user;
-        this.comments = comments;
+        this.comment = comments;
     }
 }

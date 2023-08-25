@@ -4,14 +4,9 @@ import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.post.dto.*;
-import com.example.finalproject.domain.post.entity.Comments;
-import com.example.finalproject.domain.post.entity.Image;
-import com.example.finalproject.domain.post.entity.Post;
-import com.example.finalproject.domain.post.entity.PostLike;
+import com.example.finalproject.domain.post.entity.*;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
-import com.example.finalproject.domain.post.repository.PostImageRepository;
-import com.example.finalproject.domain.post.repository.PostLikeRepository;
-import com.example.finalproject.domain.post.repository.PostRepository;
+import com.example.finalproject.domain.post.repository.*;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.responsedto.PageResponse;
@@ -41,6 +36,8 @@ public class PostService {
     private final PostLikeRepository postLikeRepository;
     private final PostImageRepository postImageRepository;
     private final PostRepository postRepository;
+    private final CommentLikeRepository commentLikeRepository;
+    private final ReplyLikeRepository replyLikeRepository;
     private final S3Utils s3Utils;
 
     @Transactional
@@ -70,10 +67,19 @@ public class PostService {
         );
 
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
-        List<Comments> commentList = post.getCommentList();
+        List<Comment> commentList = post.getCommentList();
 
-        for (Comments cmt : commentList) {
-            CommentResponseDto commentResponseDto = new CommentResponseDto(cmt);
+        for (Comment cmt : commentList) {
+            List<ReplyResponseDto> replyList=new ArrayList<>();
+            for(Reply reply : cmt.getReplyList()){
+                    Long replyLikeCount=replyLikeRepository.countByReplyId(reply.getId());
+                    Boolean isLikeReply=getreplyBoolean(userDetails, reply);
+                    ReplyResponseDto responseDto = new ReplyResponseDto(reply,replyLikeCount,isLikeReply);
+                    replyList.add(responseDto);
+            }
+            Long like_count = commentLikeRepository.countByCommentId(cmt.getId());
+            Boolean is_like = getcmtBoolean(userDetails, cmt);
+            CommentResponseDto commentResponseDto = new CommentResponseDto(cmt,like_count,is_like,replyList);
             commentResponseDtoList.add(commentResponseDto);
         }
         Long like_count = postLikeRepository.countByPostId(post.getId());
@@ -152,6 +158,26 @@ public class PostService {
             is_like = false;
         } else {
             is_like = postLikeRepository.existsByPostIdAndUserUserId(post.getId(), userDetails.getUser().getUserId());
+        }
+        return is_like;
+    }
+
+    private Boolean getcmtBoolean(UserDetailsImpl userDetails, Comment comment) {
+        Boolean is_like;
+        if (userDetails == null) {
+            is_like = false;
+        } else {
+            is_like = commentLikeRepository.existsByCommentIdAndUserUserId(comment.getId(), userDetails.getUser().getUserId());
+        }
+        return is_like;
+    }
+
+    private Boolean getreplyBoolean(UserDetailsImpl userDetails, Reply reply) {
+        Boolean is_like;
+        if (userDetails == null) {
+            is_like = false;
+        } else {
+            is_like = replyLikeRepository.existsByReplyIdAndUserUserId(reply.getId(), userDetails.getUser().getUserId());
         }
         return is_like;
     }

@@ -27,5 +27,4 @@ public class ReviewpageResponseDto {
         this.sort = pageResponse.getSort();
         this.currentPage = pageResponse.getNumber();
     }
-
 }

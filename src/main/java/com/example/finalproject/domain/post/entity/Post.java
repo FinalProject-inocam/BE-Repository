@@ -32,7 +32,7 @@ public class Post extends Timestamped {
 
     @OneToMany
     @JoinColumn(name = "post_id")
-    private List<Comments> commentList;
+    private List<Comment> commentList;
 
     @OneToMany
     @JoinColumn(name = "image_id")

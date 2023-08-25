@@ -3,12 +3,12 @@ package com.example.finalproject.domain.post.service;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.post.dto.CommentRequestDto;
+import com.example.finalproject.domain.post.entity.Comment;
 import com.example.finalproject.domain.post.entity.CommentLike;
-import com.example.finalproject.domain.post.entity.Comments;
 import com.example.finalproject.domain.post.entity.Post;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.post.repository.CommentLikeRepository;
-import com.example.finalproject.domain.post.repository.PostCommentsRepository;
+import com.example.finalproject.domain.post.repository.CommentRepository;
 import com.example.finalproject.domain.post.repository.PostRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
@@ -25,69 +25,69 @@ import static com.example.finalproject.global.enums.SuccessCode.LIKE_SUCCESS;
 
 @Service
 @RequiredArgsConstructor
-public class CommentsService {
-    private final PostCommentsRepository postCommentsRepository;
+public class CommentService {
+    private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public SuccessCode createService(Long postId, CommentRequestDto commentRequestDto, String nickname) {
+    public SuccessCode createComment(Long postId, CommentRequestDto commentRequestDto, String nickname) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
-        List<Comments> commentsList = post.getCommentList();
+        List<Comment> commentList = post.getCommentList();
         User user = userRepository.findByNickname(nickname);
-        Comments comment = new Comments(nickname, post, commentRequestDto.getComment(), user);
-        commentsList.add(comment);
-        postCommentsRepository.save(comment);
+        Comment comment = new Comment(nickname, post, commentRequestDto.getComment(), user);
+        commentList.add(comment);
+        commentRepository.save(comment);
 
         return SuccessCode.COMMENT_CREATE_SUCCESS;
     }
 
     @Transactional
     public SuccessCode updateComment(Long postId, Long commentId, CommentRequestDto commentRequestDto, String nickname) {
-        Comments comments = validateAuthority(commentId, nickname);
-        comments.setComment(commentRequestDto.getComment());
+
+        Comment comment = validateAuthority(commentId, nickname);
+        comment.setComment(commentRequestDto.getComment());
         return SuccessCode.COMMENT_UPDATE_SUCCESS;
     }
 
-
-    public SuccessCode deleteComments(Long postId, Long commentId, String nickname) {
-        Comments comments = validateAuthority(commentId, nickname);
-        postCommentsRepository.delete(comments);
+    public SuccessCode deleteComment(Long postId, Long commentId, String nickname) {
+        Comment comment = validateAuthority(commentId, nickname);
+        commentRepository.delete(comment);
         return SuccessCode.COMMENT_DELETE_SUCCESS;
     }
 
-    public SuccessCode likePost(Long commentId, Long userId) {
+    public SuccessCode likeComment(Long commentId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_CLIENT)
         );
-        Comments comments = postCommentsRepository.findById(commentId).orElseThrow(
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
 
-        Optional<CommentLike> commentLike = commentLikeRepository.findByCommentsIdAndUserUserId(commentId, userId);
+        Optional<CommentLike> commentLike = commentLikeRepository.findByCommentIdAndUserUserId(commentId, userId);
         if (commentLike.isPresent()) {
             commentLikeRepository.delete(commentLike.get());
             return LIKE_CANCEL;
         } else {
-            commentLikeRepository.save(new CommentLike(user, comments));
+            commentLikeRepository.save(new CommentLike(user, comment));
             return LIKE_SUCCESS;
         }
     }
 
-    private Comments validateAuthority(Long id, String nickname) {
-        Comments comments = postCommentsRepository.findById(id).orElseThrow(
+    private Comment validateAuthority(Long id, String nickname) {
+        Comment comment = commentRepository.findById(id).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
 
         User user = userRepository.findByNickname(nickname);
 
-        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !comments.getUser().getUserId().equals(user.getUserId())) {
+        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !comment.getUser().getUserId().equals(user.getUserId())) {
             throw new PostsNotFoundException(NO_AUTHORITY_TO_DATA);
         }
 
-        return comments;
+        return comment;
     }
 }

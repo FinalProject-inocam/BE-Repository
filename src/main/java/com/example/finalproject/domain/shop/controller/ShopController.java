@@ -1,6 +1,5 @@
 package com.example.finalproject.domain.shop.controller;
 
-import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
 import com.example.finalproject.domain.shop.dto.ShopsResponseDto;
@@ -27,8 +26,7 @@ public class ShopController {
     public ApiResponse<?> getShops(String longitude, String latitude,
                                    Integer page, Integer size,
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = checkGuest(userDetails);
-        ShopsResponseDto shopsResponseDtos = shopService.getShopList(longitude, latitude, user, page, size);
+        ShopsResponseDto shopsResponseDtos = shopService.getShopList(longitude, latitude, userDetails.getUser(), page, size);
         return ResponseUtils.pageOk(shopsResponseDtos.getSize(), shopsResponseDtos.getPage(),
                 shopsResponseDtos.getTotalCount(), shopsResponseDtos.getTotalPages(), shopsResponseDtos.getShopList());
     }
@@ -41,26 +39,14 @@ public class ShopController {
     @GetMapping("/{shopId}")
     public ApiResponse<?> getSelectedShop(@PathVariable String shopId,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = checkGuest(userDetails);
-        ShopOneResponseDto shopOneResponseDto = shopService.getSelectedShop(shopId, user);
+        ShopOneResponseDto shopOneResponseDto = shopService.getSelectedShop(shopId, userDetails.getUser());
         return ResponseUtils.ok(shopOneResponseDto);
     }
 
     @PatchMapping("/{shopId}")
     public ApiResponse<?> likeShop(@PathVariable String shopId,
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = checkGuest(userDetails);
-        SuccessCode successCode = shopService.likeShop(shopId, user);
+        SuccessCode successCode = shopService.likeShop(shopId, userDetails.getUser());
         return ResponseUtils.ok(successCode);
-    }
-
-    private User checkGuest(UserDetailsImpl userDetails) {
-        User user = null;
-        try {
-            user = userDetails.getUser();
-        } catch (NullPointerException e) {
-            log.info("게스트 사용자 입니다.");
-        }
-        return user;
     }
 }
