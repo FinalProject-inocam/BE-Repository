@@ -10,6 +10,7 @@ import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.entity.Purchase;
 import com.example.finalproject.domain.purchases.exception.PurchasesNotFoundException;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
+import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.RequiredArgsConstructor;
@@ -54,13 +55,12 @@ public class PurchasesService {
     }
 
     // 차량 출고 신청
-    public ApiResponse<?> createPurchases(PurchasesRequestDto purchasesRequestDto, User user) {
+    public SuccessCode createPurchases(PurchasesRequestDto purchasesRequestDto, User user) {
         Car car = carRepository.findByType(purchasesRequestDto.getType());
         Purchase purchase = new Purchase(purchasesRequestDto, user, car.getPrice());
         purchasesRepository.save(purchase);
-        return ok(PURCHASES_CREATE_SUCCESS);
+        return PURCHASES_CREATE_SUCCESS;
     }
-
 
     // 차량 신청 내역 수정
     @Transactional
@@ -72,11 +72,11 @@ public class PurchasesService {
     }
 
     // 차량 신청 취소
-    public ApiResponse<?> deletePurchases(Long purchaseId, User user) {
+    public SuccessCode deletePurchases(Long purchaseId, User user) {
         Purchase purchase = findPurchases(purchaseId);
         checkUsername(purchaseId, user);
         purchasesRepository.delete(purchase);
-        return ok(PURCHASES_DELETE_SUCCESS);
+        return PURCHASES_DELETE_SUCCESS;
     }
 
     private Purchase findPurchases(Long purchaseId) {

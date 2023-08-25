@@ -2,9 +2,11 @@ package com.example.finalproject.domain.purchases.controller;
 
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
+import com.example.finalproject.domain.purchases.dto.PurchasesPatchResponseDto;
 import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
 import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.service.PurchasesService;
+import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import com.example.finalproject.global.utils.ValidationSequence;
@@ -34,7 +36,8 @@ public class PurchasesController {
     @PostMapping
     public ApiResponse<?> createPurchases(@RequestBody @Validated(ValidationSequence.class) PurchasesRequestDto purchasesRequestDto,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return purchasesService.createPurchases(purchasesRequestDto, userDetails.getUser());
+        SuccessCode successCode = purchasesService.createPurchases(purchasesRequestDto, userDetails.getUser());
+        return ResponseUtils.ok(successCode);
     }
 
     // 차량 신청 내역 수정
@@ -42,13 +45,14 @@ public class PurchasesController {
     public ApiResponse<?> updatePurchases(@PathVariable Long purchaseId,
                                           @RequestBody @Validated(ValidationSequence.class) PurchasesRequestDto purchasesRequestDto,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseUtils.ok(purchasesService.updatePurchases(purchaseId, purchasesRequestDto, userDetails.getUser()));
+        PurchasesPatchResponseDto purchasesPatchResponseDto = purchasesService.updatePurchases(purchaseId, purchasesRequestDto, userDetails.getUser());
+        return ResponseUtils.ok(purchasesPatchResponseDto);
     }
 
     // 차량 신청 취소
     @DeleteMapping("/{purchaseId}")
     public ApiResponse<?> deletePurchases(@PathVariable Long purchaseId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return purchasesService.deletePurchases(purchaseId, userDetails.getUser());
+        SuccessCode successCode = purchasesService.deletePurchases(purchaseId, userDetails.getUser());
+        return ResponseUtils.ok(successCode);
     }
-
 }

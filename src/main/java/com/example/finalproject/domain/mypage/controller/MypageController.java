@@ -30,7 +30,8 @@ public class MypageController {
     }
 
     @GetMapping
-    public ApiResponse<MypageResDto> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return mypageService.getMypage(userDetails.getUser());
+    public ApiResponse<?> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        MypageResDto mypageResDto = mypageService.getMypage(userDetails.getUser());
+        return ResponseUtils.ok(mypageResDto);
     }
 }
