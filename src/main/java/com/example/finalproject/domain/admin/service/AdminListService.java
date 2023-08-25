@@ -31,9 +31,9 @@ public class AdminListService {
 
     // 페이지 나누기
     @Transactional
-    public Page<PurchasesResponseDto> allList(int page,int size){
+    public Page<PurchasesResponseDto> allList(int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "purchaseId"));
-        Page<Purchase> purchaseList=purchasesRepository.findAll(pageable);
+        Page<Purchase> purchaseList = purchasesRepository.findAll(pageable);
         List<AllPurchasseResponseDto> purchasesResponseDtoList = new ArrayList<>();
         for (Purchase purchase : purchaseList) {
             AllPurchasseResponseDto allPurchasseResponseDto = new AllPurchasseResponseDto(purchase);
@@ -51,7 +51,7 @@ public class AdminListService {
         LocalDateTime endDateTime = LocalDateTime.of(currentDateTime.toLocalDate(), LocalTime.MAX); // 오늘 날짜의 끝 시간
 
 //        Long needApprovalCount = purchasesRepository.countByApprove(null);
-        Long needApprovalCount=purchasesRepository.countByApproveIsNullAndCreatedAtBetween(startDateTime, endDateTime);
+        Long needApprovalCount = purchasesRepository.countByApproveIsNullAndCreatedAtBetween(startDateTime, endDateTime);
         Long approvedCount = purchasesRepository.countByApproveIsTrueAndCreatedAtBetween(startDateTime, endDateTime);
         Long deniedCount = purchasesRepository.countByApproveIsFalseAndCreatedAtBetween(startDateTime, endDateTime);
 
@@ -76,10 +76,10 @@ public class AdminListService {
     }
 
     public PurchasesResponseDto getone(Long purchaseId) {
-        Purchase purchase=purchasesRepository.findById(purchaseId).orElseThrow(() ->
+        Purchase purchase = purchasesRepository.findById(purchaseId).orElseThrow(() ->
                 new NullPointerException("존재하지않는 신청입니다.")
         );
-        PurchasesResponseDto purchasesResponseDto=new PurchasesResponseDto(purchase);
+        PurchasesResponseDto purchasesResponseDto = new PurchasesResponseDto(purchase);
         return purchasesResponseDto;
     }
 }

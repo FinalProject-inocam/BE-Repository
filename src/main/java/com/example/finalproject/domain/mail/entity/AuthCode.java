@@ -1,6 +1,5 @@
 package com.example.finalproject.domain.mail.entity;
 
-import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,13 +24,13 @@ public class AuthCode {
 
     LocalDateTime expirationTime;
 
-    public AuthCode(String email,String authcode,LocalDateTime expirationTime){
-        this.email=email;
-        this.authcode=authcode;
-        this.expirationTime=expirationTime;
+    public AuthCode(String email, String authcode, LocalDateTime expirationTime) {
+        this.email = email;
+        this.authcode = authcode;
+        this.expirationTime = expirationTime;
     }
 
     public void update(String code) {
-        this.authcode=code;
+        this.authcode = code;
     }
 }

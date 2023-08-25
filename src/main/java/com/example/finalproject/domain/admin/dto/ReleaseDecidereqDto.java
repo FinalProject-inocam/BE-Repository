@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import lombok.Getter;
 
 import java.util.Date;
+
 @Getter
 public class ReleaseDecidereqDto {
     @Column(nullable = false)

@@ -1,13 +1,15 @@
 package com.example.finalproject.domain.mail.controller;
 
 
-import com.example.finalproject.domain.mail.dto.MailDto;
 import com.example.finalproject.domain.mail.service.MailService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,13 +24,13 @@ public class MailController {
     }
 
     @GetMapping("/checkcode")
-    public ApiResponse<?> checkCode(@RequestParam (name = "email") String email,
-                                    @RequestParam (name = "code") String code) {
+    public ApiResponse<?> checkCode(@RequestParam(name = "email") String email,
+                                    @RequestParam(name = "code") String code) {
         return ResponseUtils.ok(mailService.checkCode(email, code));
     }
 
     @GetMapping("/findPass")
-    public ApiResponse<?> findCode(@RequestParam (name = "email") String email) {
+    public ApiResponse<?> findCode(@RequestParam(name = "email") String email) {
         return ResponseUtils.ok(mailService.findPass(email));
     }
 }

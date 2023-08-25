@@ -120,6 +120,6 @@ public class User extends Timestamped {
     }
 
     public void updatePass(String password) {
-        this.password=password;
+        this.password = password;
     }
 }
