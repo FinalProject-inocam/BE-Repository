@@ -4,7 +4,6 @@ package com.example.finalproject.domain.mail.service;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.mail.exception.MailNotFoundException;
-import com.example.finalproject.domain.mail.repository.AuthCodeRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.utils.RedisUtil;
@@ -32,7 +31,6 @@ public class MailService {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender mailSender;
-    private final AuthCodeRepository authCodeRepository;
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
     private final PasswordEncoder passwordEncoder;
@@ -132,7 +130,7 @@ public class MailService {
             throw new MailNotFoundException(ErrorCode.NOT_FOUND_EMAIL);
         }
     }
-
+//--------------------------------------------------------------------------------------------
     public String randomcode() {
         StringBuilder code = new StringBuilder(6);
         int charactersLength = CHARACTERS.length();
@@ -142,7 +140,6 @@ public class MailService {
         }
         return code.toString();
     }
-
 
     public String randomPass() {
         StringBuilder code = new StringBuilder(10); // 10자리로 변경
@@ -157,5 +154,4 @@ public class MailService {
     public Boolean checkEmail(String email) {
         return userRepository.existsByEmail(email);
     }
-
 }

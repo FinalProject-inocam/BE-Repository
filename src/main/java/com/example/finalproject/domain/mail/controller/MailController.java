@@ -26,11 +26,13 @@ public class MailController {
     @GetMapping("/checkcode")
     public ApiResponse<?> checkCode(@RequestParam(name = "email") String email,
                                     @RequestParam(name = "code") String code) {
-        return ResponseUtils.ok(mailService.checkCode(email, code));
+        SuccessCode successCode = mailService.checkCode(email, code);
+        return ResponseUtils.ok(successCode);
     }
 
     @GetMapping("/findPass")
     public ApiResponse<?> findCode(@RequestParam(name = "email") String email) {
-        return ResponseUtils.ok(mailService.findPass(email));
+        SuccessCode successCode = mailService.findPass(email);
+        return ResponseUtils.ok(successCode);
     }
 }

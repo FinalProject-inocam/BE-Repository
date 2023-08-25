@@ -39,7 +39,6 @@ public class MypageService {
             );
 
             String profileimg = s3Utils.updateProfile(multipartFile); // 프로필 사진 업데이트 후 URL을 가져옴
-//            profileimg = user.getProfileImg(); // 새로운 프로필 사진 URL을 설정
 
             String newpassword = passwordEncoder.encode(mypageRequestDto.getNewPassword());
             mypageRequestDto.setPasswordToNewPassword(passwordEncoder.encode(mypageRequestDto.getNewPassword()));
@@ -53,11 +52,10 @@ public class MypageService {
         } else {
             throw new PurchasesNotFoundException(NO_AUTHORITY_TO_DATA);
         }
-
         return SuccessCode.MYPAGE_UPDATE_SUCCESS;
     }
 
-    public ApiResponse<MypageResDto> getMypage(User user) {
-        return ok(new MypageResDto(user));
+    public MypageResDto getMypage(User user) {
+        return new MypageResDto(user);
     }
 }
