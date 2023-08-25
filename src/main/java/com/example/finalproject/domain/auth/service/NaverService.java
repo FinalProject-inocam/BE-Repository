@@ -5,7 +5,6 @@ import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.responsedto.ApiResponse;
-import com.example.finalproject.global.utils.JwtProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +35,6 @@ public class NaverService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
-    private final JwtProvider jwtUtil;
     private final RedisService redisService;
 
     @Value("${security.oauth2.naver.client-id}")
@@ -171,14 +169,13 @@ public class NaverService {
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
 
-                String name=nickname;                // 닉네임이 중복 될 시 닉네임 옆에 숫자 붙여주기
-                int num=1;
-                while(true){
-                    if(userRepository.existsByNickname(name)){
-                        name=nickname+String.valueOf(num);
+                String name = nickname;                // 닉네임이 중복 될 시 닉네임 옆에 숫자 붙여주기
+                int num = 1;
+                while (true) {
+                    if (userRepository.existsByNickname(name)) {
+                        name = nickname + String.valueOf(num);
                         num++;
-                    }
-                    else{
+                    } else {
                         break;
                     }
                 }

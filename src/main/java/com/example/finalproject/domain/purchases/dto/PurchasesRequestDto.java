@@ -1,7 +1,7 @@
 package com.example.finalproject.domain.purchases.dto;
 
-import com.example.finalproject.domain.CustomConstraint.CheckCase;
-import com.example.finalproject.global.utils.ValidationGroups;
+import com.example.finalproject.global.CustomConstraint.BirthYearLimit;
+import com.example.finalproject.global.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -19,7 +19,7 @@ public class PurchasesRequestDto {
     @NotBlank(message = "성별은 필수입니다.", groups = ValidationGroups.NotBlankGroup.class)
     private String gender;
 
-    @CheckCase(message = "18세 미만은 차량신청이 불가능합니다.", groups = ValidationGroups.ChaeckCaseGroup.class)
+    @BirthYearLimit(message = "18세 미만은 차량신청이 불가능합니다.", groups = ValidationGroups.BirthYearLimitGroup.class)
     @NotNull(message = "출생년도는 필수입니다.", groups = ValidationGroups.NotNullGroup.class)
     private Integer birthYear;
 

@@ -19,20 +19,10 @@ public class RedisUtil {
         return valueOperations.get(key);
     }
 
-    public void setData(String key, String value) {
-        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(key, value);
-    }
-
     // 유효 시간 동안 (key, value) 저장
     public void setDataExpire(String key, String value, long duration) {
         ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
         Duration expireDuration = Duration.ofSeconds(duration);
         valueOperations.set(key, value, expireDuration);
-    }
-
-    // 삭제
-    public void deleteData(String key) {
-        redisTemplate.delete(key);
     }
 }

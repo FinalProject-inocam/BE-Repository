@@ -27,10 +27,6 @@ public class ResponseUtils {
         return new ApiResponse<>(false, statusCode, msg, null);
     }
 
-//    public static ApiResponse<?> error(HttpStatus httpStatus, Map<String, String> errors) {
-//        return new ApiResponse<>(false, httpStatus.value(), errors, null);
-//    }
-
     public static ApiResponse<?> error(HttpStatus httpStatus, String error) {
         return new ApiResponse<>(false, httpStatus.value(), error, null);
     }

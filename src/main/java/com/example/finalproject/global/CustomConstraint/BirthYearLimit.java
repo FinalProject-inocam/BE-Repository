@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.CustomConstraint;
+package com.example.finalproject.global.CustomConstraint;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -13,10 +13,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({FIELD, METHOD, PARAMETER, ANNOTATION_TYPE, TYPE_USE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = CheckCaseValidator.class)
+@Constraint(validatedBy = BirthYearLimitValidator.class)
 @Documented
-@Repeatable(CheckCase.List.class)
-public @interface CheckCase {
+@Repeatable(BirthYearLimit.List.class)
+public @interface BirthYearLimit {
 
     String message() default "test case validation 통과 실패";
 
@@ -28,6 +28,6 @@ public @interface CheckCase {
     @Retention(RUNTIME)
     @Documented
     @interface List {
-        CheckCase[] value();
+        BirthYearLimit[] value();
     }
 }

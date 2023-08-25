@@ -6,7 +6,6 @@ import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.exception.buisnessException.ConditionDisagreeException;
 import com.example.finalproject.global.responsedto.ApiResponse;
-import com.example.finalproject.global.utils.JwtProvider;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +38,6 @@ public class KakaoService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final RedisService redisService;
-    private final JwtProvider jwtUtil;
 
     @Value("${security.oauth2.client.registration.kakao.client-id}")
     private String kakaoClientId;
@@ -165,7 +163,6 @@ public class KakaoService {
             );
 
 
-
             log.info("카카오 사용자 정보: " + id + ", " + nickname + ", " + email);
             return new KakaoUserInfoDto(id, nickname, email);
         } catch (Exception e) {
@@ -212,14 +209,13 @@ public class KakaoService {
                 // password: random UUID
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
-                String name=kakaoUserInfo.getNickname();
-                int num=1;
-                while(true){
-                    if(userRepository.existsByNickname(name)){
-                        name=kakaoUserInfo.getNickname()+String.valueOf(num);
+                String name = kakaoUserInfo.getNickname();
+                int num = 1;
+                while (true) {
+                    if (userRepository.existsByNickname(name)) {
+                        name = kakaoUserInfo.getNickname() + String.valueOf(num);
                         num++;
-                    }
-                    else{
+                    } else {
                         break;
                     }
                 }

@@ -18,24 +18,9 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AdminService {
-    private final PurchasesRepository purchasesRepository;
     private final QPurchasesRepository qPurchasesRepository;
     private final QUserRepository qUserRepository;
     private final CarService carService;
-
-    // 입력 받은 term 값에 따라 어떤 통계를 쓸지 분배해주는 메서드
-    public Map<String, Object> checkStat(String cal, String term) {
-        switch (term) {
-            case "getYear":
-                return yearStat(cal);
-            case "getMonth":
-                return monthStat(cal);
-            case "getWeek":
-                return weekStat(cal);
-        }
-        throw new NullPointerException("term값이 올바르지 않습니다.");
-    }
-
 
     /* 특정 기간(2020~2023)의 연별 신청, 승인, 거절 건수 */
     public Map<String, Object> yearsStat(String startCal, String endCal) {

@@ -16,6 +16,7 @@ import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.domain.shop.repository.ShopLikeRepository;
 import com.example.finalproject.domain.shop.repository.ShopRepository;
 import com.example.finalproject.global.enums.SuccessCode;
+import com.example.finalproject.global.utils.GuestUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,21 +45,25 @@ public class ShopService {
     private final ReviewLikeRepository reviewLikeRepository;
     private final ShopRepository shopRepository;
 
+    private final GuestUtil guestUtil;
+
     // RestTemplateBuilder의 build()를 사용하여 RestTemplate을 생성합니다.
     public ShopService(RestTemplateBuilder builder, ReviewRepository reviewRepository,
-                       ShopLikeRepository shopLikeRepository, ReviewLikeRepository reviewLikeRepository, ShopRepository shopRepository) {
+                       ShopLikeRepository shopLikeRepository, ReviewLikeRepository reviewLikeRepository,
+                       ShopRepository shopRepository, GuestUtil guestUtil) {
         this.restTemplate = builder.build();
         this.reviewRepository = reviewRepository;
         this.shopLikeRepository = shopLikeRepository;
         this.reviewLikeRepository = reviewLikeRepository;
         this.shopRepository = shopRepository;
+        this.guestUtil = guestUtil;
     }
 
     // openApi 사용시 필요한 servicekey
     @Value("${openApi.serviceKey}")
     private URI SERVICE_KEY;
 
-    public ShopsResponseDto getShopList(String longitude, String latitude, User user, Integer page, Integer size) {
+    public ShopsResponseDto getShopList(String longitude, String latitude, UserDetailsImpl userDetails, Integer page, Integer size) {
         StopWatch stopWatch = new StopWatch("speed test");
         stopWatch.start("find shop");
         log.info("반경내의 shop 조회");
@@ -84,27 +89,19 @@ public class ShopService {
 
         System.out.println("실행 시간(ms): " + stopWatch.getTotalTimeMillis());
         System.out.println(stopWatch.prettyPrint());
+        User user = guestUtil.checkGuest(userDetails);
         return fromJSONtoShopList(responseEntity.getBody(), user);
     }
 
-    public ShopOneResponseDto getSelectedShop(String shopId, User user) {
+    public ShopOneResponseDto getSelectedShop(String shopId, UserDetailsImpl userDetails) {
         log.info("특정 shop 상세 조회");
-//        URI uri = URI.create(UriComponentsBuilder
-//                .fromUriString("http://apis.data.go.kr")
-//                .path("/B553077/api/open/sdsc2/storeOne")
-//                .queryParam("serviceKey", SERVICE_KEY)
-//                .queryParam("key", shopId)
-//                .queryParam("type", "json")
-//                .build()
-//                .toUriString());
-//        ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
-
-//        return fromJSONtoShop(responseEntity.getBody(), user);
+        User user = guestUtil.checkGuest(userDetails);
         return fromJSONtoShop(shopId, user);
     }
 
-    public SuccessCode likeShop(String shopId, User user) {
+    public SuccessCode likeShop(String shopId, UserDetailsImpl userDetails) {
         log.info("특정 가게 좋아요");
+        User user = guestUtil.checkGuest(userDetails);
         ShopLike shopLike = shopLikeRepository.findByShopIdAndUser(shopId, user).orElse(null);
         if (shopLike != null) {
             shopLikeRepository.delete(shopLike);
@@ -222,15 +219,5 @@ public class ShopService {
             sortedImages.add(defaultImageUrl);
         }
         return sortedImages;
-    }
-
-    private Boolean getaBoolean(UserDetailsImpl userDetails, Review review) {
-        Boolean is_like;
-        if (userDetails == null) {
-            is_like = false;
-        } else {
-            is_like = reviewLikeRepository.existsByReviewIdAndUserUserId(review.getId(), userDetails.getUser().getUserId());
-        }
-        return is_like;
     }
 }
