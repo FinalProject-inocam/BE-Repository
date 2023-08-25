@@ -53,7 +53,6 @@ public class CommentService {
         return SuccessCode.COMMENT_UPDATE_SUCCESS;
     }
 
-
     public SuccessCode deleteComment(Long postId, Long commentId, String nickname) {
         Comment comment = validateAuthority(commentId, nickname);
         commentRepository.delete(comment);
@@ -85,10 +84,10 @@ public class CommentService {
 
         User user = userRepository.findByNickname(nickname);
 
-        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !comments.getUser().getUserId().equals(user.getUserId())) {
+        if (!user.getRole().equals(UserRoleEnum.ADMIN) && !comment.getUser().getUserId().equals(user.getUserId())) {
             throw new PostsNotFoundException(NO_AUTHORITY_TO_DATA);
         }
 
-        return comments;
+        return comment;
     }
 }

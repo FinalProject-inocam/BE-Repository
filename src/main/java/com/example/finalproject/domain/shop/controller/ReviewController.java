@@ -3,8 +3,9 @@ package com.example.finalproject.domain.shop.controller;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
+import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
+import com.example.finalproject.domain.shop.dto.ReviewpageResponseDto;
 import com.example.finalproject.domain.shop.service.ReviewService;
-import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
@@ -19,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@Slf4j
+@Slf4j(topic = "ReviewController")
 @RequiredArgsConstructor
 @RequestMapping("/api/shops/{shopId}/reviews")
 public class ReviewController {
@@ -30,10 +31,11 @@ public class ReviewController {
                                      @RequestParam("size") int size,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
                                      @PathVariable String shopId) {
-        return ResponseUtils.ok(reviewService.reviewList(size, page, userDetails, shopId));
+        ReviewpageResponseDto reviewpageResponseDto = reviewService.reviewList(size, page, userDetails, shopId);
+        return ResponseUtils.ok(reviewpageResponseDto);
     }
 
-    @PostMapping()
+    @PostMapping
     public ApiResponse<?> createReview(@PathVariable String shopId,
                                        @RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                        @RequestPart(value = "data") @Validated(ValidationSequence.class) ReviewRequestDto requestDto,
@@ -42,30 +44,29 @@ public class ReviewController {
         return ResponseUtils.ok(successCode);
     }
 
-    @PatchMapping("{reviewId}")
+    @PatchMapping("/{reviewId}")
     public ApiResponse<?> updateReview(@PathVariable String shopId,
                                        @PathVariable Long reviewId,
                                        @RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                        @RequestPart(value = "data") @Validated(ValidationSequence.class) ReviewRequestDto requestDto,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
-        SuccessCode successCode = reviewService.updateReview(shopId, multipartFile, reviewId, requestDto, user);
+        SuccessCode successCode = reviewService.updateReview(shopId, multipartFile, reviewId, requestDto, userDetails.getUser());
         return ResponseUtils.ok(successCode);
     }
 
-    @DeleteMapping("{reviewId}")
+    @DeleteMapping("/{reviewId}")
     public ApiResponse<?> deleteReview(@PathVariable String shopId,
                                        @PathVariable Long reviewId,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = userDetails.getUser();
-        SuccessCode successCode = reviewService.deleteReview(shopId, reviewId, user);
+        SuccessCode successCode = reviewService.deleteReview(shopId, reviewId, userDetails.getUser());
         return ResponseUtils.ok(successCode);
     }
 
 
     @GetMapping("/star")
     public ApiResponse<?> getstar(@PathVariable String shopId) {
-        return ResponseUtils.ok(reviewService.getStar(shopId));
+        ReviewStarResponseDto reviewStarResponseDto = reviewService.getStar(shopId);
+        return ResponseUtils.ok(reviewStarResponseDto);
     }
 
     @PatchMapping("/{reviewId}/like")

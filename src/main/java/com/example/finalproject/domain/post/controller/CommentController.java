@@ -40,7 +40,7 @@ public class CommentController {
     public ApiResponse<?> deleteComments(@PathVariable(name = "postId") Long postId,
                                          @PathVariable(name = "commentId") Long commentId,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = commentsService.deleteComments(postId, commentId, userDetails.getNickname());
+        SuccessCode successCode = commentsService.deleteComment(postId, commentId, userDetails.getNickname());
         return ResponseUtils.ok((successCode));
     }
 

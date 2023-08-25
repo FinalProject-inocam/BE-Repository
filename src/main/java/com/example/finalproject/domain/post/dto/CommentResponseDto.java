@@ -6,6 +6,8 @@ import lombok.Getter;
 import org.springframework.data.redis.support.collections.RedisList;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class CommentResponseDto {

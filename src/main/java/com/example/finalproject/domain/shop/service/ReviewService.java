@@ -11,6 +11,7 @@ import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.ReviewLike;
 import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
+import com.example.finalproject.domain.shop.exception.ReviewImageLimitException;
 import com.example.finalproject.domain.shop.repository.ReviewImageRepository;
 import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
@@ -58,12 +59,7 @@ public class ReviewService {
         Review review = new Review(requestDto, shopId, user);
         // image가 없을 때 빈 url생성 방지
         if (s3Utils.isFile(multipartFile)) {
-            List<String> urls = s3Utils.uploadFile(multipartFile);
-            for (String url : urls) {
-                ReviewImage reviewImage = new ReviewImage(url);
-                reviewImageRepository.save(reviewImage);
-                review.getImageUrls().add(reviewImage);
-            }
+            uploadImg(multipartFile, review);
         }
         reviewRepository.save(review);
         return SuccessCode.COMMENT_CREATE_SUCCESS;
@@ -79,17 +75,9 @@ public class ReviewService {
         review.update(requestDto);
         // image에 값이 있을때만 삭제 추가를 진행
         if (s3Utils.isFile(multipartFile)) {
-            // 기존 review에서 이미지 삭제
-            review.getImageUrls().forEach(reviewImageRepository::delete);
-            review.getImageUrls().clear();
-            List<String> urls = s3Utils.uploadFile(multipartFile);
-            for (String url : urls) {
-                ReviewImage reviewImage = new ReviewImage(url);
-                reviewImageRepository.save(reviewImage);
-                review.getImageUrls().add(reviewImage);
-            }
+            deleteImg(review);
+            uploadImg(multipartFile, review);
         }
-
         return SuccessCode.COMMENT_UPDATE_SUCCESS;
     }
 
@@ -103,52 +91,14 @@ public class ReviewService {
         return SuccessCode.COMMENT_DELETE_SUCCESS;
     }
 
-
-    public Review findReview(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
-                new NullPointerException("존재하지 않는 후기입니다.")
-        );
-        return review;
-    }
-
-    public void checkAuthority(Review review, User user) {
-        // admin 확인
-        if (!user.getRole().getAuthority().equals("ROLE_ADMIN")) {
-            // userId 확인
-            if (review.getUser().getUserId() != user.getUserId()) {
-                throw new ReviewAuthorityException(ErrorCode.NO_AUTHORITY_TO_DATA);
-            }
-        }
-    }
-
     public ReviewStarResponseDto getStar(String shopId) {
         List<Review> reivewList = reviewRepository.findAllByShopId(shopId);
         int[] countStar = new int[6];
-        for (Review review : reivewList) {
-            Integer star = review.getStar();
-            switch (star) {
-                case 0:
-                    countStar[0]++;
-                    break;
-                case 1:
-                    countStar[1]++;
-                    break;
-                case 2:
-                    countStar[2]++;
-                    break;
-                case 3:
-                    countStar[3]++;
-                    break;
-                case 4:
-                    countStar[4]++;
-                    break;
-                case 5:
-                    countStar[5]++;
-                    break;
-            }
-        }
-        ReviewStarResponseDto reviewStarResponseDto = new ReviewStarResponseDto(countStar);
+        reivewList.stream()
+                .map(Review::getStar)
+                .map((star) -> countStar[star]++);
 
+        ReviewStarResponseDto reviewStarResponseDto = new ReviewStarResponseDto(countStar);
         return reviewStarResponseDto;
     }
 
@@ -162,11 +112,10 @@ public class ReviewService {
         if (reviewLike.isPresent()) {
             reviewLikeRepository.delete(reviewLike.get());
             return LIKE_CANCEL;
-        } else {
-            ReviewLike newReviewLike = reviewLikeRepository.save(new ReviewLike(user, review.getId(), shopId));
-            review.getReviewLikes().add(newReviewLike);
-            return LIKE_SUCCESS;
         }
+        ReviewLike newReviewLike = reviewLikeRepository.save(new ReviewLike(user, review.getId(), shopId));
+        review.getReviewLikes().add(newReviewLike);
+        return LIKE_SUCCESS;
     }
 
     public ReviewpageResponseDto reviewList(int size, int page, UserDetailsImpl userDetails, String shopId) {
@@ -182,9 +131,44 @@ public class ReviewService {
             ReviewResponseDto reviewResponseDto = new ReviewResponseDto(review, like_count, is_like);
             reviewList.add(reviewResponseDto);
         }
+
         PageResponse pageResponse = new PageResponse<>(reviewList, pageable, total);
         return new ReviewpageResponseDto(pageResponse);
 //        return new PageResponse<>(reviewList, pageable, total);
+    }
+
+    /*------------------------------------------------------------------------------------------------------*/
+
+    private void checkAuthority(Review review, User user) {
+        // admin 확인
+        if (!user.getRole().getAuthority().equals("ROLE_ADMIN")) {
+            // userId 확인
+            if (review.getUser().getUserId() != user.getUserId()) {
+                throw new ReviewAuthorityException(ErrorCode.NO_AUTHORITY_TO_DATA);
+            }
+        }
+    }
+
+    private Review findReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow(() ->
+                new NullPointerException("존재하지 않는 후기입니다.")
+        );
+        return review;
+    }
+
+    private void deleteImg(Review review) {
+        // 기존 review에서 이미지 삭제
+        review.getImageUrls().forEach(reviewImageRepository::delete);
+        review.getImageUrls().clear();
+    }
+
+    private void uploadImg(List<MultipartFile> multipartFile, Review review) {
+        List<String> urls = s3Utils.uploadFile(multipartFile);
+        for (String url : urls) {
+            ReviewImage reviewImage = new ReviewImage(url);
+            reviewImageRepository.save(reviewImage);
+            review.getImageUrls().add(reviewImage);
+        }
     }
 
     private Boolean getaBoolean(UserDetailsImpl userDetails, Review review) {

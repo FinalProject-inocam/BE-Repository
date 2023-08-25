@@ -43,7 +43,6 @@ public class ShopdbService {
             }
             log.info("page : " + i);
         }
-
         return null;
     }
 

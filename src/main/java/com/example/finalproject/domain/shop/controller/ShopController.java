@@ -1,6 +1,5 @@
 package com.example.finalproject.domain.shop.controller;
 
-import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
 import com.example.finalproject.domain.shop.dto.ShopsResponseDto;
@@ -40,16 +39,14 @@ public class ShopController {
     @GetMapping("/{shopId}")
     public ApiResponse<?> getSelectedShop(@PathVariable String shopId,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = checkGuest(userDetails);
-        ShopOneResponseDto shopOneResponseDto = shopService.getSelectedShop(shopId, user);
+        ShopOneResponseDto shopOneResponseDto = shopService.getSelectedShop(shopId, userDetails.getUser());
         return ResponseUtils.ok(shopOneResponseDto);
     }
 
     @PatchMapping("/{shopId}")
     public ApiResponse<?> likeShop(@PathVariable String shopId,
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = checkGuest(userDetails);
-        SuccessCode successCode = shopService.likeShop(shopId, user);
+        SuccessCode successCode = shopService.likeShop(shopId, userDetails.getUser());
         return ResponseUtils.ok(successCode);
     }
 }

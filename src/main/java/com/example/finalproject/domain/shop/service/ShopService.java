@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.ShopBannerDto;
 import com.example.finalproject.domain.shop.dto.ShopDto;
 import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
@@ -132,7 +133,6 @@ public class ShopService {
             }
 
             ShopsResponseDto shopsResponseDto = new ShopsResponseDto(jsonObject, shopDtoList);
-
             return shopsResponseDto;
         } catch (JSONException e) {
             throw new ShopNoContentException(SuccessCode.NO_SHOP_SUCCESS);
@@ -180,7 +180,6 @@ public class ShopService {
         Integer reviewImageSize = imageSizeFuture.join();
 
         ShopOneResponseDto shopOneResponseDto = new ShopOneResponseDto(shop, reviews, shopLikes, user, banner, reviewImageSize);
-
         return shopOneResponseDto;
     }
 
@@ -222,7 +221,16 @@ public class ShopService {
         while (sortedImages.size() < imageSize) {
             sortedImages.add(defaultImageUrl);
         }
-
         return sortedImages;
+    }
+
+    private Boolean getaBoolean(UserDetailsImpl userDetails, Review review) {
+        Boolean is_like;
+        if (userDetails == null) {
+            is_like = false;
+        } else {
+            is_like = reviewLikeRepository.existsByReviewIdAndUserUserId(review.getId(), userDetails.getUser().getUserId());
+        }
+        return is_like;
     }
 }
