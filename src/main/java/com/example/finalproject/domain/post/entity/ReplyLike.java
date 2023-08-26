@@ -3,9 +3,11 @@ package com.example.finalproject.domain.post.entity;
 import com.example.finalproject.domain.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
+@NoArgsConstructor
 public class ReplyLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
