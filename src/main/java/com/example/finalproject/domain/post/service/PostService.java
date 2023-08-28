@@ -45,13 +45,23 @@ public class PostService {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
 
         Page<Post> postPage = postRepository.findByCategory(category, pageable);
-        if (category.equals("total")) {
-            postPage = postRepository.findAll(pageable);
-        }
 
         List<PostAllResponseDto> postsList = new ArrayList<>();
         long total = postPage.getTotalElements();
 
+        if (category.equals("total")) {
+            postPage = postRepository.findAll(pageable);
+            if (page == 1) {
+                Post notificationPost = postRepository.findByCategoryOrderByCreatedAtDesc("notification").orElseThrow(
+                        () -> new PostsNotFoundException(NOT_FOUND_DATA)
+                );
+                Boolean is_like = getaBoolean(userDetails, notificationPost);
+                Long comment_count = Long.valueOf(notificationPost.getCommentList().size());
+                Long like_count = postLikeRepository.countByPostId(notificationPost.getId());
+                PostAllResponseDto postAllResponseDto = new PostAllResponseDto(notificationPost, comment_count, like_count, is_like);
+                postsList.add(postAllResponseDto);
+            }
+        }
 
         for (Post post : postPage) {
             Boolean is_like = getaBoolean(userDetails, post);
