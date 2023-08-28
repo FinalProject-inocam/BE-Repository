@@ -11,8 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/communities/{postId}/comments/{commentId}")
 @RequiredArgsConstructor
+@RequestMapping("/api/communities/{postId}/comments/{commentId}/replies")
 public class ReplyController {
     private final ReplyService replyService;
 
@@ -35,7 +35,7 @@ public class ReplyController {
     }
 
     // 대댓글 삭제
-    @DeleteMapping("/replyId")
+    @DeleteMapping("/{replyId}")
     public ApiResponse<?> deleteComments(@PathVariable(name = "replyId") Long replyId,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = replyService.deleteReply(replyId, userDetails.getUser());
