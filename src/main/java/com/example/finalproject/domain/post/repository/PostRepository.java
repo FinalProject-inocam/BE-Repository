@@ -12,6 +12,9 @@ import java.util.List;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllBy(Pageable pageable);
+
+    Page<Post> findByTitleContainingIgnoreCase(String keyword,Pageable pageable);
+
     List<Post> findTop5ByOrderByCreatedAtDesc();
 
     @Query("SELECT p FROM Post p JOIN FETCH p.postLikes pl GROUP BY p ORDER BY SIZE(pl) DESC LIMIT 5")
