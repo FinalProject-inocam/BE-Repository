@@ -18,7 +18,7 @@ public enum ErrorCode {
     NOT_FOUND_KEYWORD(BAD_REQUEST, "검색어를 입력하세요"),
 
     /* 401 UNAUTHORIZED : 인증되지 않았다는 의미입니다. */
-    INVALID_ADMIN_NUMBER(UNAUTHORIZED, "관리자 번호가 유효하지 않습니다."),
+    INVALID_ADMIN(UNAUTHORIZED, "관리자 권한이 없습니다."),
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),
     UNAUTHORIZED_USER(UNAUTHORIZED, "현재 내 계정 정보가 존재하지 않습니다"),
 

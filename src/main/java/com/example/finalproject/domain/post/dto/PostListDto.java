@@ -7,13 +7,15 @@ import java.time.LocalDateTime;
 
 @Getter
 public class PostListDto {
-    private Long id;
+    private Long postId;
     private String title;
     private LocalDateTime createdAt;
+    private String url;
 
     public PostListDto(Post post) {
-        this.id = post.getId();
+        this.postId = post.getId();
         this.title = post.getTitle();
         this.createdAt = post.getCreatedAt();
+        this.url = "/community/" + post.getCategory() + "/" + post.getId();
     }
 }

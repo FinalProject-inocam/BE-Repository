@@ -4,6 +4,7 @@ import com.example.finalproject.domain.post.entity.Image;
 import com.example.finalproject.domain.post.entity.Post;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ public class PostOneResponseDto {
     private String content;
     private Boolean isLike;
     private Long likeCount;
+    private LocalDateTime createAt;
     private List<String> imageUrls; // Image URL 목록을 저장
     private List<CommentResponseDto> commentsList;
 
@@ -27,6 +29,7 @@ public class PostOneResponseDto {
                 .collect(Collectors.toList());
         this.likeCount = like_count;
         this.isLike = is_like;
+        this.createAt = post.getCreatedAt();
     }
 }
 

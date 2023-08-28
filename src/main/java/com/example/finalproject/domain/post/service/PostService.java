@@ -168,8 +168,8 @@ public class PostService {
     @Transactional
     public SuccessCode updatePost(List<MultipartFile> multipartFile, PostRequestDto postRequestDto, Long postId, String nickname) {
         Post post = validateAuthority(postId, nickname);
-        List<Image> images = new ArrayList<>(post.getImageList()); // 복사본 사용
-        imgeUpdate(post, images);
+        List<Image> images = new ArrayList<>(post.getImageList());
+        imageDel(post, images);
         validateMultipartFile(multipartFile, post);
         savePost(post);
         post.setTitle(postRequestDto.getTitle());
@@ -180,11 +180,30 @@ public class PostService {
     @Transactional
     public SuccessCode deletePost(Long postId, String nickname) {
         Post post = validateAuthority(postId, nickname);
-        List<Image> images = new ArrayList<>(post.getImageList()); // 복사본 사용
-        imgeUpdate(post, images);
+        List<Image> images = new ArrayList<>(post.getImageList());
+        imageDel(post, images);
         User user = userRepository.findByNickname(nickname);
         postLikeRepository.deleteByPostIdAndUserUserId(postId, user.getUserId()).orElseThrow(null);
         postRepository.delete(post);
+        return POST_DELETE_SUCCESS;
+    }
+
+    @Transactional
+    public SuccessCode selectDelPost(List<Long> postIdList, UserDetailsImpl userDetails) {
+        UserRoleEnum role = userDetails.getUser().getRole();
+
+        if (role != UserRoleEnum.ADMIN) {
+            throw new PostsNotFoundException(INVALID_ADMIN);
+        }
+        for(Long postId : postIdList) {
+            Post post = postRepository.findById(postId).orElseThrow(
+                    () -> new PostsNotFoundException(NOT_FOUND_DATA)
+            );
+            List<Image> images = new ArrayList<>(post.getImageList());
+            imageDel(post, images);
+            postLikeRepository.deleteByPostIdAndUserUserId(postId, post.getUser().getUserId()).orElseThrow(null);
+            postRepository.delete(post);
+        }
         return POST_DELETE_SUCCESS;
     }
 
@@ -250,7 +269,7 @@ public class PostService {
     }
 
     // 이미지 올리기
-    private void imgeUpdate(Post post, List<Image> images) {
+    private void imageDel(Post post, List<Image> images) {
         for (Image image : images) {
             post.getImageList().remove(image); // 연관관계 끊기
             postImageRepository.delete(image);

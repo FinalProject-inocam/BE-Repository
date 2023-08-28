@@ -7,7 +7,6 @@ import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,6 +70,13 @@ public class PostController {
     public ApiResponse<?> deletePost(@PathVariable(name = "postId") Long postId,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = postService.deletePost(postId, userDetails.getNickname());
+        return ResponseUtils.ok(successCode);
+    }
+
+    @DeleteMapping("/selectDel")
+    public ApiResponse<?> selectDel(@RequestBody PostSelectDelDto postSelectDelDto,
+                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        SuccessCode successCode = postService.selectDelPost(postSelectDelDto.getPostIdList(), userDetails);
         return ResponseUtils.ok(successCode);
     }
 

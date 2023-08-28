@@ -18,6 +18,7 @@ public class PostAllResponseDto {
     private String thumbnail;
     private LocalDateTime createAt;
     private String nickname;
+    private String url;
 
     public PostAllResponseDto(Post post, Long comment_count, Long like_count, Boolean is_like) {
         this.content = post.getContent();
@@ -35,5 +36,6 @@ public class PostAllResponseDto {
         this.createAt = post.getCreatedAt();
         this.nickname = post.getNickname();
         this.view = post.getView();
+        this.url = "/community/" + post.getCategory() + "/" + post.getId();
     }
 }

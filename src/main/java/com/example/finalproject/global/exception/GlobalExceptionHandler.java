@@ -114,6 +114,6 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponse<?> PostNotFoundExceptionHandler(PostsNotFoundException e) {
         log.error("검색어를 입력하지 않음 : " + e.getMessage());
-        return ResponseUtils.error(ErrorCode.NOT_FOUND_KEYWORD);
+        return ResponseUtils.error(e.getErrorCode());
     }
 }

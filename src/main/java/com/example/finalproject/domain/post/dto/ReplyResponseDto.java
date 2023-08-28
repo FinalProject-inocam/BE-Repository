@@ -15,12 +15,12 @@ public class ReplyResponseDto {
     private Boolean isLike;
     private Long likeCount;
 
-    public ReplyResponseDto(Reply reply,Long likeCount,Boolean isLike){
-        this.replyId= reply.getId();
-        this.reply=reply.getReply();
-        this.nickname= reply.getNickname();
-        this.createAt=reply.getCreatedAt();
-        this.modifiedAt=reply.getModifiedAt();
+    public ReplyResponseDto(Reply reply, Long likeCount, Boolean isLike) {
+        this.replyId = reply.getId();
+        this.reply = reply.getReply();
+        this.nickname = reply.getNickname();
+        this.createAt = reply.getCreatedAt();
+        this.modifiedAt = reply.getModifiedAt();
         this.likeCount = likeCount;
         this.isLike = isLike;
     }

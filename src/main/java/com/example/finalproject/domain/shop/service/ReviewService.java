@@ -19,7 +19,6 @@ import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.PageResponse;
 import com.example.finalproject.global.utils.GuestUtil;
-import com.example.finalproject.global.utils.ResponseUtils;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -143,7 +141,6 @@ public class ReviewService {
 
         PageResponse pageResponse = new PageResponse<>(reviewList, pageable, total);
         return new ReviewpageResponseDto(pageResponse);
-//        return new PageResponse<>(reviewList, pageable, total);
     }
 
     /*------------------------------------------------------------------------------------------------------*/
