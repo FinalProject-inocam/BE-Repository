@@ -2,7 +2,7 @@ package com.example.finalproject.domain.post.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.post.dto.PostAllResponseDto;
-import com.example.finalproject.domain.post.dto.PostLikeRequestDto;
+import com.example.finalproject.domain.post.dto.PostListResponseDto;
 import com.example.finalproject.domain.post.dto.PostOneResponseDto;
 import com.example.finalproject.domain.post.dto.PostRequestDto;
 import com.example.finalproject.domain.post.service.PostService;
@@ -80,5 +80,11 @@ public class PostController {
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = postService.likePost(postId, userDetails.getUser().getUserId());
         return ResponseUtils.ok(successCode);
+    }
+
+    @GetMapping("/list")
+    public ApiResponse<?> getPostsByTop() {
+        PostListResponseDto postListResponseDto = postService.getPostByTop();
+        return ResponseUtils.ok(postListResponseDto);
     }
 }

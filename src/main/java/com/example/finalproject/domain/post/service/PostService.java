@@ -21,9 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.example.finalproject.global.enums.ErrorCode.*;
 import static com.example.finalproject.global.enums.SuccessCode.*;
@@ -77,6 +75,32 @@ public class PostService {
     }
 
     @Transactional
+    public PostListResponseDto getPostByTop() {
+
+        List<PostListDto> recentList = postRepository.findTop5ByOrderByCreatedAtDesc().stream()
+                .map(PostListDto::new).toList();
+        Map<Integer, Object> recentListMap = new HashMap<>();
+
+        for (int i = 0; i < recentList.size(); i++) {
+            recentListMap.put(i + 1, recentList.get(i));
+        }
+
+        List<PostListDto> likeList = postRepository.findTop5ByOrderByPostLikesSizeDesc().stream()
+                .map(PostListDto::new).toList();
+        Map<Integer, Object> likeListMap = new HashMap<>();
+
+        for (int i = 0; i < likeList.size(); i++) {
+            likeListMap.put(i + 1, likeList.get(i));
+        }
+
+        String imgUrl = "https://finalimgbucket.s3.amazonaws.com/2945e31e-d47d-4c41-9da8-eae9e695fa50";
+
+        PostListResponseDto postListResponseDto = new PostListResponseDto(likeListMap, recentListMap, imgUrl);
+
+        return postListResponseDto;
+    }
+
+    @Transactional
     public PostOneResponseDto getOnePost(Long postid, UserDetailsImpl userDetails) {
         Post post = postRepository.findById(postid).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
@@ -86,16 +110,16 @@ public class PostService {
         List<Comment> commentList = post.getCommentList();
 
         for (Comment cmt : commentList) {
-            List<ReplyResponseDto> replyList=new ArrayList<>();
-            for(Reply reply : cmt.getReplyList()){
-                    Long replyLikeCount=replyLikeRepository.countByReplyId(reply.getId());
-                    Boolean isLikeReply=getreplyBoolean(userDetails, reply);
-                    ReplyResponseDto responseDto = new ReplyResponseDto(reply,replyLikeCount,isLikeReply);
-                    replyList.add(responseDto);
+            List<ReplyResponseDto> replyList = new ArrayList<>();
+            for (Reply reply : cmt.getReplyList()) {
+                Long replyLikeCount = replyLikeRepository.countByReplyId(reply.getId());
+                Boolean isLikeReply = getreplyBoolean(userDetails, reply);
+                ReplyResponseDto responseDto = new ReplyResponseDto(reply, replyLikeCount, isLikeReply);
+                replyList.add(responseDto);
             }
             Long like_count = commentLikeRepository.countByCommentId(cmt.getId());
             Boolean is_like = getcmtBoolean(userDetails, cmt);
-            CommentResponseDto commentResponseDto = new CommentResponseDto(cmt,like_count,is_like,replyList);
+            CommentResponseDto commentResponseDto = new CommentResponseDto(cmt, like_count, is_like, replyList);
             commentResponseDtoList.add(commentResponseDto);
         }
         Long like_count = postLikeRepository.countByPostId(post.getId());
