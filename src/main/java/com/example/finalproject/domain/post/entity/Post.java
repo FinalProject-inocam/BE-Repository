@@ -30,7 +30,7 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String nickname;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id")
     private List<Comment> commentList;
 
