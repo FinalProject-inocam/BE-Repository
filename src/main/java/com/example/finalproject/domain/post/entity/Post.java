@@ -33,6 +33,9 @@ public class Post extends Timestamped {
     @Column(nullable = false)
     private String category;
 
+    @Column
+    private Long view = 0L;
+
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id")
     private List<Comment> commentList;
@@ -54,5 +57,8 @@ public class Post extends Timestamped {
         this.category = postRequestDto.getCategory();
         this.user = user;
     }
-    // 일단 나중에 추가해야할거 좋아요
+
+    public void viewCount() {
+        this.view++;
+    }
 }

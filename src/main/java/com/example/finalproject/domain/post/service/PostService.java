@@ -7,7 +7,6 @@ import com.example.finalproject.domain.post.dto.*;
 import com.example.finalproject.domain.post.entity.*;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.post.repository.*;
-import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.responsedto.PageResponse;
@@ -22,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.*;
 
 import static com.example.finalproject.global.enums.ErrorCode.*;
@@ -43,14 +40,10 @@ public class PostService {
 
     @Transactional
     public PostPageDto getPost(String category, int page, int size, UserDetailsImpl userDetails) {
-
-        // 페이지 네이션
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-
         Page<Post> postPage = postRepository.findByCategory(category, pageable);
 
         List<PostAllResponseDto> postsList = new ArrayList<>();
-        long total = postPage.getTotalElements();
 
         if (category.equals("total")) {
             postPage = postRepository.findAll(pageable);
@@ -65,6 +58,7 @@ public class PostService {
                 postsList.add(postAllResponseDto);
             }
         }
+        long total = postPage.getTotalElements();
 
         for (Post post : postPage) {
             Boolean is_like = getaBoolean(userDetails, post);
@@ -73,15 +67,15 @@ public class PostService {
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
             postsList.add(postAllResponseDto);
         }
-        PageResponse pageResponse= new PageResponse<>(postsList, pageable, total);
+        PageResponse pageResponse = new PageResponse<>(postsList, pageable, total);
         return new PostPageDto(pageResponse);
     }
 
     public Page<PostAllResponseDto> searchPost(int page, int size, String keyword, UserDetailsImpl userDetails) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        log.info("keyword : "+keyword);
+        log.info("keyword : " + keyword);
 
-        if(keyword.isBlank()){
+        if (keyword.isBlank()) {
             throw new PostsNotFoundException(NOT_FOUND_KEYWORD);
         }
         Page<Post> searchList = postRepository.searchByTitle(keyword, pageable);
@@ -95,7 +89,7 @@ public class PostService {
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
             postsList.add(postAllResponseDto);
         }
-        log.info("keyword : "+keyword);
+        log.info("keyword : " + keyword);
         return new PageResponse<>(postsList, pageable, total);
     }
 
@@ -133,6 +127,9 @@ public class PostService {
 
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         List<Comment> commentList = post.getCommentList();
+
+        // 게시글 조회수 증가
+        post.viewCount();
 
         for (Comment cmt : commentList) {
             List<ReplyResponseDto> replyList = new ArrayList<>();
