@@ -11,11 +11,13 @@ public class PostAllResponseDto {
     private Boolean isLike;
     private Long likeCount;
     private Long commentCount;
+    private String category;
 
     public PostAllResponseDto(Post post, Long comment_count, Long like_count, Boolean is_like) {
         this.content = post.getContent();
         this.title = post.getTitle();
         this.postId = post.getId();
+        this.category = post.getCategory();
         this.commentCount = comment_count;
         this.likeCount = like_count;
         this.isLike = is_like;
