@@ -11,4 +11,6 @@ public interface ReplyLikeRepository extends JpaRepository<ReplyLike,Long> {
     Long countByReplyId(Long id);
 
     Boolean existsByReplyIdAndUserUserId(Long id, Long userId);
+
+    void deleteByUserUserIdAndReplyId(Long userId, Long replyId);
 }

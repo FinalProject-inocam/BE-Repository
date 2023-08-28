@@ -12,6 +12,7 @@ import com.example.finalproject.domain.post.repository.*;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,7 @@ import static com.example.finalproject.global.enums.SuccessCode.LIKE_SUCCESS;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j(topic = "postService")
 public class ReplyService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
@@ -48,9 +50,10 @@ public class ReplyService {
         reply.updateComment(commentRequestDto.getComment());
         return SuccessCode.COMMENT_UPDATE_SUCCESS;
     }
-
+    @Transactional
     public SuccessCode deleteReply(Long replyId, User user) {
         Reply reply = validateAuthority(replyId, user.getNickname());
+        replyLikeRepository.deleteByUserUserIdAndReplyId(user.getUserId(),replyId);
         replyRepository.delete(reply);
         return SuccessCode.COMMENT_DELETE_SUCCESS;
     }
