@@ -2,6 +2,7 @@ package com.example.finalproject.global.exception;
 
 
 import com.example.finalproject.domain.mail.exception.MailNotFoundException;
+import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.shop.exception.ReviewAuthorityException;
 import com.example.finalproject.domain.shop.exception.ShopNoContentException;
 import com.example.finalproject.global.enums.ErrorCode;
@@ -107,5 +108,12 @@ public class GlobalExceptionHandler {
     public ApiResponse<?> ConditionDisagreeExceptionHandler(ConditionDisagreeException e) {
         log.error("소셜 로그인 한 사용자가 모든 항목에 동의 하지 않음 : " + e.getMessage());
         return ResponseUtils.error(ErrorCode.MORE_AGREEMENT_NEEDED);
+    }
+
+    @ExceptionHandler(PostsNotFoundException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse<?> PostNotFoundExceptionHandler(PostsNotFoundException e) {
+        log.error("검색어를 입력하지 않음 : " + e.getMessage());
+        return ResponseUtils.error(ErrorCode.NOT_FOUND_KEYWORD);
     }
 }
