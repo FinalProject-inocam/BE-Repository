@@ -39,14 +39,19 @@ public class PostService {
     private final S3Utils s3Utils;
 
     @Transactional
-    public Page<PostAllResponseDto> getPost(int page, int size, UserDetailsImpl userDetails) {
+    public Page<PostAllResponseDto> getPost(String category, int page, int size, UserDetailsImpl userDetails) {
 
         // 페이지 네이션
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Post> postPage = postRepository.findAllBy(pageable);
+
+        Page<Post> postPage = postRepository.findByCategory(category, pageable);
+        if (category.equals("total")) {
+            postPage = postRepository.findAll(pageable);
+        }
 
         List<PostAllResponseDto> postsList = new ArrayList<>();
         long total = postPage.getTotalElements();
+
 
         for (Post post : postPage) {
             Boolean is_like = getaBoolean(userDetails, post);
@@ -58,9 +63,9 @@ public class PostService {
         return new PageResponse<>(postsList, pageable, total);
     }
 
-    public Page<PostAllResponseDto> searchPost(int page,int size,String keyword,UserDetailsImpl userDetails ){
+    public Page<PostAllResponseDto> searchPost(int page, int size, String keyword, UserDetailsImpl userDetails) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Post> searchList=postRepository.findByTitleContainingIgnoreCase(keyword,pageable);
+        Page<Post> searchList = postRepository.findByTitleContainingIgnoreCase(keyword, pageable);
         List<PostAllResponseDto> postsList = new ArrayList<>();
         long total = searchList.getTotalElements();
 
