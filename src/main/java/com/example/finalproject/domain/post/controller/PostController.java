@@ -74,6 +74,13 @@ public class PostController {
         return ResponseUtils.ok(successCode);
     }
 
+    @DeleteMapping("/selectDel")
+    public ApiResponse<?> selectDel(@RequestBody PostSelectDelDto postSelectDelDto,
+                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        SuccessCode successCode = postService.selectDelPost(postSelectDelDto.getPostIdList(), userDetails);
+        return ResponseUtils.ok(successCode);
+    }
+
     // 게시글 좋아요
     @PatchMapping("/{postId}/like")
     public ApiResponse<?> likeNews(@PathVariable("postId") Long postId,
