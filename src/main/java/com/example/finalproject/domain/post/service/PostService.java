@@ -48,14 +48,18 @@ public class PostService {
         if (category.equals("total")) {
             postPage = postRepository.findAll(pageable);
             if (page == 1) {
-                Post notificationPost = postRepository.findByCategoryOrderByCreatedAtDesc("notification").orElseThrow(
-                        () -> new PostsNotFoundException(NOT_FOUND_DATA)
-                );
-                Boolean is_like = getaBoolean(userDetails, notificationPost);
-                Long comment_count = Long.valueOf(notificationPost.getCommentList().size());
-                Long like_count = postLikeRepository.countByPostId(notificationPost.getId());
-                PostAllResponseDto postAllResponseDto = new PostAllResponseDto(notificationPost, comment_count, like_count, is_like);
-                postsList.add(postAllResponseDto);
+                try {
+                    Post notificationPost = postRepository.findByCategoryOrderByCreatedAtDesc("notification").orElseThrow(
+                            () -> new PostsNotFoundException(NOT_FOUND_DATA)
+                    );
+                    Boolean is_like = getaBoolean(userDetails, notificationPost);
+                    Long comment_count = Long.valueOf(notificationPost.getCommentList().size());
+                    Long like_count = postLikeRepository.countByPostId(notificationPost.getId());
+                    PostAllResponseDto postAllResponseDto = new PostAllResponseDto(notificationPost, comment_count, like_count, is_like);
+                    postsList.add(postAllResponseDto);
+                } catch (PostsNotFoundException e) {
+                    log.info("등록된 공지사항이 없습니다.");
+                }
             }
         }
         long total = postPage.getTotalElements();
