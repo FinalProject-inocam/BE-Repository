@@ -7,7 +7,6 @@ import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

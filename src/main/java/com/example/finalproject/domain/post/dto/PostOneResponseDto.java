@@ -29,6 +29,7 @@ public class PostOneResponseDto {
                 .collect(Collectors.toList());
         this.likeCount = like_count;
         this.isLike = is_like;
+        this.createAt = post.getCreatedAt();
     }
 }
 

@@ -168,8 +168,8 @@ public class PostService {
     @Transactional
     public SuccessCode updatePost(List<MultipartFile> multipartFile, PostRequestDto postRequestDto, Long postId, String nickname) {
         Post post = validateAuthority(postId, nickname);
-        List<Image> images = new ArrayList<>(post.getImageList()); // 복사본 사용
-        imgeUpdate(post, images);
+        List<Image> images = new ArrayList<>(post.getImageList());
+        imageDel(post, images);
         validateMultipartFile(multipartFile, post);
         savePost(post);
         post.setTitle(postRequestDto.getTitle());
@@ -180,8 +180,8 @@ public class PostService {
     @Transactional
     public SuccessCode deletePost(Long postId, String nickname) {
         Post post = validateAuthority(postId, nickname);
-        List<Image> images = new ArrayList<>(post.getImageList()); // 복사본 사용
-        imgeUpdate(post, images);
+        List<Image> images = new ArrayList<>(post.getImageList());
+        imageDel(post, images);
         User user = userRepository.findByNickname(nickname);
         postLikeRepository.deleteByPostIdAndUserUserId(postId, user.getUserId()).orElseThrow(null);
         postRepository.delete(post);
