@@ -189,6 +189,25 @@ public class PostService {
     }
 
     @Transactional
+    public SuccessCode selectDelPost(List<Long> postIdList, UserDetailsImpl userDetails) {
+        UserRoleEnum role = userDetails.getUser().getRole();
+
+        if (role != UserRoleEnum.ADMIN) {
+            throw new PostsNotFoundException(INVALID_ADMIN);
+        }
+        for(Long postId : postIdList) {
+            Post post = postRepository.findById(postId).orElseThrow(
+                    () -> new PostsNotFoundException(NOT_FOUND_DATA)
+            );
+            List<Image> images = new ArrayList<>(post.getImageList());
+            imageDel(post, images);
+            postLikeRepository.deleteByPostIdAndUserUserId(postId, post.getUser().getUserId()).orElseThrow(null);
+            postRepository.delete(post);
+        }
+        return POST_DELETE_SUCCESS;
+    }
+
+    @Transactional
     public SuccessCode likePost(Long postId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_CLIENT)
@@ -250,7 +269,7 @@ public class PostService {
     }
 
     // 이미지 올리기
-    private void imgeUpdate(Post post, List<Image> images) {
+    private void imageDel(Post post, List<Image> images) {
         for (Image image : images) {
             post.getImageList().remove(image); // 연관관계 끊기
             postImageRepository.delete(image);
