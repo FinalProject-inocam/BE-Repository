@@ -39,7 +39,7 @@ public class PostService {
     private final S3Utils s3Utils;
 
     @Transactional
-    public Page<PostAllResponseDto> getPost(String category, int page, int size, UserDetailsImpl userDetails) {
+    public PostPageDto getPost(String category, int page, int size, UserDetailsImpl userDetails) {
 
         // 페이지 네이션
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
@@ -70,7 +70,8 @@ public class PostService {
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
             postsList.add(postAllResponseDto);
         }
-        return new PageResponse<>(postsList, pageable, total);
+        PageResponse pageResponse= new PageResponse<>(postsList, pageable, total);
+        return new PostPageDto(pageResponse);
     }
 
     public Page<PostAllResponseDto> searchPost(int page, int size, String keyword, UserDetailsImpl userDetails) {
