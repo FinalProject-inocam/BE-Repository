@@ -9,11 +9,11 @@ import java.util.Map;
 public class PostListResponseDto {
     private Map<Integer, Object> likeList;
     private Map<Integer, Object> recentList;
-    private String imgUrl;
+    private String newImgUrl;
 
     public PostListResponseDto(Map<Integer, Object> likeList, Map<Integer, Object> recentList, String imgUrl) {
         this.likeList = likeList;
         this.recentList = recentList;
-        this.imgUrl= imgUrl;
+        this.newImgUrl= imgUrl;
     }
 }
