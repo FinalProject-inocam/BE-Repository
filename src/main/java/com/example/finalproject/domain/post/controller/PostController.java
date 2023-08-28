@@ -25,7 +25,7 @@ public class PostController {
                                       @RequestParam("size") int size,
                                       @RequestParam("keyword") String keyword,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Page<PostAllResponseDto> postAllResponseDtos = postService.searchPost(page, size, keyword, userDetails);
+        SearchPageDto postAllResponseDtos = postService.searchPost(page, size, keyword, userDetails);
         return ResponseUtils.ok(postAllResponseDtos);
     }
 

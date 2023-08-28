@@ -71,7 +71,7 @@ public class PostService {
         return new PostPageDto(pageResponse);
     }
 
-    public Page<PostAllResponseDto> searchPost(int page, int size, String keyword, UserDetailsImpl userDetails) {
+    public SearchPageDto searchPost(int page, int size, String keyword, UserDetailsImpl userDetails) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
         log.info("keyword : " + keyword);
 
@@ -90,7 +90,8 @@ public class PostService {
             postsList.add(postAllResponseDto);
         }
         log.info("keyword : " + keyword);
-        return new PageResponse<>(postsList, pageable, total);
+        PageResponse pageResponse = new PageResponse<>(postsList, pageable, total);
+        return new SearchPageDto(pageResponse);
     }
 
     @Transactional
