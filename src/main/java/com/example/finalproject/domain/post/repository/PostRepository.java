@@ -17,6 +17,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByCategoryOrderByCreatedAtDesc(String category);
 
     Page<Post> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
+    @Query("SELECT p FROM Post p WHERE p.title LIKE %:keyword%")
+    Page<Post> searchByTitle(String keyword,Pageable pageable);
 
     List<Post> findTop5ByOrderByCreatedAtDesc();
 

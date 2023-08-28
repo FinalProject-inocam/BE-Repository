@@ -7,6 +7,7 @@ import com.example.finalproject.domain.post.dto.*;
 import com.example.finalproject.domain.post.entity.*;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.post.repository.*;
+import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.responsedto.PageResponse;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.*;
 
 import static com.example.finalproject.global.enums.ErrorCode.*;
@@ -76,7 +79,12 @@ public class PostService {
 
     public Page<PostAllResponseDto> searchPost(int page, int size, String keyword, UserDetailsImpl userDetails) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Post> searchList = postRepository.findByTitleContainingIgnoreCase(keyword, pageable);
+        log.info("keyword : "+keyword);
+
+        if(keyword.isBlank()){
+            throw new PostsNotFoundException(NOT_FOUND_KEYWORD);
+        }
+        Page<Post> searchList = postRepository.searchByTitle(keyword, pageable);
         List<PostAllResponseDto> postsList = new ArrayList<>();
         long total = searchList.getTotalElements();
 
@@ -87,6 +95,7 @@ public class PostService {
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
             postsList.add(postAllResponseDto);
         }
+        log.info("keyword : "+keyword);
         return new PageResponse<>(postsList, pageable, total);
     }
 
