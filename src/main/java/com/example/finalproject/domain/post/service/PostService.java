@@ -138,7 +138,7 @@ public class PostService {
     }
 
     @Transactional
-    public SuccessCode likePost(Long postId, Long userId, PostLikeRequestDto postLikeRequestDto) {
+    public SuccessCode likePost(Long postId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_CLIENT)
         );
