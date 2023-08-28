@@ -38,6 +38,9 @@ public class Post extends Timestamped {
     @JoinColumn(name = "image_id")
     private List<Image> imageList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post")
+    private List<PostLike> postLikes = new ArrayList<>();
+
     @ManyToOne
     private User user;
 
