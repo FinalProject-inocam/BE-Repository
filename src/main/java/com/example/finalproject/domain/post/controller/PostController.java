@@ -1,10 +1,7 @@
 package com.example.finalproject.domain.post.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.post.dto.PostAllResponseDto;
-import com.example.finalproject.domain.post.dto.PostListResponseDto;
-import com.example.finalproject.domain.post.dto.PostOneResponseDto;
-import com.example.finalproject.domain.post.dto.PostRequestDto;
+import com.example.finalproject.domain.post.dto.*;
 import com.example.finalproject.domain.post.service.PostService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
@@ -38,8 +35,8 @@ public class PostController {
                                    @RequestParam("page") int page,
                                    @RequestParam("size") int size,
                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Page<PostAllResponseDto> postResponseDtoList = postService.getPost(category, page, size, userDetails);
-        return ResponseUtils.ok(postResponseDtoList);
+        PostPageDto postDto = postService.getPost(category, page, size, userDetails);
+        return ResponseUtils.ok(postDto);
     }
 
     // 게시글 상세 조회
