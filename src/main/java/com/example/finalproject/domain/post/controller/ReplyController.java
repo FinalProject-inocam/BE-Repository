@@ -11,8 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/communities/{postId}/comments/{commentId}/replies")
 @RequiredArgsConstructor
+@RequestMapping("/api/communities/{postId}/comments/{commentId}/replies")
 public class ReplyController {
     private final ReplyService replyService;
 

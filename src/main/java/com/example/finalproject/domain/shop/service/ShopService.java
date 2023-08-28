@@ -2,10 +2,7 @@ package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.shop.dto.ShopBannerDto;
-import com.example.finalproject.domain.shop.dto.ShopDto;
-import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
-import com.example.finalproject.domain.shop.dto.ShopsResponseDto;
+import com.example.finalproject.domain.shop.dto.*;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.Shop;
@@ -23,6 +20,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -44,6 +45,7 @@ public class ShopService {
     private final ShopLikeRepository shopLikeRepository;
     private final ReviewLikeRepository reviewLikeRepository;
     private final ShopRepository shopRepository;
+//    private final QShopRepository qShopRepository;
 
     private final GuestUtil guestUtil;
 
@@ -57,6 +59,7 @@ public class ShopService {
         this.reviewLikeRepository = reviewLikeRepository;
         this.shopRepository = shopRepository;
         this.guestUtil = guestUtil;
+//        this.qShopRepository = qShopRepository;
     }
 
     // openApi 사용시 필요한 servicekey
@@ -123,7 +126,9 @@ public class ShopService {
             for (Object item : items) {
                 JSONObject itemToJsonObj = (JSONObject) item;
                 String shopId = itemToJsonObj.getString("bizesId");
+                log.info(shopId);
                 List<Review> reviews = reviewRepository.findAllByShopId(shopId);
+                log.info(String.valueOf(reviews.size()));
                 List<ShopLike> shopLikes = shopLikeRepository.findAllByShopId(shopId);
                 ShopDto shopDto = new ShopDto(itemToJsonObj, reviews, shopLikes, user);
                 shopDtoList.add(shopDto);
@@ -219,5 +224,20 @@ public class ShopService {
             sortedImages.add(defaultImageUrl);
         }
         return sortedImages;
+    }
+
+    public ShopsPageResponseDto radiusSearch(Integer size, Integer page, String longitude, String latitude, UserDetailsImpl userDetails) {
+        Double myLongitude = Double.valueOf(longitude);
+        Double myLatitude = Double.valueOf(latitude);
+        User user = guestUtil.checkGuest(userDetails);
+
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "id"));
+        Page<Shop> shopPage = shopRepository.searchByCondition(myLongitude, myLatitude, 2000, pageable);
+
+        List<ShopPageDto> shopPageDtoList = shopPage.get()
+                .map(shop -> new ShopPageDto(shop, reviewRepository.findAllByShopId(shop.getShopId()),
+                        shopLikeRepository.findAllByShopId(shop.getShopId()), user)).toList();
+        ShopsPageResponseDto shopsResponseDto = new ShopsPageResponseDto(shopPage, shopPageDtoList);
+        return shopsResponseDto;
     }
 }
