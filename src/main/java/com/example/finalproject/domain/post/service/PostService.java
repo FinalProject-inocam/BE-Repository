@@ -60,6 +60,22 @@ public class PostService {
         return new PageResponse<>(postsList, pageable, total);
     }
 
+    public Page<PostAllResponseDto> searchPost(int page,int size,String keyword,UserDetailsImpl userDetails ){
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Post> searchList=postRepository.findByTitleContainingIgnoreCase(keyword,pageable);
+        List<PostAllResponseDto> postsList = new ArrayList<>();
+        long total = searchList.getTotalElements();
+
+        for (Post post : searchList) {
+            Boolean is_like = getaBoolean(userDetails, post);
+            Long comment_count = Long.valueOf(post.getCommentList().size());
+            Long like_count = postLikeRepository.countByPostId(post.getId());
+            PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
+            postsList.add(postAllResponseDto);
+        }
+        return new PageResponse<>(postsList, pageable, total);
+    }
+
     @Transactional
     public PostOneResponseDto getOnePost(Long postid, UserDetailsImpl userDetails) {
         Post post = postRepository.findById(postid).orElseThrow(

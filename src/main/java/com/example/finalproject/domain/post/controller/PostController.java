@@ -22,6 +22,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    @GetMapping("/search")
+    public ApiResponse<?> searchPosts(@RequestParam("page") int page,
+                                      @RequestParam("size") int size,
+                                      @RequestParam("keyword") String keyword,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails){
+        Page<PostAllResponseDto> postAllResponseDtos =postService.searchPost(page,size,keyword,userDetails);
+        return ResponseUtils.ok(postAllResponseDtos);
+    }
 
     // 게시글 전체 조회
     @GetMapping
@@ -31,7 +39,6 @@ public class PostController {
         Page<PostAllResponseDto> postResponseDtoList = postService.getPost(page, size, userDetails);
         return ResponseUtils.ok(postResponseDtoList);
     }
-
     // 게시글 상세 조회
     @GetMapping("/{postId}")
     public ApiResponse<?> getOnePost(@PathVariable(name = "postId") Long postId,
