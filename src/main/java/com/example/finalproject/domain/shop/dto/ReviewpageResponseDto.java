@@ -15,7 +15,6 @@ public class ReviewpageResponseDto {
     private Boolean last;
     private Boolean first;
     private int currentPage;
-    private Sort sort;
 
     public ReviewpageResponseDto(PageResponse pageResponse) {
         this.content = pageResponse.getContent();
@@ -24,7 +23,6 @@ public class ReviewpageResponseDto {
         this.totalElements = pageResponse.getTotalElements();
         this.last = pageResponse.isLast();
         this.first = pageResponse.isFirst();
-        this.sort = pageResponse.getSort();
-        this.currentPage = pageResponse.getNumber();
+        this.currentPage = pageResponse.getNumber() + 1;
     }
 }

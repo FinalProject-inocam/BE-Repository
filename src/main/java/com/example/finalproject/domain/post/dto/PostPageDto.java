@@ -1,9 +1,7 @@
 package com.example.finalproject.domain.post.dto;
 
-import com.example.finalproject.domain.shop.dto.ReviewResponseDto;
 import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.Getter;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -18,11 +16,12 @@ public class PostPageDto {
     private int currentPage;
 
     public PostPageDto(PageResponse pageResponse) {
-        this.content=pageResponse.getContent();
-        this.size=pageResponse.getSize();
-        this.totalElements=pageResponse.getTotalElements();
-        this.last=pageResponse.isLast();
-        this.first=pageResponse.isFirst();
-        this.currentPage=pageResponse.getNumber();
+        this.content = pageResponse.getContent();
+        this.size = pageResponse.getSize();
+        this.totalElements = pageResponse.getTotalElements();
+        this.totalPages = pageResponse.getTotalPages();
+        this.last = pageResponse.isLast();
+        this.first = pageResponse.isFirst();
+        this.currentPage = pageResponse.getNumber() + 1;
     }
 }
