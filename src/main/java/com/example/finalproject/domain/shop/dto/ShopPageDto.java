@@ -12,7 +12,6 @@ import java.util.List;
 public class ShopPageDto {
     private String shopId;
     private String shopName;
-//    private String lnoAdr; //지번 주소
     private String rdnmAdr; //도로명 주소
     private Double longitude;
     private Double latitude;
@@ -23,7 +22,6 @@ public class ShopPageDto {
     public ShopPageDto(Shop shop, List<Review> reviews, List<ShopLike> shopLikes, User user) {
         this.shopId = shop.getShopId();
         this.shopName = shop.getShopName();
-//        this.lnoAdr = shop.;
         this.rdnmAdr = shop.getAddress();
         this.longitude = shop.getLongitude();
         this.latitude = shop.getLatitude();

@@ -12,7 +12,6 @@ public class ShopsResponseDto {
     private Integer totalCount;
     private Integer totalPages;
     private List<ShopDto> shopList;
-//    private List<ReviewResponseDto> commentsList;
 
     public ShopsResponseDto(JSONObject jsonObject, List<ShopDto> shopList) {
         this.size = jsonObject.getJSONObject("body").getInt("numOfRows");
