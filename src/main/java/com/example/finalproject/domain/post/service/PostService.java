@@ -48,11 +48,10 @@ public class PostService {
 
         List<PostAllResponseDto> postsList = new ArrayList<>();
 
-        if (category.equals("total")) {
+        if (category.equals("전체")) {
             if (page == 1) {
-//                pageable = PageRequest.of(page - 1, size - 1, Sort.by(Sort.Direction.DESC, "id"));
                 try {
-                    Post notificationPost = postRepository.findByCategoryOrderByCreatedAtDesc("notification").orElseThrow(
+                    Post notificationPost = postRepository.findByCategoryOrderByCreatedAtDesc("공지").orElseThrow(
                             () -> new PostsNotFoundException(NOT_FOUND_DATA)
                     );
                     Boolean is_like = getaBoolean(userDetails, notificationPost);

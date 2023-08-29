@@ -13,6 +13,7 @@ public class PostOneResponseDto {
     private Long postId;
     private String title;
     private String content;
+    private String nickname;
     private Boolean isLike;
     private Long likeCount;
     private LocalDateTime createAt;
@@ -23,6 +24,7 @@ public class PostOneResponseDto {
         this.postId = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.nickname = post.getNickname();
         this.commentsList = commentResponseDtoList;
         this.imageUrls = post.getImageList().stream() // 이미지 URL만 추출
                 .map(Image::getImage)
