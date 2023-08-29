@@ -18,7 +18,6 @@ import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.PageResponse;
-import com.example.finalproject.global.utils.GuestUtil;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,6 @@ public class ReviewService {
     private final S3Utils s3Utils;
     private final ReviewImageRepository reviewImageRepository;
     private final ReviewLikeRepository reviewLikeRepository;
-    private final GuestUtil guestUtil;
 
     @Transactional
     public SuccessCode createReview(String shopId, List<MultipartFile> multipartFile,
@@ -58,8 +56,7 @@ public class ReviewService {
         }
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, userDetails);
-        User user = guestUtil.checkGuest(userDetails);
-        Review review = new Review(requestDto, shopId, user);
+        Review review = new Review(requestDto, shopId, userDetails.getUser());
         // image가 없을 때 빈 url생성 방지
         if (s3Utils.isFile(multipartFile)) {
             uploadImg(multipartFile, review);
@@ -74,9 +71,8 @@ public class ReviewService {
                                     Long reviewId, ReviewRequestDto requestDto, UserDetailsImpl userDetails) {
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, userDetails);
-        User user = guestUtil.checkGuest(userDetails);
         Review review = findReview(reviewId);
-        checkAuthority(review, user);
+        checkAuthority(review, userDetails.getUser());
         review.update(requestDto);
         // image에 값이 있을때만 삭제 추가를 진행
         if (s3Utils.isFile(multipartFile)) {
@@ -89,9 +85,8 @@ public class ReviewService {
     public SuccessCode deleteReview(String shopId, Long reviewId, UserDetailsImpl userDetails) {
         // shopId가 있는지 확인
         shopService.getSelectedShop(shopId, userDetails);
-        User user = guestUtil.checkGuest(userDetails);
         Review review = findReview(reviewId);
-        checkAuthority(review, user);
+        checkAuthority(review, userDetails.getUser());
         deleteImg(review);
         reviewRepository.delete(review);
         return SuccessCode.COMMENT_DELETE_SUCCESS;
@@ -110,17 +105,16 @@ public class ReviewService {
 
     @Transactional
     public SuccessCode getlike(String shopId, Long reviewId, UserDetailsImpl userDetails) {
-        User user = guestUtil.checkGuest(userDetails);
         Review review = reviewRepository.findById(reviewId).orElseThrow(
                 () -> new PostsNotFoundException(NOT_FOUND_DATA)
         );
 
-        Optional<ReviewLike> reviewLike = reviewLikeRepository.findByReviewIdAndUserUserId(reviewId, user.getUserId());
+        Optional<ReviewLike> reviewLike = reviewLikeRepository.findByReviewIdAndUserUserId(reviewId, userDetails.getUser().getUserId());
         if (reviewLike.isPresent()) {
             reviewLikeRepository.delete(reviewLike.get());
             return LIKE_CANCEL;
         }
-        ReviewLike newReviewLike = reviewLikeRepository.save(new ReviewLike(user, review.getId(), shopId));
+        ReviewLike newReviewLike = reviewLikeRepository.save(new ReviewLike(userDetails.getUser(), review.getId(), shopId));
         review.getReviewLikes().add(newReviewLike);
         return LIKE_SUCCESS;
     }
