@@ -3,7 +3,10 @@ package com.example.finalproject.domain.post.service;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.post.dto.*;
+import com.example.finalproject.domain.post.dto.PostPageDto;
+import com.example.finalproject.domain.post.dto.SearchPageDto;
+import com.example.finalproject.domain.post.dto.request.PostRequestDto;
+import com.example.finalproject.domain.post.dto.response.*;
 import com.example.finalproject.domain.post.entity.*;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.post.repository.*;
@@ -54,7 +57,7 @@ public class PostService {
                     Post notificationPost = postRepository.findByCategoryOrderByCreatedAtDesc("공지").orElseThrow(
                             () -> new PostsNotFoundException(NOT_FOUND_DATA)
                     );
-                    Boolean is_like = getaBoolean(userDetails, notificationPost);
+                    Boolean is_like = getPostBoolean(userDetails, notificationPost);
                     Long comment_count = Long.valueOf(notificationPost.getCommentList().size());
                     Long like_count = postLikeRepository.countByPostId(notificationPost.getId());
                     PostAllResponseDto postAllResponseDto = new PostAllResponseDto(notificationPost, comment_count, like_count, is_like);
@@ -69,7 +72,7 @@ public class PostService {
         long total = postPage.getTotalElements();
 
         for (Post post : postPage) {
-            Boolean is_like = getaBoolean(userDetails, post);
+            Boolean is_like = getPostBoolean(userDetails, post);
             Long comment_count = Long.valueOf(post.getCommentList().size());
             Long like_count = postLikeRepository.countByPostId(post.getId());
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
@@ -91,7 +94,7 @@ public class PostService {
         long total = searchList.getTotalElements();
 
         for (Post post : searchList) {
-            Boolean is_like = getaBoolean(userDetails, post);
+            Boolean is_like = getPostBoolean(userDetails, post);
             Long comment_count = Long.valueOf(post.getCommentList().size());
             Long like_count = postLikeRepository.countByPostId(post.getId());
             PostAllResponseDto postAllResponseDto = new PostAllResponseDto(post, comment_count, like_count, is_like);
@@ -138,18 +141,17 @@ public class PostService {
             List<ReplyResponseDto> replyList = new ArrayList<>();
             for (Reply reply : cmt.getReplyList()) {
                 Long replyLikeCount = replyLikeRepository.countByReplyId(reply.getId());
-                Boolean isLikeReply = getreplyBoolean(userDetails, reply);
+                Boolean isLikeReply = getReplyBoolean(userDetails, reply);
                 ReplyResponseDto responseDto = new ReplyResponseDto(reply, replyLikeCount, isLikeReply);
                 replyList.add(responseDto);
             }
             Long like_count = commentLikeRepository.countByCommentId(cmt.getId());
-            Boolean is_like = getcmtBoolean(userDetails, cmt);
+            Boolean is_like = getCmtBoolean(userDetails, cmt);
             CommentResponseDto commentResponseDto = new CommentResponseDto(cmt, like_count, is_like, replyList);
             commentResponseDtoList.add(commentResponseDto);
         }
         Long like_count = postLikeRepository.countByPostId(post.getId());
-        Boolean is_like = getaBoolean(userDetails, post);
-
+        Boolean is_like = getPostBoolean(userDetails, post);
         PostOneResponseDto postOneResponseDto = new PostOneResponseDto(post, commentResponseDtoList, like_count, is_like);
         return postOneResponseDto;
     }
@@ -189,7 +191,6 @@ public class PostService {
     @Transactional
     public SuccessCode selectDelPost(List<Long> postIdList, UserDetailsImpl userDetails) {
         UserRoleEnum role = userDetails.getUser().getRole();
-
         if (role != UserRoleEnum.ADMIN) {
             throw new PostsNotFoundException(INVALID_ADMIN);
         }
@@ -236,7 +237,7 @@ public class PostService {
     }
 
     // 좋아요 선택?
-    private Boolean getaBoolean(UserDetailsImpl userDetails, Post post) {
+    private Boolean getPostBoolean(UserDetailsImpl userDetails, Post post) {
         Boolean is_like;
         if (userDetails == null) {
             is_like = false;
@@ -246,7 +247,7 @@ public class PostService {
         return is_like;
     }
 
-    private Boolean getcmtBoolean(UserDetailsImpl userDetails, Comment comment) {
+    private Boolean getCmtBoolean(UserDetailsImpl userDetails, Comment comment) {
         Boolean is_like;
         if (userDetails == null) {
             is_like = false;
@@ -256,7 +257,7 @@ public class PostService {
         return is_like;
     }
 
-    private Boolean getreplyBoolean(UserDetailsImpl userDetails, Reply reply) {
+    private Boolean getReplyBoolean(UserDetailsImpl userDetails, Reply reply) {
         Boolean is_like;
         if (userDetails == null) {
             is_like = false;

@@ -4,7 +4,7 @@ import com.example.finalproject.domain.admin.dto.AllPurchasseResponseDto;
 import com.example.finalproject.domain.admin.dto.ReleaseDecidereqDto;
 import com.example.finalproject.domain.admin.dto.TotalListResponseDto;
 import com.example.finalproject.domain.admin.exception.AdminNotFoundException;
-import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
+import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.entity.Purchase;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.global.enums.SuccessCode;

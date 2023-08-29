@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.shop.service;
 
-import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
+import com.example.finalproject.domain.shop.dto.response.ShopOneResponseDto;
 import com.example.finalproject.domain.shop.entity.Shop;
 import com.example.finalproject.domain.shop.repository.ShopRepository;
 import lombok.RequiredArgsConstructor;

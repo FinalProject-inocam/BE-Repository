@@ -60,11 +60,6 @@ public class KakaoService {
         // 3. 필요시에 회원가입
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
-        // 4. JWT 토큰 반환
-//        String accessToken = jwtUtil.createAccessToken(kakaoUser.getEmail(), kakaoUser.getRole(), kakaoUser.getNickname(), kakaoUser.getGender()); // 30분
-//        String refreshToken = jwtUtil.createRefreshToken(kakaoUser.getEmail(), kakaoUser.getRole(), kakaoUser.getNickname(), kakaoUser.getGender()); // 3일
-//        jwtUtil.addAccessJwtHeader(accessToken, response);
-//        jwtUtil.addRefreshJwtHeader(refreshToken, response);
         // 로그인 절차
         redisService.newLogin(kakaoUser, response);
 

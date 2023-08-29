@@ -1,9 +1,8 @@
 package com.example.finalproject.domain.shop.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
-import com.example.finalproject.domain.shop.dto.ShopsPageResponseDto;
-import com.example.finalproject.domain.shop.dto.ShopsResponseDto;
+import com.example.finalproject.domain.shop.dto.response.ShopOneResponseDto;
+import com.example.finalproject.domain.shop.dto.response.ShopsPageResponseDto;
 import com.example.finalproject.domain.shop.service.ShopService;
 import com.example.finalproject.domain.shop.service.ShopdbService;
 import com.example.finalproject.global.enums.SuccessCode;

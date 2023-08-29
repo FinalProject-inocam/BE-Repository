@@ -2,7 +2,7 @@ package com.example.finalproject.domain.post.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
-import com.example.finalproject.domain.post.dto.CommentRequestDto;
+import com.example.finalproject.domain.post.dto.request.CommentRequestDto;
 import com.example.finalproject.domain.post.entity.Comment;
 import com.example.finalproject.domain.post.entity.CommentLike;
 import com.example.finalproject.domain.post.entity.Post;

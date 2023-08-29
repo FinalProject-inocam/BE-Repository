@@ -1,9 +1,9 @@
 package com.example.finalproject.domain.shop.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
-import com.example.finalproject.domain.shop.dto.ReviewStarResponseDto;
-import com.example.finalproject.domain.shop.dto.ReviewpageResponseDto;
+import com.example.finalproject.domain.shop.dto.request.ReviewRequestDto;
+import com.example.finalproject.domain.shop.dto.response.ReviewStarResponseDto;
+import com.example.finalproject.domain.shop.dto.response.ReviewpageResponseDto;
 import com.example.finalproject.domain.shop.service.ReviewService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;

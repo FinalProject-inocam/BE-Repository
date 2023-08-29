@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.post.dto;
 
+import com.example.finalproject.domain.post.dto.response.PostAllResponseDto;
 import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.Getter;
 

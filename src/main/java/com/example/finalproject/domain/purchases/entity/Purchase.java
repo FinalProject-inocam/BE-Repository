@@ -1,7 +1,7 @@
 package com.example.finalproject.domain.purchases.entity;
 
 import com.example.finalproject.domain.auth.entity.User;
-import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
+import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;

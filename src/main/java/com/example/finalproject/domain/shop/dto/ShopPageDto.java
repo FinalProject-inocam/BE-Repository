@@ -18,7 +18,7 @@ public class ShopPageDto {
     private Boolean isLike;
     private Integer likeCount;
     private Double avgStar;
-
+    private Long reviewCount;
     public ShopPageDto(Shop shop, List<Review> reviews, List<ShopLike> shopLikes, User user) {
         this.shopId = shop.getShopId();
         this.shopName = shop.getShopName();
@@ -38,5 +38,6 @@ public class ShopPageDto {
                 .map(Review::getStar)
                 .mapToInt(Integer::intValue)
                 .average().orElse(0);
+        this.reviewCount=Long.valueOf(reviews.size());
     }
 }

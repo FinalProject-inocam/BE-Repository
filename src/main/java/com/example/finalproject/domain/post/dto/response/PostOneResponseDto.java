@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.post.dto;
+package com.example.finalproject.domain.post.dto.response;
 
 import com.example.finalproject.domain.post.entity.Image;
 import com.example.finalproject.domain.post.entity.Post;

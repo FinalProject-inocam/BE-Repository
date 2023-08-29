@@ -4,14 +4,13 @@ import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.car.entity.Car;
 import com.example.finalproject.domain.car.repository.CarRepository;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
-import com.example.finalproject.domain.purchases.dto.PurchasesPatchResponseDto;
-import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
-import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
+import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
+import com.example.finalproject.domain.purchases.dto.response.PurchasesPatchResponseDto;
+import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.entity.Purchase;
 import com.example.finalproject.domain.purchases.exception.PurchasesNotFoundException;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.global.enums.SuccessCode;
-import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +27,6 @@ import static com.example.finalproject.global.enums.ErrorCode.NO_AUTHORITY_TO_DA
 import static com.example.finalproject.global.enums.ErrorCode.PURCHASES_DELETE_FAIL;
 import static com.example.finalproject.global.enums.SuccessCode.PURCHASES_CREATE_SUCCESS;
 import static com.example.finalproject.global.enums.SuccessCode.PURCHASES_DELETE_SUCCESS;
-import static com.example.finalproject.global.utils.ResponseUtils.ok;
 
 @Service
 @RequiredArgsConstructor

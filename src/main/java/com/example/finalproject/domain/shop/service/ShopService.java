@@ -2,10 +2,8 @@ package com.example.finalproject.domain.shop.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.shop.dto.ShopBannerDto;
-import com.example.finalproject.domain.shop.dto.ShopOneResponseDto;
-import com.example.finalproject.domain.shop.dto.ShopPageDto;
-import com.example.finalproject.domain.shop.dto.ShopsPageResponseDto;
+import com.example.finalproject.domain.shop.dto.*;
+import com.example.finalproject.domain.shop.dto.response.*;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.Shop;

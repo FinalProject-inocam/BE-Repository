@@ -2,6 +2,10 @@ package com.example.finalproject.domain.post.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.post.dto.*;
+import com.example.finalproject.domain.post.dto.request.PostRequestDto;
+import com.example.finalproject.domain.post.dto.request.PostSelectDelDto;
+import com.example.finalproject.domain.post.dto.response.PostListResponseDto;
+import com.example.finalproject.domain.post.dto.response.PostOneResponseDto;
 import com.example.finalproject.domain.post.service.PostService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
