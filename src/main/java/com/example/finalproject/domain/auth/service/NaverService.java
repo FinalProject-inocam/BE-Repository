@@ -58,12 +58,6 @@ public class NaverService {
         // 3. 필요시에 회원가입
         User naverUser = registerNaverUserIfNeeded(jsonNode);
 
-        // 4. JWT 토큰 반환
-//        String accessToken = jwtUtil.createAccessToken(naverUser.getEmail(), naverUser.getRole(), naverUser.getNickname(), naverUser.getGender()); // 30분
-//        String refreshToken = jwtUtil.createRefreshToken(naverUser.getEmail(), naverUser.getRole(), naverUser.getNickname(), naverUser.getGender()); // 3일
-//        jwtUtil.addAccessJwtHeader(accessToken, response);
-//        jwtUtil.addRefreshJwtHeader(refreshToken, response);
-
         // 로그인 절차
         redisService.newLogin(naverUser, response);
 
