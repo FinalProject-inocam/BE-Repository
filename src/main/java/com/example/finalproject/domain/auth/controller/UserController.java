@@ -52,22 +52,25 @@ public class UserController {
 
     @PostMapping("/signup")
     public ApiResponse<?> signup(@RequestBody @Validated(ValidationSequence.class) SignupRequestDto requestDto) {
-        return ResponseUtils.ok(userService.signup(requestDto));
+        SuccessCode successCode = userService.signup(requestDto);
+        return ResponseUtils.ok(successCode);
     }
 
     @GetMapping("/email")
     public ApiResponse<?> checkEmail(@RequestParam String email) {
-        return ResponseUtils.ok(userService.checkEmail(email));
+        SuccessCode successCode = userService.checkEmail(email);
+        return ResponseUtils.ok(successCode);
     }
 
     @GetMapping("/nickname")
     public ApiResponse<?> checkNickname(@RequestParam String nickname) {
-        return ResponseUtils.ok(userService.checkNickname(nickname));
+        SuccessCode successCode = userService.checkNickname(nickname);
+        return ResponseUtils.ok(successCode);
     }
 
     @GetMapping("/logout")
     public ApiResponse<?> logout(HttpServletRequest request) {
-        return ResponseUtils.ok(userService.logout(request));
+        SuccessCode successCode = userService.logout(request);
+        return ResponseUtils.ok(successCode);
     }
-
 }
