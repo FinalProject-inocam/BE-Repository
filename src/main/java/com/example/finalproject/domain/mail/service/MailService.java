@@ -40,7 +40,7 @@ public class MailService {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final String PASSCHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/";
 
-    private static final String FROM_ADDRESS = "inomotorservice@naver.com";
+    private static final String FROM_ADDRESS = "helper@innomotors.shop";
 
     public SuccessCode send(String to) {
         if (checkEmail(to)) {
@@ -52,7 +52,7 @@ public class MailService {
             redisUtil.setDataExpire(code, to, 60 * 5L);
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
-            helper.setFrom(new InternetAddress("inomotorservice@naver.com", "이노모터서비스"));
+            helper.setFrom(new InternetAddress("helper@innomotors.shop", "이노모터서비스"));
             //메일 제목 설정
             helper.setSubject("[이노모터스] 인증코드입니다");
 
