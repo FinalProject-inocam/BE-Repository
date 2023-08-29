@@ -134,7 +134,7 @@ public class ReviewService {
         }
 
         PageResponse pageResponse = new PageResponse<>(reviewList, pageable, total);
-        return new ReviewpageResponseDto(pageResponse);
+        return new ReviewpageResponseDto(pageResponse, bannerList, avgStar, banner.size());
     }
 
     /*------------------------------------------------------------------------------------------------------*/
