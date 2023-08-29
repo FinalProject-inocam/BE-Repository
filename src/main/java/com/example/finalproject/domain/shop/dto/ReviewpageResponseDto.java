@@ -24,5 +24,8 @@ public class ReviewpageResponseDto {
         this.last = pageResponse.isLast();
         this.first = pageResponse.isFirst();
         this.currentPage = pageResponse.getNumber() + 1;
+        this.bannerList = bannerList;
+        this.avgStar = avgStar;
+        this.reviewCount=Long.valueOf(reviewCount);
     }
 }
