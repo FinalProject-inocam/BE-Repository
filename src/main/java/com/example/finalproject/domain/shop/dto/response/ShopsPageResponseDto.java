@@ -1,5 +1,6 @@
-package com.example.finalproject.domain.shop.dto;
+package com.example.finalproject.domain.shop.dto.response;
 
+import com.example.finalproject.domain.shop.dto.ShopPageDto;
 import com.example.finalproject.domain.shop.entity.Shop;
 import lombok.Getter;
 import org.springframework.data.domain.Page;

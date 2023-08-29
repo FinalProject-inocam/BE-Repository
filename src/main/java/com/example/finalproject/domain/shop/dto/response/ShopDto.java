@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.shop.dto;
+package com.example.finalproject.domain.shop.dto.response;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.shop.entity.Review;

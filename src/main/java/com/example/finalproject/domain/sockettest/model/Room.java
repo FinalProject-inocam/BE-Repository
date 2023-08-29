@@ -1,11 +1,8 @@
 package com.example.finalproject.domain.sockettest.model;
 
-import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -22,7 +19,7 @@ public class Room {
     @Column
     private String peer2;
 
-    public Room (String roomName){
+    public Room(String roomName) {
         this.roomName = roomName;
         String[] peerList = roomName.split("!");
         this.peer1 = peerList[0];

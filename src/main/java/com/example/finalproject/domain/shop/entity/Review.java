@@ -1,7 +1,7 @@
 package com.example.finalproject.domain.shop.entity;
 
 import com.example.finalproject.domain.auth.entity.User;
-import com.example.finalproject.domain.shop.dto.ReviewRequestDto;
+import com.example.finalproject.domain.shop.dto.request.ReviewRequestDto;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;

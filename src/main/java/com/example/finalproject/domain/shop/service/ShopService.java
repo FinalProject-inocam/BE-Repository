@@ -3,6 +3,7 @@ package com.example.finalproject.domain.shop.service;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.shop.dto.*;
+import com.example.finalproject.domain.shop.dto.response.*;
 import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.Shop;

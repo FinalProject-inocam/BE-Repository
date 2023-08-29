@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.shop.dto;
+package com.example.finalproject.domain.shop.dto.request;
 
 import com.example.finalproject.global.validation.ValidationGroups.MaxGroup;
 import com.example.finalproject.global.validation.ValidationGroups.MinGroup;
