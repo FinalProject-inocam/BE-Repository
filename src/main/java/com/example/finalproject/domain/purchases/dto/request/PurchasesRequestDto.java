@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.purchases.dto;
+package com.example.finalproject.domain.purchases.dto.request;
 
 import com.example.finalproject.global.CustomConstraint.BirthYearLimit;
 import com.example.finalproject.global.validation.ValidationGroups;

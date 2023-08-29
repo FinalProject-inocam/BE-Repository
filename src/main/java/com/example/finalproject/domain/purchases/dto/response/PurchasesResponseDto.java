@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.purchases.dto;
+package com.example.finalproject.domain.purchases.dto.response;
 
 import com.example.finalproject.domain.purchases.entity.Purchase;
 import lombok.Getter;

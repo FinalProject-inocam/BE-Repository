@@ -1,8 +1,7 @@
-package com.example.finalproject.domain.shop.dto;
+package com.example.finalproject.domain.shop.dto.response;
 
 import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.Getter;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
