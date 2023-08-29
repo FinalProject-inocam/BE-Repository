@@ -123,6 +123,13 @@ public class ReviewService {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Review> reviewPage = reviewRepository.findByShopIdUsingQuery(shopId, pageable);
 
+        List<Review> banner = reviewRepository.findAllByShopId(shopId);
+        List<String> bannerList = shopService.getBanner(banner);
+        Double avgStar = banner.stream()
+                .mapToInt(Review::getStar)
+                .average()
+                .orElse(0);
+
         List<ReviewResponseDto> reviewList = new ArrayList<>();
         long total = reviewPage.getTotalElements();
 

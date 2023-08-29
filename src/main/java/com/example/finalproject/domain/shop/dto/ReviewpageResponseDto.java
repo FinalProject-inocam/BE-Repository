@@ -15,8 +15,11 @@ public class ReviewpageResponseDto {
     private Boolean last;
     private Boolean first;
     private int currentPage;
-
-    public ReviewpageResponseDto(PageResponse pageResponse) {
+    private List<String> bannerList;
+    private Double avgStar;
+    private Long reviewCount;
+//배너 ,별점, 리뷰 갯수
+    public ReviewpageResponseDto(PageResponse pageResponse, List<String> bannerList, Double avgStar, int reviewCount) {
         this.content = pageResponse.getContent();
         this.size = pageResponse.getSize();
         this.totalPages = pageResponse.getTotalPages();
