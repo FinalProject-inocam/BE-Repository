@@ -1,7 +1,7 @@
 package com.example.finalproject.domain.post.entity;
 
 import com.example.finalproject.domain.auth.entity.User;
-import com.example.finalproject.domain.post.dto.PostRequestDto;
+import com.example.finalproject.domain.post.dto.request.PostRequestDto;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;

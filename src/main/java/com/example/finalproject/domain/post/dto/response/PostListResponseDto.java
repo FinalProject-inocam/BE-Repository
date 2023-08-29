@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.post.dto;
+package com.example.finalproject.domain.post.dto.response;
 
 import lombok.Getter;
 

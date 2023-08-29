@@ -1,9 +1,7 @@
-package com.example.finalproject.domain.post.dto;
+package com.example.finalproject.domain.post.dto.response;
 
 import com.example.finalproject.domain.post.entity.Comment;
-import com.example.finalproject.domain.post.entity.Reply;
 import lombok.Getter;
-import org.springframework.data.redis.support.collections.RedisList;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

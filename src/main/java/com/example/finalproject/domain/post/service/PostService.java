@@ -4,6 +4,8 @@ import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.post.dto.*;
+import com.example.finalproject.domain.post.dto.request.PostRequestDto;
+import com.example.finalproject.domain.post.dto.response.*;
 import com.example.finalproject.domain.post.entity.*;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.post.repository.*;
