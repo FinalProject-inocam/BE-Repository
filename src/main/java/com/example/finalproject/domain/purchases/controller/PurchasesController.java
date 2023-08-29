@@ -2,9 +2,9 @@ package com.example.finalproject.domain.purchases.controller;
 
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.purchases.dto.PurchasesPatchResponseDto;
-import com.example.finalproject.domain.purchases.dto.PurchasesRequestDto;
-import com.example.finalproject.domain.purchases.dto.PurchasesResponseDto;
+import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
+import com.example.finalproject.domain.purchases.dto.response.PurchasesPatchResponseDto;
+import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.service.PurchasesService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
