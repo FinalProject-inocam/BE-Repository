@@ -38,6 +38,7 @@ public class Post extends Timestamped {
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id")
+    @OrderBy("createdAt desc")
     private List<Comment> commentList;
 
     @OneToMany(fetch = FetchType.EAGER)

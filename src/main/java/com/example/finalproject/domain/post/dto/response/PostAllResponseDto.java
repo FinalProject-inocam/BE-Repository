@@ -36,6 +36,6 @@ public class PostAllResponseDto {
         this.createAt = post.getCreatedAt();
         this.nickname = post.getNickname();
         this.view = post.getView();
-        this.url = "/community/" + post.getCategory() + "/" + post.getId();
+        this.url = "community/review/" + post.getId();
     }
 }

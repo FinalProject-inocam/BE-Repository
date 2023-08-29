@@ -24,7 +24,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 import static com.example.finalproject.global.enums.ErrorCode.*;
 import static com.example.finalproject.global.enums.SuccessCode.*;
@@ -48,11 +51,10 @@ public class PostService {
 
         List<PostAllResponseDto> postsList = new ArrayList<>();
 
-        if (category.equals("total")) {
-            postPage = postRepository.findAll(pageable);
+        if (category.equals("전체")) {
             if (page == 1) {
                 try {
-                    Post notificationPost = postRepository.findByCategoryOrderByCreatedAtDesc("notification").orElseThrow(
+                    Post notificationPost = postRepository.findByCategoryOrderByCreatedAtDesc("공지").orElseThrow(
                             () -> new PostsNotFoundException(NOT_FOUND_DATA)
                     );
                     Boolean is_like = getPostBoolean(userDetails, notificationPost);
@@ -64,6 +66,8 @@ public class PostService {
                     log.info("등록된 공지사항이 없습니다.");
                 }
             }
+            postPage = postRepository.findAll(pageable);
+
         }
         long total = postPage.getTotalElements();
 
@@ -104,23 +108,20 @@ public class PostService {
     @Transactional
     public PostListResponseDto getPostByTop() {
 
-        List<PostListDto> recentList = postRepository.findTop5ByOrderByCreatedAtDesc().stream()
-                .map(PostListDto::new).toList();
-        Map<Integer, Object> recentListMap = new HashMap<>();
+        List<Post> recentList = postRepository.findTop5ByOrderByCreatedAtDesc();
+        List<PostListDto> recentRankList = IntStream.range(0, recentList.size())
+                .mapToObj(index -> new PostListDto(recentList.get(index), index + 1))
+                .toList();
 
-        for (int i = 0; i < recentList.size(); i++) {
-            recentListMap.put(i + 1, recentList.get(i));
-        }
+        List<Post> likeList = postRepository.findTop5ByOrderByPostLikesSizeDesc();
+        List<PostListDto> likeRankList = IntStream.range(0, likeList.size())
+                .mapToObj(index -> new PostListDto(likeList.get(index), index + 1))
+                .toList();
 
-        List<PostListDto> likeList = postRepository.findTop5ByOrderByPostLikesSizeDesc().stream()
-                .map(PostListDto::new).toList();
-        Map<Integer, Object> likeListMap = new HashMap<>();
-
-        for (int i = 0; i < likeList.size(); i++) {
-            likeListMap.put(i + 1, likeList.get(i));
-        }
         String imgUrl = "https://finalimgbucket.s3.amazonaws.com/2945e31e-d47d-4c41-9da8-eae9e695fa50";
-        PostListResponseDto postListResponseDto = new PostListResponseDto(likeListMap, recentListMap, imgUrl);
+
+        PostListResponseDto postListResponseDto = new PostListResponseDto(recentRankList, likeRankList, imgUrl);
+
         return postListResponseDto;
     }
 
