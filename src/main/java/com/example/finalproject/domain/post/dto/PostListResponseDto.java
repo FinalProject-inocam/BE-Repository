@@ -7,11 +7,11 @@ import java.util.Map;
 
 @Getter
 public class PostListResponseDto {
-    private Map<Integer, Object> likeList;
-    private Map<Integer, Object> recentList;
+    private List<PostListDto> likeList;
+    private List<PostListDto> recentList;
     private String newImgUrl;
 
-    public PostListResponseDto(Map<Integer, Object> likeList, Map<Integer, Object> recentList, String imgUrl) {
+    public PostListResponseDto(List<PostListDto> likeList, List<PostListDto> recentList, String imgUrl) {
         this.likeList = likeList;
         this.recentList = recentList;
         this.newImgUrl= imgUrl;
