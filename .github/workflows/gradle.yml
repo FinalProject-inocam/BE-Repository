@@ -60,6 +60,5 @@ jobs:
           envs: GITHUB_SHA
           script: |
               sudo docker rm -f $(docker ps -qa)
-              sudo docker pull ${{ secrets.DOCKER_REPO }}/innomotors
-              docker-compose up -d
-              docker image prune -f
+              sudo docker pull ${{ secrets.DOCKER_REPO }}:${GITHUB_SHA::7}
+              docker run -d --rm --name server -p 80:8080 ${GITHUB_SHA::7}
