@@ -52,65 +52,66 @@ public class AdminService {
     }
 
     /* 1년간 매달의 신청, 승인, 거절 건수 */
-    public Map<String, Object> yearStat(String cal) {
-        LocalDate localDate = convertStringToLocalDate(cal);
+    public Map<String, Object> yearStat(String year) {
 
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("total", customYearStat(localDate, null));
+        resultMap.put("total", customYearStat(year, null));
         carService.getCarList()
                 .stream()
                 .map(Car::getType)
-                .forEach((type) -> resultMap.put(type, customYearStat(localDate, type)));
+                .forEach((type) -> resultMap.put(type, customYearStat(year, type)));
 
         return resultMap;
     }
 
-    public Map<String, Object> customYearStat(LocalDate localDate, String type) {
+    public Map<String, Object> customYearStat(String year, String type) {
         Map<String, Object> resultMap = new HashMap<>();
         // current
-        resultMap.put("purchase", qPurchasesRepository.countPurchaseForYear(localDate, null, type));
-        resultMap.put("approve", qPurchasesRepository.countPurchaseForYear(localDate, true, type));
-        resultMap.put("cancel", qPurchasesRepository.countPurchaseForYear(localDate, false, type));
+        resultMap.put("purchase", qPurchasesRepository.countPurchaseForYear(year, null, type));
+        resultMap.put("approve", qPurchasesRepository.countPurchaseForYear(year, true, type));
+        resultMap.put("cancel", qPurchasesRepository.countPurchaseForYear(year, false, type));
         // gender, age, color
-        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForYear(localDate, type));
-        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForYear(localDate, type));
-        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYear(localDate, type));
+        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForYear(year, type));
+        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForYear(year, type));
+        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYear(year, type));
         // pre
-        resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreYear(localDate, null, type));
-        resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreYear(localDate, true, type));
-        resultMap.put("preCancel", qPurchasesRepository.countPurchaseForPreYear(localDate, false, type));
+        resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreYear(year, null, type));
+        resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreYear(year, true, type));
+        resultMap.put("preCancel", qPurchasesRepository.countPurchaseForPreYear(year, false, type));
 
         return resultMap;
     }
 
     /* 1달간 매주의 신청, 승인 거절 건수 */
-    public Map<String, Object> monthStat(String cal) {
-        LocalDate localDate = convertStringToLocalDate(cal);
+    public Map<String, Object> monthStat(String yearMonth) {
+//        Integer year = Integer.valueOf(month.split("-")[0]);
+//        Integer month = Integer.valueOf(month.split("-")[1]);
+//        LocalDate localDate = convertStringToLocalDate(cal);
 
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("total", customMonthStat(localDate, null));
+        resultMap.put("total", customMonthStat(yearMonth, null));
         carService.getCarList()
                 .stream()
                 .map(Car::getType)
-                .forEach((type) -> resultMap.put(type, customMonthStat(localDate, type)));
+                .forEach((type) -> resultMap.put(type, customMonthStat(yearMonth, type)));
 
         return resultMap;
     }
 
-    public Map<String, Object> customMonthStat(LocalDate localDate, String type) {
+    public Map<String, Object> customMonthStat(String yearMonth, String type) {
         Map<String, Object> resultMap = new HashMap<>();
         // current
-        resultMap.put("purchase", qPurchasesRepository.countPurchaseForMonth(localDate, null, type));
-        resultMap.put("approve", qPurchasesRepository.countPurchaseForMonth(localDate, true, type));
-        resultMap.put("cancel", qPurchasesRepository.countPurchaseForMonth(localDate, false, type));
+        resultMap.put("purchase", qPurchasesRepository.countPurchaseForMonth(yearMonth, null, type));
+        resultMap.put("approve", qPurchasesRepository.countPurchaseForMonth(yearMonth, true, type));
+        resultMap.put("cancel", qPurchasesRepository.countPurchaseForMonth(yearMonth, false, type));
         // gender, age, color
-        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForMonth(localDate, type));
-        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForMonth(localDate, type));
-        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForMonth(localDate, type));
+        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForMonth(yearMonth, type));
+        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForMonth(yearMonth, type));
+        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForMonth(yearMonth, type));
         // pre
-        resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreMonth(localDate, null, type));
-        resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreMonth(localDate, true, type));
-        resultMap.put("preCancel", qPurchasesRepository.countPurchaseForPreMonth(localDate, false, type));
+        resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreMonth(yearMonth, null, type));
+        resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreMonth(yearMonth, true, type));
+        resultMap.put("preCancel", qPurchasesRepository.countPurchaseForPreMonth(yearMonth, false, type));
 
         return resultMap;
     }
@@ -156,24 +157,23 @@ public class AdminService {
     }
 
     // 연간 회원 통계
-    public Map<String, Object> userStat(String cal) {
-        LocalDate localDate = convertStringToLocalDate(cal);
+    public Map<String, Object> userStat(String year) {
 
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("total", customUserStat(localDate));
+        resultMap.put("total", customUserStat(year));
 
         return resultMap;
     }
 
-    public Map<String, Object> customUserStat(LocalDate localDate) {
+    public Map<String, Object> customUserStat(String year) {
         Map<String, Object> resultMap = new HashMap<>();
         // current
-        resultMap.put("users", qUserRepository.countUserForYear(localDate));
+        resultMap.put("users", qUserRepository.countUserForYear(year));
         // gender, age
-        resultMap.put("gender", qUserRepository.countUserByGenderForYear(localDate));
-        resultMap.put("age", qUserRepository.countUserByAgeForYear(localDate));
+        resultMap.put("gender", qUserRepository.countUserByGenderForYear(year));
+        resultMap.put("age", qUserRepository.countUserByAgeForYear(year));
         // pre
-        resultMap.put("preUser", qUserRepository.countUserForPreYear(localDate));
+        resultMap.put("preUser", qUserRepository.countUserForPreYear(year));
 
         return resultMap;
     }
