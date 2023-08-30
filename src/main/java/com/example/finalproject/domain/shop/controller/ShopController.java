@@ -55,8 +55,6 @@ public class ShopController {
                                          Integer page, Integer size,
                                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
         ShopsPageResponseDto shopsPageResponseDto = shopService.radiusSearch(size, page, longitude, latitude, userDetails);
-        return ResponseUtils.pageOk(shopsPageResponseDto.getSize(), shopsPageResponseDto.getPage(),
-                shopsPageResponseDto.getTotalCount(), shopsPageResponseDto.getTotalPages(),
-                shopsPageResponseDto.getShopList());
+        return ResponseUtils.ok(shopsPageResponseDto);
     }
 }
