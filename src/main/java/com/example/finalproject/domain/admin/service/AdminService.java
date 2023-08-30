@@ -173,7 +173,7 @@ public class AdminService {
         resultMap.put("gender", qUserRepository.countUserByGenderForYear(localDate));
         resultMap.put("age", qUserRepository.countUserByAgeForYear(localDate));
         // pre
-        resultMap.put("prePurchase", qUserRepository.countUserForPreYear(localDate));
+        resultMap.put("preUser", qUserRepository.countUserForPreYear(localDate));
 
         return resultMap;
     }
