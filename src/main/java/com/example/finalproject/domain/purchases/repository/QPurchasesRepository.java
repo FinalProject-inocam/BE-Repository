@@ -238,11 +238,9 @@ public class QPurchasesRepository {
         return colorMap;
     }
 
-    public Map<Integer, Long> countPurchaseForYear(LocalDate localDate, Boolean approve, String type) {
+    public Map<Integer, Long> countPurchaseForYear(String year, Boolean approve, String type) {
         log.info("연간 통계");
         QPurchase qPurchase = QPurchase.purchase;
-
-        Integer year = localDate.getYear();
 
         BooleanExpression approveCondition = null;
         if (approve != null) {
@@ -261,7 +259,7 @@ public class QPurchasesRepository {
                 )
                 .from(qPurchase)
                 .where(
-                        qPurchase.createdAt.year().eq(year),
+                        qPurchase.createdAt.year().eq(Integer.valueOf(year)),
                         approveCondition,
                         typeCondition
                 )
@@ -285,11 +283,9 @@ public class QPurchasesRepository {
         return resultMap;
     }
 
-    public Map<String, Map> countPurchaseByGenderForYear(LocalDate localDate, String type) {
+    public Map<String, Map> countPurchaseByGenderForYear(String year, String type) {
         log.info("연간 성별분포");
         QPurchase qPurchase = QPurchase.purchase;
-
-        Integer year = localDate.getYear();
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -303,7 +299,7 @@ public class QPurchasesRepository {
                 )
                 .from(qPurchase)
                 .where(
-                        qPurchase.createdAt.year().eq(year),
+                        qPurchase.createdAt.year().eq(Integer.valueOf(year)),
                         typeCondition
                 )
                 .groupBy(qPurchase.gender)
@@ -338,11 +334,9 @@ public class QPurchasesRepository {
         return genderMap;
     }
 
-    public Map<String, Map> countPurchaseByAgeForYear(LocalDate localDate, String type) {
+    public Map<String, Map> countPurchaseByAgeForYear(String year, String type) {
         log.info("연간 나이");
         QPurchase qPurchase = QPurchase.purchase;
-
-        Integer year = localDate.getYear();
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -359,7 +353,7 @@ public class QPurchasesRepository {
                 )
                 .from(qPurchase)
                 .where(
-                        qPurchase.createdAt.year().eq(year),
+                        qPurchase.createdAt.year().eq(Integer.valueOf(year)),
                         typeCondition
                 )
                 .fetch();
@@ -397,11 +391,9 @@ public class QPurchasesRepository {
         return ageMap;
     }
 
-    public Map<String, Map> countPurchaseByColorForYear(LocalDate localDate, String type) {
+    public Map<String, Map> countPurchaseByColorForYear(String year, String type) {
         log.info("연간 색깔분포");
         QPurchase qPurchase = QPurchase.purchase;
-
-        Integer year = localDate.getYear();
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -415,7 +407,7 @@ public class QPurchasesRepository {
                 )
                 .from(qPurchase)
                 .where(
-                        qPurchase.createdAt.year().eq(year),
+                        qPurchase.createdAt.year().eq(Integer.valueOf(year)),
                         typeCondition
                 )
                 .groupBy(qPurchase.color)
@@ -446,11 +438,9 @@ public class QPurchasesRepository {
         return colorMap;
     }
 
-    public Long countPurchaseForPreYear(LocalDate localDate, Boolean approve, String type) {
+    public Long countPurchaseForPreYear(String year, Boolean approve, String type) {
         log.info("작년 통계");
         QPurchase qPurchase = QPurchase.purchase;
-
-        Integer year = localDate.getYear() - 1;
 
         BooleanExpression approveCondition = null;
         if (approve != null) {
@@ -468,7 +458,7 @@ public class QPurchasesRepository {
                 )
                 .from(qPurchase)
                 .where(
-                        qPurchase.createdAt.year().eq(year),
+                        qPurchase.createdAt.year().eq(Integer.valueOf(year) - 1),
                         approveCondition,
                         typeCondition
                 )
@@ -478,11 +468,14 @@ public class QPurchasesRepository {
         return result.get(0);
     }
 
-    public Map<Integer, Long> countPurchaseForMonth(LocalDate localDate, Boolean approve, String type) {
+    public Map<Integer, Long> countPurchaseForMonth(String yearMonthStr, Boolean approve, String type) {
         log.info("월간 통계");
         QPurchase qPurchase = QPurchase.purchase;
 
-        YearMonth yearMonth = YearMonth.from(localDate);
+        Integer year = Integer.valueOf(yearMonthStr.split("-")[0]);
+        Integer month = Integer.valueOf(yearMonthStr.split("-")[1]);
+
+        YearMonth yearMonth = YearMonth.of(year, month);
 
         LocalDate startOfFirstWeek = yearMonth.atDay(1)
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
@@ -525,12 +518,12 @@ public class QPurchasesRepository {
         return resultMap;
     }
 
-    public Map<String, Map> countPurchaseByGenderForMonth(LocalDate localDate, String type) {
+    public Map<String, Map> countPurchaseByGenderForMonth(String yearMonth, String type) {
         log.info("월간 성별분포");
         QPurchase qPurchase = QPurchase.purchase;
 
-        Integer year = localDate.getYear();
-        Integer month = localDate.getMonth().getValue();
+        Integer year = Integer.valueOf(yearMonth.split("-")[0]);
+        Integer month = Integer.valueOf(yearMonth.split("-")[1]);
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -581,12 +574,12 @@ public class QPurchasesRepository {
         return genderMap;
     }
 
-    public Map<String, Map> countPurchaseByAgeForMonth(LocalDate localDate, String type) {
+    public Map<String, Map> countPurchaseByAgeForMonth(String yearMonth, String type) {
         log.info("월간 나이");
         QPurchase qPurchase = QPurchase.purchase;
 
-        Integer year = localDate.getYear();
-        Integer month = localDate.getMonth().getValue();
+        Integer year = Integer.valueOf(yearMonth.split("-")[0]);
+        Integer month = Integer.valueOf(yearMonth.split("-")[1]);
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -638,12 +631,12 @@ public class QPurchasesRepository {
         return ageMap;
     }
 
-    public Map<String, Map> countPurchaseByColorForMonth(LocalDate localDate, String type) {
+    public Map<String, Map> countPurchaseByColorForMonth(String yearMonth, String type) {
         log.info("월간 색깔분포");
         QPurchase qPurchase = QPurchase.purchase;
 
-        Integer year = localDate.getYear();
-        Integer month = localDate.getMonth().getValue();
+        Integer year = Integer.valueOf(yearMonth.split("-")[0]);
+        Integer month = Integer.valueOf(yearMonth.split("-")[1]);
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -689,12 +682,12 @@ public class QPurchasesRepository {
         return colorMap;
     }
 
-    public Long countPurchaseForPreMonth(LocalDate localDate, Boolean approve, String type) {
+    public Long countPurchaseForPreMonth(String yearMonth, Boolean approve, String type) {
         log.info("전월 통계");
         QPurchase qPurchase = QPurchase.purchase;
 
-        Integer year = localDate.getYear();
-        Integer month = localDate.getMonth().getValue() - 1;
+        Integer year = Integer.valueOf(yearMonth.split("-")[0]);
+        Integer month = Integer.valueOf(yearMonth.split("-")[1]) - 1;
 
         BooleanExpression approveCondition = null;
         if (approve != null) {
