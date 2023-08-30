@@ -16,6 +16,7 @@ public class PurchasesResponseDto {
     private String color;
     private Boolean alarm;
     private String content;
+    private String phoneNumber;
     private String addressName;
     private String zoneNo;
     private Boolean approve;
@@ -31,6 +32,7 @@ public class PurchasesResponseDto {
         this.color = purchase.getColor();
         this.alarm = purchase.getAlarm();
         this.content = purchase.getContent();
+        this.phoneNumber = purchase.getPhoneNumber();
         this.addressName = purchase.getAddressName();
         this.zoneNo = purchase.getZoneNo();
         this.approve = purchase.getApprove();

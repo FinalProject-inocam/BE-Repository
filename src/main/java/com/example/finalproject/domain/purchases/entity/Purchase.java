@@ -37,6 +37,9 @@ public class Purchase extends Timestamped {
     private String content;
 
     @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column(nullable = false)
     private String addressName;
 
     @Column(nullable = false)
@@ -48,7 +51,7 @@ public class Purchase extends Timestamped {
 
     private Date deliveryDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -58,6 +61,7 @@ public class Purchase extends Timestamped {
         this.gender = purchasesRequestDto.getGender();
         this.birthYear = purchasesRequestDto.getBirthYear();
         this.alarm = purchasesRequestDto.getAlarm();
+        this.phoneNumber = purchasesRequestDto.getPhoneNumber();
         this.content = purchasesRequestDto.getContent();
         this.addressName = purchasesRequestDto.getAddressName();
         this.zoneNo = purchasesRequestDto.getZoneNo();
