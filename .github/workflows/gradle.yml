@@ -60,6 +60,5 @@ jobs:
           envs: GITHUB_SHA
           script: |
               sudo docker pull ${{ secrets.DOCKER_REPO }}:${GITHUB_SHA::7}
-              sudo docker tag souliat/mung-friend:${GITHUB_SHA::7} innomotors
               sudo docker stop server
-              sudo docker run -d --rm --name server -p 80:8080 innomotors
+              sudo docker run -d --rm --name server -p 80:8080 ${{ secrets.DOCKER_REPO }}:${GITHUB_SHA::7}
