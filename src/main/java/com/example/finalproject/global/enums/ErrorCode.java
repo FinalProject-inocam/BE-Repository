@@ -16,6 +16,8 @@ public enum ErrorCode {
     DIFFIRENT_USER(BAD_REQUEST, "후기작성자가 아닙니다"),
     LIMIT_MAX_IMAGE(BAD_REQUEST, "최대 4개까지 업로드 가능합니다"),
     NOT_FOUND_KEYWORD(BAD_REQUEST, "검색어를 입력하세요"),
+    EMAIL_SEND_FAIL(BAD_REQUEST, "이메일 발송 실패"),
+
 
     /* 401 UNAUTHORIZED : 인증되지 않았다는 의미입니다. */
     INVALID_ADMIN(UNAUTHORIZED, "관리자 권한이 없습니다."),
