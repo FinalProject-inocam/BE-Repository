@@ -49,14 +49,14 @@ public class AdminController {
     }
 
     @GetMapping("/stats/purchases/year")
-    public ApiResponse<?> getStatYear(@RequestParam String cal) {
-        Map<String, Object> statMap = adminService.yearStat(cal);
+    public ApiResponse<?> getStatYear(@RequestParam String year) {
+        Map<String, Object> statMap = adminService.yearStat(year);
         return ResponseUtils.ok(statMap);
     }
 
     @GetMapping("/stats/purchases/month")
-    public ApiResponse<?> getStatMonth(@RequestParam String cal) {
-        Map<String, Object> statMap = adminService.monthStat(cal);
+    public ApiResponse<?> getStatMonth(@RequestParam String yearMonth) {
+        Map<String, Object> statMap = adminService.monthStat(yearMonth);
         return ResponseUtils.ok(statMap);
     }
 
