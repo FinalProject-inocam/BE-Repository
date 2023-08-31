@@ -23,7 +23,7 @@ public class QPurchasesRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public List<Object> countPurchaseForYears(String startYearStr, String endYearStr, Boolean approve, String type) {
+    public Map<String, Object> countPurchaseForYears(String startYearStr, String endYearStr, Boolean approve, String type) {
         log.info("연별 통계");
         QPurchase qPurchase = QPurchase.purchase;
 
@@ -54,7 +54,7 @@ public class QPurchasesRepository {
                 .groupBy(qPurchase.createdAt.year())
                 .orderBy(qPurchase.createdAt.year().asc())
                 .fetch();
-        List<Object> labelResult = new ArrayList<>();
+        Map<String, Object> yearsResult = new HashMap<>();
         List<Integer> label = new ArrayList<>();
         for (int i = startYear; i <= endYear; i++) {
             label.add(i);
@@ -71,10 +71,10 @@ public class QPurchasesRepository {
         }
         log.info("연별 통계 : " + resultList.toString());
 
-        labelResult.add(label);
-        labelResult.add(resultList);
+        yearsResult.put("labels", label);
+        yearsResult.put("countList", resultList);
 
-        return labelResult;
+        return yearsResult;
     }
 
     public Map<String, Object> countPurchaseByGenderForYears(String startYearStr, String endYearStr, String type) {
@@ -102,7 +102,8 @@ public class QPurchasesRepository {
                 .groupBy(qPurchase.gender.stringValue())
                 .orderBy(qPurchase.gender.stringValue().asc())
                 .fetch();
-        List<Object> labelResultRatio = new ArrayList<>();  // gender, company 정보 담을 맵
+//        List<Object> labelResultRatio = new ArrayList<>();  // gender, company 정보 담을 맵
+        Map<String, Object> yearsResult = new HashMap<>();
         List<String> genderLabel = new ArrayList<>();
         genderLabel.add("MALE");
         genderLabel.add("FEMALE");
@@ -122,12 +123,13 @@ public class QPurchasesRepository {
         for (int i = 0; i < genderLabel.size(); i++) {
             ratioList.set(i, Math.floor(resultList.get(i) * 1000 / sum) / 10.0);
         }
-        labelResultRatio.add(genderLabel);
-        labelResultRatio.add(resultList);
-        labelResultRatio.add(ratioList);
+
+        yearsResult.put("labels", genderLabel);
+        yearsResult.put("countList", resultList);
+        yearsResult.put("ratioList", ratioList);
 
         log.info("다년간 성별분포");
-        return labelResultRatio;
+        return yearsResult;
     }
 
     public List<Object> countPurchaseByAgeForYears(String startYearStr, String endYearStr, String type) {
@@ -216,7 +218,6 @@ public class QPurchasesRepository {
                 .groupBy(qPurchase.color)
                 .orderBy(qPurchase.color.asc())
                 .fetch();
-        Map<String, Map> colorMap = new HashMap<>();  // 색깔 담을 맵
         List<Object> labelResultRatio = new ArrayList<>();
         List<String> colorLabel = new ArrayList<>();
         colorLabel.add("black");
@@ -233,16 +234,20 @@ public class QPurchasesRepository {
         for (Tuple tuple : result) {
             String color = tuple.get(qPurchase.color);
             long count = tuple.get(qPurchase.color.count());
-            resultMap.put(color, count);
+            resultList.set(colorLabel.indexOf(color), count);
             sum += count;
         }
 
-        for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
+        for (int i = 0; i < resultList.size(); i++) {
+            ratioList.set(i, Math.floor(resultList.get(i) * 1000 / sum) / 10.0);
         }
 
-        log.info("다년간 색깔분포 : " + colorMap);
-        return colorMap;
+        labelResultRatio.add(colorLabel);
+        labelResultRatio.add(resultList);
+        labelResultRatio.add(ratioList);
+
+        log.info("다년간 색깔분포");
+        return labelResultRatio;
     }
 
     public List<Long> countPurchaseForYear(String year, Boolean approve, String type) {
