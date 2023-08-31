@@ -9,6 +9,7 @@ import com.example.finalproject.global.responsedto.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +49,7 @@ public class KakaoService {
     @Value("${security.oauth2.client.registration.kakao.redirect-uri2}")
     private String kakaoRedirectUri;
 
-    public ApiResponse<?> kakaoLogin(String code, HttpServletResponse response) throws JsonProcessingException {
+    public ApiResponse<?> kakaoLogin(String code, HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
         log.info("test: " + code);
         // code -> token // token -> 사용자정보 // 사용자정보 회원가입, 로그인 -> jwt 토큰 발급
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -61,7 +62,7 @@ public class KakaoService {
         User kakaoUser = registerKakaoUserIfNeeded(kakaoUserInfo);
 
         // 로그인 절차
-        redisService.newLogin(kakaoUser, response);
+        redisService.newLogin(kakaoUser, response, request);
 
         return ok(USER_LOGIN_SUCCESS);
     }

@@ -2,6 +2,7 @@ package com.example.finalproject.global.utils;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
+import com.example.finalproject.domain.auth.service.RedisService;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -52,6 +53,7 @@ public class JwtUtil {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     private final UserRepository userRepository;
     private final RedisTemplate redisTemplate;
+    private final ClientIpUtil clientIpUtil;
 
     // 로그 설정
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
@@ -146,34 +148,27 @@ public class JwtUtil {
     }
 
     public String regenerateRefreshToken(String refreshToken) {
-        String email = getUserInfoFromToken(substringToken(refreshToken)).get("email", String.class);
+        // 토큰 재발급 과정
+
+        String email = getUserInfoFromToken(refreshToken.substring(7)).get("email", String.class);
         Optional<User> userOptional = userRepository.findByEmail(email);
         String nickname = userOptional.get().getNickname();
         UserRoleEnum userRole = userOptional.get().getRole();
         return createRefreshToken(email, nickname, userRole);
+
     }
 
-    public String findRefreshToken(String refreshToken) {
-        String redisRefreshToken = getAccessTokenFromRedis(refreshToken);
-        if (redisRefreshToken == null) {
-            throw new RuntimeException("저장되지 않은 RefreshToken 입니다.");
-        }
-        return redisRefreshToken;
-    }
+    public void validateAccess(String refreshToken, HttpServletRequest request) {
+        String ipAddressFromRedis = getIpAddressFromRedis(refreshToken);
+        String ipFromClient = clientIpUtil.getClientIp(request);
 
-    public void validateRefreshToken(String refreshToken) {
-        String accessTokenFromRedis = getAccessTokenFromRedis(refreshToken);
-        log.info(accessTokenFromRedis);
-
-        if (accessTokenFromRedis == null) {
+        if (ipAddressFromRedis == null) {
             throw new RuntimeException("저장되지 않은 RefreshToken 입니다.");
         }
 
-        String tokenValue = accessTokenFromRedis.substring(7);
-        if (validateAccessToken(tokenValue)) {
-            log.info("아직 유효한 accessToken이 있는 상태에서 새로운 accessToken을 요구한 상태");
-            redisTemplate.delete(refreshToken); //두 사용자중 어느쪽이 부정한 접속자인지 알 수 없으니 둘다 로그아웃 처리
-            throw new IllegalArgumentException("비정상적인 접속이 확인되어 로그아웃 됩니다.");
+        if (!ipFromClient.equals(ipAddressFromRedis)) {
+            log.info("다른 ip에서 refresh 토큰을 통한 access 토큰 재발급을 요청한 상태");
+            throw new IllegalArgumentException("비정상적인 접속이 확인되었습니다.");
         }
     }
 
@@ -186,8 +181,8 @@ public class JwtUtil {
       결과적으로 refresh 토큰이 탈취 당했을때의 대처가 되지 않게 된다.
     */
 
-    public String validateTokens(HttpServletRequest req, HttpServletResponse res) {
-        // accessToken 검증 실패 RefreshToken 검증 시작
+    public String[] validateTokens(HttpServletRequest req, HttpServletResponse res) {
+        log.info("accessToken 검증 실패 RefreshToken 검증 시작");
 
         String refreshToken = getRefreshTokenFromHeader(req);
 
@@ -195,14 +190,18 @@ public class JwtUtil {
             log.error("Refresh 토큰이 만료되었거나 Refresh 토큰이 존재하지 않습니다.");
             throw new RuntimeException("Refresh 토큰이 만료되었거나 Refresh 토큰이 존재하지 않습니다.");
         }
-        log.info(refreshToken);
-        validateRefreshToken(refreshToken);
+
+        validateAccess(refreshToken, req);
         String newAccessToken = regenerateAccessToken(refreshToken);
         res.addHeader(JwtUtil.ACCESS_TOKEN, newAccessToken);
-        res.addHeader(JwtUtil.REFRESH_TOKEN, refreshToken);
+        String newRefreshToken = regenerateRefreshToken(refreshToken);
+        res.addHeader(JwtUtil.REFRESH_TOKEN, newRefreshToken);
 
-        log.info("토큰재발급 성공: {}", newAccessToken);
-        return newAccessToken;
+        // 기존 refresh 토큰 삭제
+        redisTemplate.delete(refreshToken);
+
+        log.info("토큰재발급 성공");
+        return new String[]{newAccessToken, newRefreshToken};
     }
 
     // 토큰에서 사용자 정보 가져오기
@@ -214,7 +213,7 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public String getAccessTokenFromRedis(String refreshToken) {
+    public String getIpAddressFromRedis(String refreshToken) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         return values.get(refreshToken);
     }

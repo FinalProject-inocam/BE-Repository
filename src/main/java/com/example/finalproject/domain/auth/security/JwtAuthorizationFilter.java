@@ -1,7 +1,7 @@
 package com.example.finalproject.domain.auth.security;
 
-import com.example.finalproject.domain.auth.entity.RefreshToken;
 import com.example.finalproject.domain.auth.service.RedisService;
+import com.example.finalproject.global.utils.ClientIpUtil;
 import com.example.finalproject.global.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -24,6 +24,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final RedisService redisService;
+    private final ClientIpUtil clientIpUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
@@ -38,12 +39,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                     accessTokenValue = accessTokenValueFromHeader;
                 } else {
                     log.info("가지고 있던 accessToken이 유효하지 않음");
-                    String newAccessToken = jwtUtil.validateTokens(req, res);
-                    accessTokenValue = jwtUtil.substringToken(newAccessToken);
-                    log.info("accessTokenValue = " + accessTokenValue);
-                    String newRefreshToken = jwtUtil.getRefreshTokenFromHeader(req);
+                    jwtUtil.validateAccess(refreshTokenValueFromHeader, req);
 
-                    redisService.setRefreshToken(new RefreshToken(newRefreshToken, newAccessToken));
+                    String[] tokens = jwtUtil.validateTokens(req, res);
+
+                    String newAccessToken = tokens[0];
+                    accessTokenValue = jwtUtil.substringToken(newAccessToken);
+                    String newRefreshToken = tokens[1];
+
+                    // 잠시
+
+                    String ipAddress = clientIpUtil.getClientIp(req);
+                    redisService.setRefreshToken(newRefreshToken, ipAddress);
                 }
 
                 Claims info = jwtUtil.getUserInfoFromToken(accessTokenValue);

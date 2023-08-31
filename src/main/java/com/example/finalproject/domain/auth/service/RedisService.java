@@ -1,10 +1,11 @@
 package com.example.finalproject.domain.auth.service;
 
-import com.example.finalproject.domain.auth.entity.RefreshToken;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.global.enums.UserRoleEnum;
+import com.example.finalproject.global.utils.ClientIpUtil;
 import com.example.finalproject.global.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +23,14 @@ import java.util.Set;
 public class RedisService {
     private final RedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
+    private final ClientIpUtil clientIpUtil;
 
-    public void newLogin(User user, HttpServletResponse response) {
+    public void newLogin(User user, HttpServletResponse response, HttpServletRequest request) {
         String email = user.getEmail();
         String nickname = user.getNickname();
         UserRoleEnum role = user.getRole();
 
         String accessToken = jwtUtil.createAccessToken(email, nickname, role);
-        log.info("expired error : " + accessToken);
         response.addHeader(JwtUtil.ACCESS_TOKEN, accessToken);
 
         // 중복 로그인 가능한 계정 수를 제한시키기
@@ -40,14 +41,14 @@ public class RedisService {
         String newRefreshToken = jwtUtil.createRefreshToken(email, nickname, role);
         response.addHeader(JwtUtil.REFRESH_TOKEN, newRefreshToken);
         // redis에 저장
-        setRefreshToken(new RefreshToken(newRefreshToken, accessToken));
+        setRefreshToken(newRefreshToken, clientIpUtil.getClientIp(request));
     }
 
     @Transactional
-    public void setRefreshToken(RefreshToken refreshToken) {
+    public void setRefreshToken(String refreshToken, String ipAddress) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         Duration expireDuration = Duration.ofSeconds(jwtUtil.REFRESH_TOKEN_TIME / 1000);
-        values.set(refreshToken.getRefreshToken(), String.valueOf(refreshToken.getAccessToken()), expireDuration);
+        values.set(refreshToken, String.valueOf(ipAddress), expireDuration);
     }
 
     public void deleteOldRefreshToken(String nickname) {

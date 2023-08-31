@@ -5,6 +5,7 @@ import com.example.finalproject.domain.auth.security.JwtAuthorizationFilter;
 import com.example.finalproject.domain.auth.security.UserDetailsServiceImpl;
 import com.example.finalproject.domain.auth.service.RedisService;
 import com.example.finalproject.global.enums.UserRoleEnum;
+import com.example.finalproject.global.utils.ClientIpUtil;
 import com.example.finalproject.global.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -32,6 +33,7 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final RedisService redisService;
+    private final ClientIpUtil clientIpUtil;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -53,7 +55,7 @@ public class WebSecurityConfig {
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
-        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, redisService);
+        return new JwtAuthorizationFilter(jwtUtil, userDetailsService, redisService, clientIpUtil);
     }
 
 //    @Bean

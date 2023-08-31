@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("successfulAuthentication");
         User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
         // 로그인 절차
-        redisService.newLogin(user, response);
+        redisService.newLogin(user, response, request);
 
         response.setStatus(200);
         response.setContentType("application/json;charset=UTF-8");

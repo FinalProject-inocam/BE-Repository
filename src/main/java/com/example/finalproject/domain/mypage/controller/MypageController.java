@@ -8,6 +8,7 @@ import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import com.example.finalproject.global.validation.ValidationSequence;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,8 +27,9 @@ public class MypageController {
     public ApiResponse<?> updateMypage(@RequestPart(value = "images", required = false) MultipartFile multipartFile,
                                        @RequestPart(value = "data") @Validated(ValidationSequence.class) MypageRequestDto mypageRequestDto,
                                        @AuthenticationPrincipal UserDetailsImpl userDetails,
-                                       HttpServletResponse response) {
-        SuccessCode successCode = mypageService.updateMypage(multipartFile, mypageRequestDto, userDetails.getUser(), response);
+                                       HttpServletResponse response,
+                                       HttpServletRequest request) {
+        SuccessCode successCode = mypageService.updateMypage(multipartFile, mypageRequestDto, userDetails.getUser(), response, request);
         return ResponseUtils.ok(successCode);
     }
 
