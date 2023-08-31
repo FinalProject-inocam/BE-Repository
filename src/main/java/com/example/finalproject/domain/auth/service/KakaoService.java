@@ -190,6 +190,7 @@ public class KakaoService {
         // DB 에 중복된 Kakao Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
         Long kakaoId = kakaoUserInfo.getId(); // @kakao.com // naver.com
         User kakaoUser = userRepository.findByKakaoId(kakaoId);
+        String profile="https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
 
         if (kakaoUser == null) {
             // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인 // 이미 가입 email == kakao login email // @kakao, naver
@@ -216,7 +217,7 @@ public class KakaoService {
                     }
                 }
                 kakaoUserInfo.updateNickname(name);
-                kakaoUser = new User(kakaoUserInfo, encodedPassword, UserRoleEnum.USER);
+                kakaoUser = new User(kakaoUserInfo, encodedPassword, UserRoleEnum.USER,profile);
             }
 
             userRepository.save(kakaoUser);

@@ -85,6 +85,7 @@ public class GoogleService {
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
         String googleId = userResourceNode.get("id").asText();
+        String profile="https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
 //                Long.parseLong(userResourceNode.get("googleId").asText());
         User googleUser = userRepository.findByGoogleId(googleId);
 
@@ -112,7 +113,7 @@ public class GoogleService {
                         break;
                     }
                 }
-                googleUser = new User(googleId, email, name, encodedPassword, UserRoleEnum.USER);
+                googleUser = new User(googleId, email, name, encodedPassword, UserRoleEnum.USER,profile);
             }
 
             userRepository.save(googleUser);
