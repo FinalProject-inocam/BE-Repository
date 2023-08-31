@@ -1,8 +1,6 @@
 package com.example.finalproject.domain.purchases.service;
 
 import com.example.finalproject.domain.auth.entity.User;
-import com.example.finalproject.domain.car.entity.Car;
-import com.example.finalproject.domain.car.repository.CarRepository;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesPatchResponseDto;

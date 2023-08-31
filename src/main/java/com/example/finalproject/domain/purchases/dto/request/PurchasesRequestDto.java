@@ -33,7 +33,7 @@ public class PurchasesRequestDto {
     @NotBlank(message = "우편번호는 필수입니다.", groups = ValidationGroups.NotBlankGroup.class)
     private String zoneNo;
 
-    @NotBlank(message = "번호는 필수입니다.", groups = ValidationGroups.NotBlankGroup.class)
+    @NotBlank(message = "연락처는 필수입니다.", groups = ValidationGroups.NotBlankGroup.class)
     private String phoneNumber;
 
     private Long price;

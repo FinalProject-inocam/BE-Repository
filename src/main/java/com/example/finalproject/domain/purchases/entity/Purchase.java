@@ -69,7 +69,7 @@ public class Purchase extends Timestamped {
         this.content = purchasesRequestDto.getContent();
         this.addressName = purchasesRequestDto.getAddressName();
         this.zoneNo = purchasesRequestDto.getZoneNo();
-        this.price = price;
+        this.price = purchasesRequestDto.getPrice();
         this.user = user;
         this.trim=purchasesRequestDto.getTrim();
     }
