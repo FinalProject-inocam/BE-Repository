@@ -10,15 +10,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MypageRequestDto {
     @NotBlank(message = "닉네임은 필수입니다.", groups = ValidationGroups.NotBlankGroup.class)
-    String nickname;
+    private String nickname;
 
-    String phoneNumber;
-
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#?$%^&*]).{8,15}$", message = "영문자와 숫자, 특수문자를 포함한 8~15자 이내로 작성해주세요")
-    String password;
-
-    @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[!@#?$%^&*]).{8,15}$", message = "영문자와 숫자, 특수문자를 포함한 8~15자 이내로 작성해주세요")
-    String newPassword;
+    private String phoneNumber;
+    private String password;
+    private String newPassword;
 
     public void setPasswordToNewPassword(String encode) { // 기본 setter와 같은 이름
         this.newPassword = encode;
