@@ -10,9 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -22,7 +20,7 @@ public class QUserRepository {
     private final JPAQueryFactory queryFactory;
 
     // 현재 createdAt없음
-    public Map<Integer, Long> countUserForYear(String year) {
+    public List<Long> countUserForYear(String year) {
         log.info("연간 회원 통계");
         QUser qUser = QUser.user;
 
@@ -38,21 +36,16 @@ public class QUserRepository {
                 .groupBy(qUser.createdAt.month())
                 .orderBy(qUser.createdAt.month().asc())
                 .fetch();
-        Map<Integer, Long> resultMap = new HashMap<>();  // 월별 데이터를 저장할 맵
-
-        // 월별 데이터 초기화
-        for (int i = 1; i <= 12; i++) {
-            resultMap.put(i, 0L);  // 기본값 0으로 초기화
-        }
+        List<Long> resultList = new ArrayList<>(Collections.nCopies(12, 0l));  // 월별 데이터를 저장할 맵
 
         // 결과를 맵에 저장
         for (Tuple tuple : result) {
             int month = tuple.get(qUser.createdAt.month());
             long count = tuple.get(qUser.createdAt.count());
-            resultMap.put(month, count);
+            resultList.set(month - 1, count);
         }
-        log.info("연간 회원 통계 : " + resultMap);
-        return resultMap;
+        log.info("연간 회원 통계 : " + resultList.toString());
+        return resultList;
     }
 
     public Map<String, Map> countUserByGenderForYear(String year) {
@@ -127,7 +120,6 @@ public class QUserRepository {
         for (int i = 20; i < 70; i += 10) {
             resultMap.put(Integer.toString(i), 0l);
         }
-        resultMap.put("10-", 0l);
         resultMap.put("70+", 0l);
         resultMap.put("unknown", 0l);
 
@@ -150,9 +142,9 @@ public class QUserRepository {
                 resultMap.put("70+", value + 1);
                 continue;
             }
-            if (age < 20) {
-                Long value = resultMap.get("10-");
-                resultMap.put("10-", value + 1);
+            if (age < 30) {
+                Long value = resultMap.get("20");
+                resultMap.put("20", value + 1);
                 continue;
             }
             String ageToString = Integer.toString(age);

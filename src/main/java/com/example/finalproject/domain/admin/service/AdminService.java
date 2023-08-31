@@ -84,10 +84,6 @@ public class AdminService {
 
     /* 1달간 매주의 신청, 승인 거절 건수 */
     public Map<String, Object> monthStat(String yearMonth) {
-//        Integer year = Integer.valueOf(month.split("-")[0]);
-//        Integer month = Integer.valueOf(month.split("-")[1]);
-//        LocalDate localDate = convertStringToLocalDate(cal);
-
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("total", customMonthStat(yearMonth, null));
         carService.getCarList()
