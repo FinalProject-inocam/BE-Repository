@@ -43,12 +43,10 @@ public class CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final UserRepository userRepository;
     private final ReplyLikeRepository replyLikeRepository;
-    public CommentPageDto getComment(Long postId, UserDetailsImpl userDetails,int size,int page) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostsNotFoundException(NOT_FOUND_DATA)
-        );
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
 
+    @Transactional
+    public CommentPageDto getComment(Long postId, UserDetailsImpl userDetails,int size,int page) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
         Page<Comment> commentList = commentRepository.findByPostId(postId,pageable);
         long total = commentList.getTotalElements();
 
