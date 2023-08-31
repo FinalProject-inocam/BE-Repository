@@ -44,7 +44,7 @@ public class NaverService {
     @Value("${security.oauth2.naver.client-secret}")
     private String naverClientSecret;
 
-    @Value("${security.oauth2.naver.resource-uri2}")
+    @Value("${security.oauth2.naver.resource-uri}")
     private String naverRedirectUri;
 
     public ApiResponse<?> naverLogin(String code, String state, HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
