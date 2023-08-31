@@ -53,6 +53,7 @@ public class JwtUtil {
     private final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
     private final UserRepository userRepository;
     private final RedisTemplate redisTemplate;
+    private final ClientIpUtil clientIpUtil;
 
     // 로그 설정
     public static final Logger logger = LoggerFactory.getLogger("JWT 관련 로그");
@@ -159,14 +160,15 @@ public class JwtUtil {
 
     public void validateAccess(String refreshToken, HttpServletRequest request) {
         String ipAddressFromRedis = getIpAddressFromRedis(refreshToken);
+        String ipFromClient = clientIpUtil.getClientIp(request);
 
         if (ipAddressFromRedis == null) {
             throw new RuntimeException("저장되지 않은 RefreshToken 입니다.");
         }
 
-        if (!request.getRemoteAddr().equals(ipAddressFromRedis)) {
+        if (!ipFromClient.equals(ipAddressFromRedis)) {
             log.info("다른 ip에서 refresh 토큰을 통한 access 토큰 재발급을 요청한 상태");
-            throw new IllegalArgumentException("비정상적인 접속이 확인되어 로그아웃 됩니다.");
+            throw new IllegalArgumentException("비정상적인 접속이 확인되었습니다.");
         }
     }
 

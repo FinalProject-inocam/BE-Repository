@@ -2,6 +2,7 @@ package com.example.finalproject.domain.auth.service;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.global.enums.UserRoleEnum;
+import com.example.finalproject.global.utils.ClientIpUtil;
 import com.example.finalproject.global.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import java.util.Set;
 public class RedisService {
     private final RedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
+    private final ClientIpUtil clientIpUtil;
 
     public void newLogin(User user, HttpServletResponse response, HttpServletRequest request) {
         String email = user.getEmail();
@@ -39,7 +41,7 @@ public class RedisService {
         String newRefreshToken = jwtUtil.createRefreshToken(email, nickname, role);
         response.addHeader(JwtUtil.REFRESH_TOKEN, newRefreshToken);
         // redis에 저장
-        setRefreshToken(newRefreshToken, request.getRemoteAddr());
+        setRefreshToken(newRefreshToken, clientIpUtil.getClientIp(request));
     }
 
     @Transactional
