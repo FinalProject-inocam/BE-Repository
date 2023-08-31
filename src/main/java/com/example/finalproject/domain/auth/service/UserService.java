@@ -24,7 +24,7 @@ public class UserService {
     private final RedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
 
-    @Value("${admin.token}") // Base64 Encode 한 SecretKey
+    @Value("${admin.token}") // SecretKey
     private String ADMIN_TOKEN;
 
     public SuccessCode signup(SignupRequestDto requestDto) {
