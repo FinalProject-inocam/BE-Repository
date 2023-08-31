@@ -146,6 +146,7 @@ public class NaverService {
         String nickname = jsonNode.get("response").get("nickname").asText();// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
         String email = jsonNode.get("response").get("email").asText();
         String naverId = id; // naver.com
+        String profile="https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
 
         User naverUser = userRepository.findByNaverId(naverId);
 
@@ -176,7 +177,7 @@ public class NaverService {
                 }
 
                 NaverUserInfoDto naverUserInfoDto = new NaverUserInfoDto(id, name, email);
-                naverUser = new User(naverUserInfoDto, encodedPassword, UserRoleEnum.USER);
+                naverUser = new User(naverUserInfoDto, encodedPassword, UserRoleEnum.USER,profile);
             }
             userRepository.save(naverUser);
         }
