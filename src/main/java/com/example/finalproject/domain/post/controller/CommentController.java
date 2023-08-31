@@ -1,14 +1,19 @@
 package com.example.finalproject.domain.post.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
+import com.example.finalproject.domain.post.dto.CommentPageDto;
 import com.example.finalproject.domain.post.dto.request.CommentRequestDto;
+import com.example.finalproject.domain.post.dto.response.CommentResponseDto;
 import com.example.finalproject.domain.post.service.CommentService;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,6 +21,14 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
     private final CommentService commentsService;
 
+    @GetMapping
+    public ApiResponse<?> getComments(@PathVariable(name = "postId") Long postId,
+                                      @RequestParam("page") int page,
+                                      @RequestParam("size") int size,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails){
+        CommentPageDto commentPageDto= commentsService.getComment(postId,userDetails,size,page);
+        return ResponseUtils.ok(commentPageDto);
+    }
     // 댓글 생성
     @PostMapping
     public ApiResponse<?> createComments(@PathVariable(name = "postId") Long postId,

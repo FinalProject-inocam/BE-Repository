@@ -6,6 +6,7 @@ import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,25 +45,15 @@ public class GoogleService {
     @Value("${security.oauth2.google.resource-uri}")
     String resourceUri;
 
-    public SuccessCode googleLogin(String code, HttpServletResponse response) throws IOException, ServletException {
+    public SuccessCode googleLogin(String code, HttpServletResponse response, HttpServletRequest request) throws IOException, ServletException {
 
         String googleAccessToken = getAccessToken(code);
         JsonNode userResourceNode = getUserResource(googleAccessToken);
-        String email = userResourceNode.get("email").asText();
-        String nickname = userResourceNode.get("name").asText();
-        String id = userResourceNode.get("id").asText();
 
         User googleUser = registerGoogleUserIfNeeded(userResourceNode);
 
-        // 4. JWT 토큰 반환
-//        String accessToken = jwtUtil.createAccessToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 30분
-//        String refreshToken = jwtUtil.createRefreshToken(googleUser.getEmail(), googleUser.getRole(), googleUser.getNickname(), googleUser.getGender()); // 3일
-//        jwtUtil.addAccessJwtHeader(accessToken, response);
-//        jwtUtil.addRefreshJwtHeader(refreshToken, response);
-//        log.info("accessToken : {}", accessToken);
-//        log.info("refreshToken : {}", refreshToken);
         // 로그인 절차
-        redisService.newLogin(googleUser, response);
+        redisService.newLogin(googleUser, response, request);
         return USER_LOGIN_SUCCESS;
     }
 

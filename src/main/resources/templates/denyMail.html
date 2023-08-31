@@ -6,6 +6,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <!-- Google Fonts: Noto Serif KR -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap" rel="stylesheet">
+  <!-- Custom styles -->
   <style>
     .border-box {
       border: 2px solid #ccc;
@@ -14,24 +15,24 @@
     }
     .inner-box {
       padding: 20px;
-      background: linear-gradient(to bottom, #ffffff, #f3f3f3);
+      background: linear-gradient(to bottom, #e5e5e5, #c8c8c8);
     }
   </style>
 </head>
-<body style="font-family: 'Noto Serif KR', serif; background-color: #f9f9f9;">
+<body style="font-family: 'Noto Serif KR', serif; background-color: #e5e5e5;">
 <table class="border-box" style="padding: 20px; margin: auto; width: 80%; border-collapse: collapse;">
   <tbody>
   <tr>
     <td class="inner-box" style="text-align: center;">
-      <!-- Company Logo -->
+      <!-- Company Logo with darker border -->
       <div style="display: inline-block; border: 5px solid #333; border-radius: 15px; overflow: hidden;">
         <img src="https://finalimgbucket.s3.amazonaws.com/d0c5a8cf-71a2-4aa6-b440-db5c36a67ac1" alt="이노모터서비스 로고" style="max-width: 250px; margin-bottom: 20px; pointer-events: none;">
       </div>
 
-      <p style="font-size: 24px; text-align: center; color: #333; margin-bottom: 20px;">이노모터서비스와 함께해주셔서 감사합니다.</p>
-      <p style="font-size: 18px; color: #333; text-align: center; margin-bottom: 20px;">밑의 코드로 이메일 주소를 인증해주세요</p>
+      <p style="font-size: 24px; text-align: center; color: #333; margin-bottom: 20px;">이노모터서비스 출고 반려 알림</p>
+      <p style="font-size: 18px; color: #333; text-align: center; margin-bottom: 20px;">차량의 출고가 반려되었습니다. 아래는 반려된 이유입니다.</p>
       <div style="background-color: #FFFFFF; border: 1px solid #ccc; border-radius: 10px; padding: 15px; text-align: center; width: 60%; margin: 0 auto;">
-        <p style="font-size: 18px; text-align: center; color: #333;">인증 코드: <span th:text="${name}"></span></p>
+        <p style="font-size: 18px; text-align: center; color: #333;">반려 이유: <span th:text="${name}"></span></p>
       </div>
     </td>
   </tr>

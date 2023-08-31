@@ -31,7 +31,7 @@ public class Comment extends Timestamped {
     @ManyToOne
     private User user;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id")
     private List<Reply> replyList;
 

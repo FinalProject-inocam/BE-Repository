@@ -22,11 +22,9 @@ public class QUserRepository {
     private final JPAQueryFactory queryFactory;
 
     // 현재 createdAt없음
-    public Map<Integer, Long> countUserForYear(LocalDate localDate) {
+    public Map<Integer, Long> countUserForYear(String year) {
         log.info("연간 회원 통계");
         QUser qUser = QUser.user;
-
-        Integer year = localDate.getYear();
 
         List<Tuple> result = queryFactory
                 .select(
@@ -35,7 +33,7 @@ public class QUserRepository {
                 )
                 .from(qUser)
                 .where(
-                        qUser.createdAt.year().eq(year)
+                        qUser.createdAt.year().eq(Integer.valueOf(year))
                         )
                 .groupBy(qUser.createdAt.month())
                 .orderBy(qUser.createdAt.month().asc())
@@ -57,11 +55,9 @@ public class QUserRepository {
         return resultMap;
     }
 
-    public Map<String, Map> countUserByGenderForYear(LocalDate localDate) {
+    public Map<String, Map> countUserByGenderForYear(String year) {
         log.info("연간 회원 성별분포");
         QUser qUser = QUser.user;
-
-        Integer year = localDate.getYear();
 
         List<Tuple> result = queryFactory
                 .select(
@@ -70,7 +66,7 @@ public class QUserRepository {
                 )
                 .from(qUser)
                 .where(
-                        qUser.createdAt.year().eq(year)
+                        qUser.createdAt.year().eq(Integer.valueOf(year))
                 )
                 .groupBy(qUser.gender.stringValue().coalesce("UNKNOWN"))
                 .orderBy(qUser.gender.stringValue().coalesce("UNKNOWN").asc())
@@ -105,11 +101,9 @@ public class QUserRepository {
         return genderMap;
     }
 
-    public Map<String, Map> countUserByAgeForYear(LocalDate localDate) {
+    public Map<String, Map> countUserByAgeForYear(String year) {
         log.info("연간 회원 나이대");
         QUser qUser = QUser.user;
-
-        Integer year = localDate.getYear();
 
         NumberExpression<Integer> ageExpression = Expressions.currentDate().year()
                 .subtract(qUser.birthYear)
@@ -122,7 +116,7 @@ public class QUserRepository {
                 )
                 .from(qUser)
                 .where(
-                        qUser.createdAt.year().eq(year)
+                        qUser.createdAt.year().eq(Integer.valueOf(year))
                         )
                 .fetch();
 
@@ -173,11 +167,9 @@ public class QUserRepository {
         return ageMap;
     }
 
-    public Long countUserForPreYear(LocalDate localDate) {
+    public Long countUserForPreYear(String year) {
         log.info("작년 회원 통계");
         QUser qUser = QUser.user;
-
-        Integer year = localDate.getYear() - 1;
 
         List<Long> result = queryFactory
                 .select(
@@ -185,7 +177,7 @@ public class QUserRepository {
                 )
                 .from(qUser)
                 .where(
-                        qUser.createdAt.year().eq(year)
+                        qUser.createdAt.year().eq(Integer.valueOf(year) - 1)
                         )
                 .fetch();
 
