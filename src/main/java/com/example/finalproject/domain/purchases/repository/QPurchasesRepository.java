@@ -26,12 +26,12 @@ public class QPurchasesRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public Map<Integer, Long> countPurchaseForYears(LocalDate StartDate, LocalDate endDate, Boolean approve, String type) {
+    public Map<Integer, Long> countPurchaseForYears(String startYearStr, String endYearStr, Boolean approve, String type) {
         log.info("연별 통계");
         QPurchase qPurchase = QPurchase.purchase;
 
-        Integer startYear = StartDate.getYear();
-        Integer endYear = endDate.getYear();
+        Integer startYear = Integer.valueOf(startYearStr);
+        Integer endYear = Integer.valueOf(endYearStr);
 
         BooleanExpression approveCondition = null;
         if (approve != null) {
@@ -74,12 +74,12 @@ public class QPurchasesRepository {
         return resultMap;
     }
 
-    public Map<String, Map> countPurchaseByGenderForYears(LocalDate StartDate, LocalDate endDate, String type) {
+    public Map<String, Map> countPurchaseByGenderForYears(String startYearStr, String endYearStr, String type) {
         log.info("다년간 성별분포");
         QPurchase qPurchase = QPurchase.purchase;
 
-        Integer startYear = StartDate.getYear();
-        Integer endYear = endDate.getYear();
+        Integer startYear = Integer.valueOf(startYearStr);
+        Integer endYear = Integer.valueOf(endYearStr);
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -88,16 +88,16 @@ public class QPurchasesRepository {
 
         List<Tuple> result = queryFactory
                 .select(
-                        qPurchase.gender,
-                        qPurchase.gender.count()
+                        qPurchase.gender.stringValue(),
+                        qPurchase.gender.stringValue().count()
                 )
                 .from(qPurchase)
                 .where(
                         qPurchase.createdAt.year().between(startYear, endYear),
                         typeCondition
                 )
-                .groupBy(qPurchase.gender)
-                .orderBy(qPurchase.gender.asc())
+                .groupBy(qPurchase.gender.stringValue())
+                .orderBy(qPurchase.gender.stringValue().asc())
                 .fetch();
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
@@ -114,8 +114,8 @@ public class QPurchasesRepository {
 
         // 결과를 맵에 저장
         for (Tuple tuple : result) {
-            String gender = tuple.get(qPurchase.gender);
-            long count = tuple.get(qPurchase.gender.count());
+            String gender = tuple.get(qPurchase.gender.stringValue());
+            long count = tuple.get(qPurchase.gender.stringValue().count());
             resultMap.put(gender, count);
             sum += count;
         }
@@ -128,12 +128,12 @@ public class QPurchasesRepository {
         return genderMap;
     }
 
-    public Map<String, Map> countPurchaseByAgeForYears(LocalDate StartDate, LocalDate endDate, String type) {
+    public Map<String, Map> countPurchaseByAgeForYears(String startYearStr, String endYearStr, String type) {
         log.info("다년간 나이");
         QPurchase qPurchase = QPurchase.purchase;
 
-        Integer startYear = StartDate.getYear();
-        Integer endYear = endDate.getYear();
+        Integer startYear = Integer.valueOf(startYearStr);
+        Integer endYear = Integer.valueOf(endYearStr);
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -188,12 +188,12 @@ public class QPurchasesRepository {
         return ageMap;
     }
 
-    public Map<String, Map> countPurchaseByColorForYears(LocalDate StartDate, LocalDate endDate, String type) {
+    public Map<String, Map> countPurchaseByColorForYears(String startYearStr, String endYearStr, String type) {
         log.info("다년간 색깔분포");
         QPurchase qPurchase = QPurchase.purchase;
 
-        Integer startYear = StartDate.getYear();
-        Integer endYear = endDate.getYear();
+        Integer startYear = Integer.valueOf(startYearStr);
+        Integer endYear = Integer.valueOf(endYearStr);
 
         BooleanExpression typeCondition = null;
         if (type != null) {
@@ -294,16 +294,16 @@ public class QPurchasesRepository {
 
         List<Tuple> result = queryFactory
                 .select(
-                        qPurchase.gender,
-                        qPurchase.gender.count()
+                        qPurchase.gender.stringValue(),
+                        qPurchase.gender.stringValue().count()
                 )
                 .from(qPurchase)
                 .where(
                         qPurchase.createdAt.year().eq(Integer.valueOf(year)),
                         typeCondition
                 )
-                .groupBy(qPurchase.gender)
-                .orderBy(qPurchase.gender.asc())
+                .groupBy(qPurchase.gender.stringValue())
+                .orderBy(qPurchase.gender.stringValue().asc())
                 .fetch();
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
@@ -320,8 +320,8 @@ public class QPurchasesRepository {
 
         // 결과를 맵에 저장
         for (Tuple tuple : result) {
-            String gender = tuple.get(qPurchase.gender);
-            long count = tuple.get(qPurchase.gender.count());
+            String gender = tuple.get(qPurchase.gender.stringValue());
+            long count = tuple.get(qPurchase.gender.stringValue().count());
             resultMap.put(gender, count);
             sum += count;
         }
@@ -533,8 +533,8 @@ public class QPurchasesRepository {
         // 각 주의 시작일을 계산하고 저장
         List<Tuple> result = queryFactory
                 .select(
-                        qPurchase.gender,
-                        qPurchase.gender.count()
+                        qPurchase.gender.stringValue(),
+                        qPurchase.gender.stringValue().count()
                 )
                 .from(qPurchase)
                 .where(
@@ -542,7 +542,7 @@ public class QPurchasesRepository {
                         qPurchase.createdAt.month().eq(month),
                         typeCondition
                 )
-                .groupBy(qPurchase.gender)
+                .groupBy(qPurchase.gender.stringValue())
                 .fetch();
 
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
@@ -560,8 +560,8 @@ public class QPurchasesRepository {
 
         // 결과를 맵에 저장
         for (Tuple tuple : result) {
-            String gender = tuple.get(qPurchase.gender);
-            long count = tuple.get(qPurchase.gender.count());
+            String gender = tuple.get(qPurchase.gender.stringValue());
+            long count = tuple.get(qPurchase.gender.stringValue().count());
             resultMap.put(gender, count);
             sum += count;
         }
@@ -779,8 +779,8 @@ public class QPurchasesRepository {
         // 각 주의 시작일을 계산하고 저장
         List<Tuple> result = queryFactory
                 .select(
-                        qPurchase.gender,
-                        qPurchase.gender.count()
+                        qPurchase.gender.stringValue(),
+                        qPurchase.gender.stringValue().count()
                 )
                 .from(qPurchase)
                 .where(
@@ -788,7 +788,7 @@ public class QPurchasesRepository {
                                 endOfWeek.atTime(23, 59, 59, 999999)),
                         typeCondition
                 )
-                .groupBy(qPurchase.gender)
+                .groupBy(qPurchase.gender.stringValue())
                 .fetch();
 
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
@@ -806,8 +806,8 @@ public class QPurchasesRepository {
 
         // 결과를 맵에 저장
         for (Tuple tuple : result) {
-            String gender = tuple.get(qPurchase.gender);
-            long count = tuple.get(qPurchase.gender.count());
+            String gender = tuple.get(qPurchase.gender.stringValue());
+            long count = tuple.get(qPurchase.gender.stringValue().count());
             resultMap.put(gender, count);
             sum += count;
         }

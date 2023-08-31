@@ -2,6 +2,7 @@ package com.example.finalproject.domain.purchases.entity;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
+import com.example.finalproject.global.enums.UserGenderEnum;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,7 +27,8 @@ public class Purchase extends Timestamped {
     private String color;
 
     @Column(nullable = false)
-    private String gender;
+    @Enumerated(value = EnumType.STRING)
+    private UserGenderEnum gender;
 
     @Column(nullable = false)
     private Integer birthYear;
@@ -58,7 +60,7 @@ public class Purchase extends Timestamped {
     public Purchase(PurchasesRequestDto purchasesRequestDto, User user, Long price) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
-        this.gender = purchasesRequestDto.getGender();
+        this.gender = genderEnumCheck(purchasesRequestDto.getGender());
         this.birthYear = purchasesRequestDto.getBirthYear();
         this.alarm = purchasesRequestDto.getAlarm();
         this.phoneNumber = purchasesRequestDto.getPhoneNumber();
@@ -82,11 +84,24 @@ public class Purchase extends Timestamped {
     public void update(PurchasesRequestDto purchasesRequestDto) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
-        this.gender = purchasesRequestDto.getGender();
+        this.gender = genderEnumCheck(purchasesRequestDto.getGender());
         this.birthYear = purchasesRequestDto.getBirthYear();
         this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
         this.addressName = purchasesRequestDto.getAddressName();
         this.zoneNo = purchasesRequestDto.getZoneNo();
+    }
+
+    private UserGenderEnum genderEnumCheck(String genderStr) {
+        if (genderStr.equals("male")) {
+            return UserGenderEnum.MALE;
+        }
+        if (genderStr.equals("female")) {
+            return UserGenderEnum.FEMALE;
+        }
+        if (genderStr.equals("company")) {
+            return UserGenderEnum.COMPANY;
+        }
+        return null;
     }
 }
