@@ -9,6 +9,7 @@ import com.example.finalproject.domain.purchases.exception.PurchasesNotFoundExce
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.S3Utils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +32,10 @@ public class MypageService {
     private final S3Utils s3Utils;
 
     @Transactional
-    public SuccessCode updateMypage(MultipartFile multipartFile, MypageRequestDto mypageRequestDto, User user, HttpServletResponse response) {
+    public SuccessCode updateMypage(MultipartFile multipartFile,
+                                    MypageRequestDto mypageRequestDto,
+                                    User user, HttpServletResponse response,
+                                    HttpServletRequest request) {
 
         if (passwordEncoder.matches(mypageRequestDto.getPassword(), user.getPassword())) {
             User newuser = userRepository.findById(user.getUserId()).orElseThrow(
@@ -47,7 +51,7 @@ public class MypageService {
             // 기존의 로그인 되어있던 모든계정에서 로그아웃 처리
             redisService.deleteAllRefreshToken(user.getNickname());
             // 새로운 user 정보로 로그인 처리
-            redisService.newLogin(newuser, response);
+            redisService.newLogin(newuser, response, request);
 
         } else {
             throw new PurchasesNotFoundException(NO_AUTHORITY_TO_DATA);

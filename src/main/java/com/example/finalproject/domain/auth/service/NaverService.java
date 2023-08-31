@@ -8,6 +8,7 @@ import com.example.finalproject.global.responsedto.ApiResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,7 @@ public class NaverService {
     @Value("${security.oauth2.naver.resource-uri2}")
     private String naverRedirectUri;
 
-    public ApiResponse<?> naverLogin(String code, String state, HttpServletResponse response) throws JsonProcessingException {
+    public ApiResponse<?> naverLogin(String code, String state, HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
         log.info("test: " + code);
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -59,7 +60,7 @@ public class NaverService {
         User naverUser = registerNaverUserIfNeeded(jsonNode);
 
         // 로그인 절차
-        redisService.newLogin(naverUser, response);
+        redisService.newLogin(naverUser, response, request);
 
         return ok(USER_LOGIN_SUCCESS);
     }

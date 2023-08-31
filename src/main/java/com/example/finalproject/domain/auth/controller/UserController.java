@@ -31,23 +31,30 @@ public class UserController {
 
     //구글 로그인
     @GetMapping("/login/google")
-    public ApiResponse<?> googleLogin(@RequestParam String code, HttpServletResponse response) throws IOException, ServletException {
-        SuccessCode successCode = googleService.googleLogin(code, response);
+    public ApiResponse<?> googleLogin(@RequestParam String code,
+                                      HttpServletResponse response,
+                                      HttpServletRequest request) throws IOException, ServletException {
+        SuccessCode successCode = googleService.googleLogin(code, response, request);
         return ResponseUtils.ok(successCode);
     }
 
     // 카카오 로그인
     @GetMapping("/login/kakao")
     // GET https://kauth.kakao.com/oauth/authorize?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}
-    public ApiResponse<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        return kakaoService.kakaoLogin(code, response);
+    public ApiResponse<?> kakaoLogin(@RequestParam String code,
+                                     HttpServletResponse response,
+                                     HttpServletRequest request) throws JsonProcessingException {
+        return kakaoService.kakaoLogin(code, response, request);
     }
 
     // 네이버 로그인
     @GetMapping("/login/naver")
     // GET https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id={client_id}&state=STATE_STRING&redirect_uri={redirect_uri}
-    public ApiResponse<?> naverLogin(@RequestParam String code, @RequestParam String state, HttpServletResponse response) throws JsonProcessingException {
-        return naverService.naverLogin(code, state, response);
+    public ApiResponse<?> naverLogin(@RequestParam String code,
+                                     @RequestParam String state,
+                                     HttpServletResponse response,
+                                     HttpServletRequest request) throws JsonProcessingException {
+        return naverService.naverLogin(code, state, response, request);
     }
 
     @PostMapping("/signup")
