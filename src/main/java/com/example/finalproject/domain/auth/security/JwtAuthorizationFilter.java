@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.auth.security;
 
 import com.example.finalproject.domain.auth.service.RedisService;
+import com.example.finalproject.global.utils.ClientIpUtil;
 import com.example.finalproject.global.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
@@ -23,6 +24,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private final RedisService redisService;
+    private final ClientIpUtil clientIpUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
@@ -47,7 +49,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
                     // 잠시
 
-                    String ipAddress = req.getRemoteAddr();
+                    String ipAddress = clientIpUtil.getClientIp(req);
                     redisService.setRefreshToken(newRefreshToken, ipAddress);
                 }
 
