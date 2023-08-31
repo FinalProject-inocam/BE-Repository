@@ -42,7 +42,7 @@ public class Post extends Timestamped {
     private List<Comment> commentList;
 
     @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "image_id")
+    @JoinColumn(name = "post_id")
     private List<Image> imageList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
