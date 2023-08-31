@@ -73,7 +73,7 @@ public class QUserRepository {
                 .fetch();
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         resultMap.put("MALE", 0l);
         resultMap.put("FEMALE", 0l);
@@ -94,7 +94,7 @@ public class QUserRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("연간 회원 성별분포 : " + genderMap);
@@ -122,7 +122,7 @@ public class QUserRepository {
 
         Map<String, Map> ageMap = new HashMap<>();  // age 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         for (int i = 20; i < 70; i += 10) {
             resultMap.put(Integer.toString(i), 0l);
@@ -160,7 +160,7 @@ public class QUserRepository {
         }
 
         for (String age : resultMap.keySet()) {
-            ratioMap.put(age, Math.round(resultMap.get(age) * 100 / sum));
+            ratioMap.put(age, Math.floor(resultMap.get(age) * 1000 / sum) / 10.0);
         }
 
         log.info("연간 회원 나이분포 : " + ageMap);

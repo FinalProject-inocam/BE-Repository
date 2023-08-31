@@ -101,7 +101,7 @@ public class QPurchasesRepository {
                 .fetch();
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         resultMap.put("MALE", 0l);
         resultMap.put("FEMALE", 0l);
@@ -121,7 +121,7 @@ public class QPurchasesRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("다년간 성별분포 : " + genderMap);
@@ -157,7 +157,7 @@ public class QPurchasesRepository {
 
         Map<String, Map> ageMap = new HashMap<>();  // age 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         for (int i = 10; i < 80; i += 10) {
             resultMap.put(Integer.toString(i), 0l);
@@ -181,7 +181,7 @@ public class QPurchasesRepository {
         }
 
         for (String age : resultMap.keySet()) {
-            ratioMap.put(age, Math.round(resultMap.get(age) * 100 / sum));
+            ratioMap.put(age, Math.floor(resultMap.get(age) * 1000 / sum) / 10.0);
         }
 
         log.info("다년간 나이분포 : " + ageMap);
@@ -215,7 +215,7 @@ public class QPurchasesRepository {
                 .fetch();
         Map<String, Map> colorMap = new HashMap<>();  // 색깔 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         colorMap.put("byColor", resultMap);
         colorMap.put("ratio", ratioMap);
@@ -231,7 +231,7 @@ public class QPurchasesRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("다년간 색깔분포 : " + colorMap);
@@ -307,7 +307,7 @@ public class QPurchasesRepository {
                 .fetch();
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         resultMap.put("MALE", 0l);
         resultMap.put("FEMALE", 0l);
@@ -327,7 +327,7 @@ public class QPurchasesRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("연간 성별분포 : " + genderMap);
@@ -360,7 +360,7 @@ public class QPurchasesRepository {
 
         Map<String, Map> ageMap = new HashMap<>();  // age 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         for (int i = 10; i < 80; i += 10) {
             resultMap.put(Integer.toString(i), 0l);
@@ -384,7 +384,7 @@ public class QPurchasesRepository {
         }
 
         for (String age : resultMap.keySet()) {
-            ratioMap.put(age, Math.round(resultMap.get(age) * 100 / sum));
+            ratioMap.put(age, Math.floor(resultMap.get(age) * 1000 / sum) / 10.0);
         }
 
         log.info("연간 나이분포 : " + ageMap);
@@ -415,7 +415,7 @@ public class QPurchasesRepository {
                 .fetch();
         Map<String, Map> colorMap = new HashMap<>();  // 색깔 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         colorMap.put("byColor", resultMap);
         colorMap.put("ratio", ratioMap);
@@ -431,7 +431,7 @@ public class QPurchasesRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("연간 색깔분포 : " + colorMap);
@@ -547,7 +547,7 @@ public class QPurchasesRepository {
 
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         resultMap.put("MALE", 0l);
         resultMap.put("FEMALE", 0l);
@@ -567,7 +567,7 @@ public class QPurchasesRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("월간 성별분포 : " + genderMap);
@@ -600,7 +600,7 @@ public class QPurchasesRepository {
 
         Map<String, Map> ageMap = new HashMap<>();  // age 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         for (int i = 10; i < 80; i += 10) {
             resultMap.put(Integer.toString(i), 0l);
@@ -624,7 +624,7 @@ public class QPurchasesRepository {
         }
 
         for (String age : resultMap.keySet()) {
-            ratioMap.put(age, Math.round(resultMap.get(age) * 100 / sum));
+            ratioMap.put(age, Math.floor(resultMap.get(age) * 1000 / sum) / 10.0);
         }
 
         log.info("월간 나이분포 : " + ageMap);
@@ -659,7 +659,7 @@ public class QPurchasesRepository {
                 .fetch();
         Map<String, Map> colorMap = new HashMap<>();  // 색깔 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         colorMap.put("byColor", resultMap);
         colorMap.put("ratio", ratioMap);
@@ -675,7 +675,7 @@ public class QPurchasesRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("월간 색깔분포 : " + colorMap);
@@ -793,7 +793,7 @@ public class QPurchasesRepository {
 
         Map<String, Map> genderMap = new HashMap<>();  // gender, company 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         resultMap.put("MALE", 0l);
         resultMap.put("FEMALE", 0l);
@@ -813,7 +813,7 @@ public class QPurchasesRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("주간 성별분포 : " + genderMap);
@@ -846,7 +846,7 @@ public class QPurchasesRepository {
 
         Map<String, Map> ageMap = new HashMap<>();  // age 정보 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         for (int i = 10; i < 80; i += 10) {
             resultMap.put(Integer.toString(i), 0l);
@@ -870,7 +870,7 @@ public class QPurchasesRepository {
         }
 
         for (String age : resultMap.keySet()) {
-            ratioMap.put(age, Math.round(resultMap.get(age) * 100 / sum));
+            ratioMap.put(age, Math.floor(resultMap.get(age) * 1000 / sum) / 10.0);
         }
 
         log.info("주간 나이분포 : " + ageMap);
@@ -905,7 +905,7 @@ public class QPurchasesRepository {
                 .fetch();
         Map<String, Map> colorMap = new HashMap<>();  // 색깔 담을 맵
         Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Integer> ratioMap = new HashMap<>();
+        Map<String, Double> ratioMap = new HashMap<>();
 
         colorMap.put("byColor", resultMap);
         colorMap.put("ratio", ratioMap);
@@ -921,7 +921,7 @@ public class QPurchasesRepository {
         }
 
         for (String gender : resultMap.keySet()) {
-            ratioMap.put(gender, Math.round(resultMap.get(gender) * 100 / sum));
+            ratioMap.put(gender, Math.floor(resultMap.get(gender) * 1000 / sum) / 10.0);
         }
 
         log.info("주간 색깔분포 : " + colorMap);
