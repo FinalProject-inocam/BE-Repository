@@ -23,30 +23,30 @@ public class AdminService {
     private final CarService carService;
 
     /* 특정 기간(2020~2023)의 연별 신청, 승인, 거절 건수 */
-    public Map<String, Object> yearsStat(String startCal, String endCal) {
-        LocalDate startDate = convertStringToLocalDate(startCal);
-        LocalDate endDate = convertStringToLocalDate(endCal);
+    public Map<String, Object> yearsStat(String startYear, String endYear) {
+//        LocalDate startDate = convertStringToLocalDate(startCal);
+//        LocalDate endDate = convertStringToLocalDate(endCal);
 
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("total", customYearsStat(startDate, endDate, null));
+        resultMap.put("total", customYearsStat(startYear, endYear, null));
         carService.getCarList()
                 .stream()
                 .map(Car::getType)
-                .forEach((type) -> resultMap.put(type, customYearsStat(startDate, endDate, type)));
+                .forEach((type) -> resultMap.put(type, customYearsStat(startYear, endYear, type)));
 
         return resultMap;
     }
 
-    public Map<String, Object> customYearsStat(LocalDate strartDate, LocalDate endDate, String type) {
+    public Map<String, Object> customYearsStat(String startYear, String endYear, String type) {
         Map<String, Object> resultMap = new HashMap<>();
         // current
-        resultMap.put("purchase", qPurchasesRepository.countPurchaseForYears(strartDate, endDate, null, type));
-        resultMap.put("approve", qPurchasesRepository.countPurchaseForYears(strartDate, endDate, true, type));
-        resultMap.put("cancel", qPurchasesRepository.countPurchaseForYears(strartDate, endDate, false, type));
+        resultMap.put("purchase", qPurchasesRepository.countPurchaseForYears(startYear, endYear, null, type));
+        resultMap.put("approve", qPurchasesRepository.countPurchaseForYears(startYear, endYear, true, type));
+        resultMap.put("cancel", qPurchasesRepository.countPurchaseForYears(startYear, endYear, false, type));
         // gender, age, color
-        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForYears(strartDate, endDate, type));
-        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForYears(strartDate, endDate, type));
-        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYears(strartDate, endDate, type));
+        resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForYears(startYear, endYear, type));
+        resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForYears(startYear, endYear, type));
+        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYears(startYear, endYear, type));
 
         return resultMap;
     }
