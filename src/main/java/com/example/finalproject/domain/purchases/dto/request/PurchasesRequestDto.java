@@ -35,4 +35,8 @@ public class PurchasesRequestDto {
 
     @NotBlank(message = "번호는 필수입니다.", groups = ValidationGroups.NotBlankGroup.class)
     private String phoneNumber;
+
+    private Long price;
+
+    private String trim;
 }
