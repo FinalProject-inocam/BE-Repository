@@ -77,7 +77,7 @@ public class QPurchasesRepository {
         return labelResult;
     }
 
-    public List<Object> countPurchaseByGenderForYears(String startYearStr, String endYearStr, String type) {
+    public Map<String, Object> countPurchaseByGenderForYears(String startYearStr, String endYearStr, String type) {
         log.info("다년간 성별분포");
         QPurchase qPurchase = QPurchase.purchase;
 
@@ -191,7 +191,7 @@ public class QPurchasesRepository {
         return labelResultRatio;
     }
 
-    public Map<String, Map> countPurchaseByColorForYears(String startYearStr, String endYearStr, String type) {
+    public List<Object> countPurchaseByColorForYears(String startYearStr, String endYearStr, String type) {
         log.info("다년간 색깔분포");
         QPurchase qPurchase = QPurchase.purchase;
 
@@ -218,11 +218,14 @@ public class QPurchasesRepository {
                 .fetch();
         Map<String, Map> colorMap = new HashMap<>();  // 색깔 담을 맵
         List<Object> labelResultRatio = new ArrayList<>();
-        Map<String, Long> resultMap = new HashMap<>();
-        Map<String, Double> ratioMap = new HashMap<>();
+        List<String> colorLabel = new ArrayList<>();
+        colorLabel.add("black");
+        colorLabel.add("white");
+        colorLabel.add("yellow");
+        colorLabel.add("blue");
 
-        colorMap.put("byColor", resultMap);
-        colorMap.put("ratio", ratioMap);
+        List<Long> resultList = new ArrayList<>(Collections.nCopies(colorLabel.size(), 0l));
+        List<Double> ratioList = new ArrayList<>(Collections.nCopies(colorLabel.size(), 0.0));
 
         Float sum = 0f;
 
