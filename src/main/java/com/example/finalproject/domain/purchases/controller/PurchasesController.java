@@ -11,10 +11,11 @@ import com.example.finalproject.global.responsedto.ApiResponse;
 import com.example.finalproject.global.utils.ResponseUtils;
 import com.example.finalproject.global.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/purchases")
@@ -26,10 +27,8 @@ public class PurchasesController {
 
     // 차량 신청 내역 조회 (마이페이지)
     @GetMapping
-    public Page<PurchasesResponseDto> getPurchases(@RequestParam("page") int page,
-                                                   @RequestParam("size") int size,
-                                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return purchasesService.findAllPurchases(page, size, userDetails.getUser());
+    public List<PurchasesResponseDto> getPurchases(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return purchasesService.findAllPurchases(userDetails.getUser());
     }
 
     // 차량 출고 신청
