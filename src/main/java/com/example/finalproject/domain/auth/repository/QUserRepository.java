@@ -38,12 +38,7 @@ public class QUserRepository {
                 .groupBy(qUser.createdAt.month())
                 .orderBy(qUser.createdAt.month().asc())
                 .fetch();
-        Map<Integer, Long> resultMap = new HashMap<>();  // 월별 데이터를 저장할 맵
-
-        // 월별 데이터 초기화
-        for (int i = 1; i <= 12; i++) {
-            resultMap.put(i, 0L);  // 기본값 0으로 초기화
-        }
+        List<Long> resultList = new ArrayList<>(Collections.nCopies(12, 0l));  // 월별 데이터를 저장할 맵
 
         // 결과를 맵에 저장
         for (Tuple tuple : result) {

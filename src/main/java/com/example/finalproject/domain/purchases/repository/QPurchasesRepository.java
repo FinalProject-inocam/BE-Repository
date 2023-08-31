@@ -26,7 +26,7 @@ public class QPurchasesRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public Map<Integer, Long> countPurchaseForYears(String startYearStr, String endYearStr, Boolean approve, String type) {
+    public List<Object> countPurchaseForYears(String startYearStr, String endYearStr, Boolean approve, String type) {
         log.info("연별 통계");
         QPurchase qPurchase = QPurchase.purchase;
 
@@ -128,7 +128,7 @@ public class QPurchasesRepository {
         return genderMap;
     }
 
-    public Map<String, Map> countPurchaseByAgeForYears(String startYearStr, String endYearStr, String type) {
+    public List<Object> countPurchaseByAgeForYears(String startYearStr, String endYearStr, String type) {
         log.info("다년간 나이");
         QPurchase qPurchase = QPurchase.purchase;
 
