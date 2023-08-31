@@ -61,4 +61,5 @@ jobs:
           script: |
               sudo docker pull ${{ secrets.DOCKER_REPO }}:${GITHUB_SHA::7}
               sudo docker stop server
+              sudo docker rm server
               sudo docker run -d --rm --name server -p 80:8080 --network redis-network ${{ secrets.DOCKER_REPO }}:${GITHUB_SHA::7}
