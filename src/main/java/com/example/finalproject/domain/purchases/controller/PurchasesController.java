@@ -26,9 +26,15 @@ public class PurchasesController {
     private final PurchasesService purchasesService;
 
     // 차량 신청 내역 조회 (마이페이지)
+//    @GetMapping
+//    public List<PurchasesResponseDto> getPurchases(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+//        return purchasesService.findAllPurchases(userDetails.getUser());
+//    }
+
     @GetMapping
-    public List<PurchasesResponseDto> getPurchases(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return purchasesService.findAllPurchases(userDetails.getUser());
+    public ApiResponse<?> getPurchases(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<PurchasesResponseDto> purchasesResponseDtoList = purchasesService.findAllPurchases(userDetails.getUser());
+        return ResponseUtils.ok(purchasesResponseDtoList);
     }
 
     // 차량 출고 신청
