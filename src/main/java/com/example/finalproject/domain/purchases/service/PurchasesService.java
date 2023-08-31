@@ -1,8 +1,6 @@
 package com.example.finalproject.domain.purchases.service;
 
 import com.example.finalproject.domain.auth.entity.User;
-import com.example.finalproject.domain.car.entity.Car;
-import com.example.finalproject.domain.car.repository.CarRepository;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesPatchResponseDto;
@@ -27,7 +25,7 @@ import static com.example.finalproject.global.enums.SuccessCode.PURCHASES_DELETE
 @RequiredArgsConstructor
 public class PurchasesService {
     private final PurchasesRepository purchasesRepository;
-    private final CarRepository carRepository;
+
 
     // 차량 신청 내역 조회 (마이페이지)
     public List<PurchasesResponseDto> findAllPurchases(User user) {
@@ -44,8 +42,7 @@ public class PurchasesService {
 
     // 차량 출고 신청
     public SuccessCode createPurchases(PurchasesRequestDto purchasesRequestDto, User user) {
-        Car car = carRepository.findByType(purchasesRequestDto.getType());
-        Purchase purchase = new Purchase(purchasesRequestDto, user, car.getPrice());
+        Purchase purchase = new Purchase(purchasesRequestDto, user);
         purchasesRepository.save(purchase);
         return PURCHASES_CREATE_SUCCESS;
     }

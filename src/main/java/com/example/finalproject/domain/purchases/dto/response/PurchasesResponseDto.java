@@ -22,10 +22,12 @@ public class PurchasesResponseDto {
     private Boolean approve;
     private String denyMessage;
     private Date deliveryDate;
+    private String trim;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
     public PurchasesResponseDto(Purchase purchase) {
+        this.trim = purchase.getTrim();
         this.purchaseId = purchase.getPurchaseId();
         this.type = purchase.getType();
         this.price = purchase.getPrice();
