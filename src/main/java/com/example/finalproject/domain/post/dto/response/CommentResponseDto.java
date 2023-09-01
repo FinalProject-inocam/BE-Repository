@@ -12,7 +12,7 @@ public class CommentResponseDto {
     private Long commentId;
     private String nickname;
     private String comment;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private Long likeCount;
     private Boolean isLike;
@@ -21,7 +21,7 @@ public class CommentResponseDto {
     public CommentResponseDto(Comment cmt,Long likeCount,Boolean isLike,List<ReplyResponseDto> replyList) {
         this.commentId = cmt.getId();
         this.comment = cmt.getComment();
-        this.createAt = cmt.getCreatedAt();
+        this.createdAt = cmt.getCreatedAt();
         this.modifiedAt = cmt.getModifiedAt();
         this.nickname = cmt.getNickname();
         this.likeCount=likeCount;
