@@ -45,7 +45,7 @@ public class ReplyController {
     // 대댓글 좋아요
     @PatchMapping("{replyId}/like")
     public ApiResponse<?> likeReply(@PathVariable("replyId") Long replyId,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         SuccessCode successCode = replyService.likeReply(replyId, userDetails.getUser().getUserId());
         return ResponseUtils.ok(successCode);
     }

@@ -40,8 +40,6 @@ public class MailService {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final String PASSCHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/";
 
-    private static final String FROM_ADDRESS = "helper@innomotors.shop";
-
     public SuccessCode send(String to) {
         if (checkEmail(to)) {
             throw new MailNotFoundException(ErrorCode.DUPLICATE_EMAIL);
@@ -130,7 +128,7 @@ public class MailService {
             throw new MailNotFoundException(ErrorCode.NOT_FOUND_EMAIL);
         }
     }
-//--------------------------------------------------------------------------------------------
+
     public String randomcode() {
         StringBuilder code = new StringBuilder(6);
         int charactersLength = CHARACTERS.length();

@@ -3,7 +3,6 @@ package com.example.finalproject.domain.admin.service;
 import com.example.finalproject.domain.auth.repository.QUserRepository;
 import com.example.finalproject.domain.car.entity.Car;
 import com.example.finalproject.domain.car.service.CarService;
-import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.domain.purchases.repository.QPurchasesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -9,8 +9,6 @@ import java.util.Date;
 public class ReleaseDecidereqDto {
     @Column(nullable = false)
     private Boolean approve;
-
     private String denyMessage;
     private Date deliveryDate;
-
 }
