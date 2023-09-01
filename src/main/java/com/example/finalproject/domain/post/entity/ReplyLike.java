@@ -22,7 +22,7 @@ public class ReplyLike {
     private Reply reply;
 
     public ReplyLike(User user, Reply reply) {
-        this.user=user;
-        this.reply=reply;
+        this.user = user;
+        this.reply = reply;
     }
 }

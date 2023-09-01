@@ -12,16 +12,16 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/car")
 public class CarController {
     private final CarService carService;
 
-    @PostMapping("/car")
+    @PostMapping
     public void car() {
         carService.create();
     }
 
-    @GetMapping("/car")
+    @GetMapping
     public List<Car> getCarList() {
         return carService.getCarList();
     }

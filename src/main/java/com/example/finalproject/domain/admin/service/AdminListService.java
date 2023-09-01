@@ -4,7 +4,6 @@ import com.example.finalproject.domain.admin.dto.AllPurchasseResponseDto;
 import com.example.finalproject.domain.admin.dto.ReleaseDecidereqDto;
 import com.example.finalproject.domain.admin.dto.TotalListResponseDto;
 import com.example.finalproject.domain.admin.exception.AdminNotFoundException;
-import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.mail.exception.MailNotFoundException;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.entity.Purchase;
@@ -45,7 +44,6 @@ public class AdminListService {
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
     private final JavaMailSender mailSender;
-    private static final String FROM_ADDRESS = "helper@innomotors.shop";
 
     // 페이지 나누기
     @Transactional
@@ -68,7 +66,6 @@ public class AdminListService {
         LocalDateTime startDateTime = LocalDateTime.of(currentDateTime.toLocalDate(), LocalTime.MIDNIGHT); // 오늘 날짜의 시작 시간
         LocalDateTime endDateTime = LocalDateTime.of(currentDateTime.toLocalDate(), LocalTime.MAX); // 오늘 날짜의 끝 시간
 
-//        Long needApprovalCount = purchasesRepository.countByApprove(null);
         Long needApprovalCount = purchasesRepository.countByApproveIsNullAndCreatedAtBetween(startDateTime, endDateTime);
         Long approvedCount = purchasesRepository.countByApproveIsTrueAndCreatedAtBetween(startDateTime, endDateTime);
         Long deniedCount = purchasesRepository.countByApproveIsFalseAndCreatedAtBetween(startDateTime, endDateTime);
@@ -85,28 +82,28 @@ public class AdminListService {
         Purchase purchase = purchasesRepository.findById(id).orElseThrow(
                 () -> new AdminNotFoundException(NOT_FOUND_DATA)
         );
-        log.info("출고인 닉네임 : "+purchase.getUser().getNickname());
+        log.info("출고인 닉네임 : " + purchase.getUser().getNickname());
         if (releaseDecidereqDto.getApprove()) {
             if (releaseDecidereqDto.getDeliveryDate() == null) {
                 throw new NullPointerException("배송 날짜가 없습니다");
             }
             purchase.update(releaseDecidereqDto.getApprove(), releaseDecidereqDto.getDeliveryDate());
-            if(purchase.getAlarm()){
+            if (purchase.getAlarm()) {
                 send(purchase);
             }
-            log.info("승인 알람 : "+purchase.getAlarm());
-            log.info("배달일자 : "+purchase.getDeliveryDate());
+            log.info("승인 알람 : " + purchase.getAlarm());
+            log.info("배달일자 : " + purchase.getDeliveryDate());
             return SuccessCode.PURCHASE_APPROVE;
         } else {
-            if (releaseDecidereqDto.getDenyMessage() == null || releaseDecidereqDto.getDenyMessage().trim().isEmpty()||releaseDecidereqDto.getDenyMessage().isBlank()) {
-                throw  new NullPointerException("반려사유가 없습니다");
+            if (releaseDecidereqDto.getDenyMessage() == null || releaseDecidereqDto.getDenyMessage().trim().isEmpty() || releaseDecidereqDto.getDenyMessage().isBlank()) {
+                throw new NullPointerException("반려사유가 없습니다");
             }
             purchase.update(releaseDecidereqDto.getApprove(), releaseDecidereqDto.getDenyMessage());
-            if(purchase.getAlarm()){
+            if (purchase.getAlarm()) {
                 send(purchase);
             }
-            log.info("승인 알람 : "+purchase.getAlarm());
-            log.info("반려 사유 : "+purchase.getDenyMessage());
+            log.info("승인 알람 : " + purchase.getAlarm());
+            log.info("반려 사유 : " + purchase.getDenyMessage());
             return SuccessCode.PURCHASE_DENIED;
         }
     }
@@ -123,7 +120,7 @@ public class AdminListService {
     public void send(Purchase purchase) {
 
         try {
-            log.info("출고인 이메일 : "+purchase.getUser().getEmail());
+            log.info("출고인 이메일 : " + purchase.getUser().getEmail());
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
             helper.setFrom(new InternetAddress("helper@innomotors.shop ", "이노모터서비스"));
@@ -134,7 +131,7 @@ public class AdminListService {
             //템플릿에 전달할 데이터 설정
             Context context = new Context();
 
-            if(purchase.getApprove()) {
+            if (purchase.getApprove()) {
                 helper.setSubject("[이노모터스] 차량출고 승인 알림");
                 Date deliveryDate = purchase.getDeliveryDate();
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -144,8 +141,7 @@ public class AdminListService {
                 helper.setText(html, true);
                 //메일 보내기
                 javaMailSender.send(mimeMessage);
-            }
-            else{
+            } else {
                 helper.setSubject("[이노모터스] 차량출고 반려 알림");
                 context.setVariable("name", purchase.getDenyMessage());
                 String html = templateEngine.process("denyMail", context);
@@ -154,11 +150,9 @@ public class AdminListService {
                 javaMailSender.send(mimeMessage);
             }
             log.info("이메일 발송 완료 ");
-
         } catch (Exception e) {
             e.printStackTrace();
             throw new MailNotFoundException(ErrorCode.EMAIL_SEND_FAIL);
         }
     }
-
 }

@@ -16,16 +16,16 @@ public class CommentResponseDto {
     private LocalDateTime modifiedAt;
     private Long likeCount;
     private Boolean isLike;
-    private List<ReplyResponseDto> replyList = new ArrayList<>();
+    private List<ReplyResponseDto> replyList;
 
-    public CommentResponseDto(Comment cmt,Long likeCount,Boolean isLike,List<ReplyResponseDto> replyList) {
+    public CommentResponseDto(Comment cmt, Long likeCount, Boolean isLike, List<ReplyResponseDto> replyList) {
         this.commentId = cmt.getId();
         this.comment = cmt.getComment();
         this.createAt = cmt.getCreatedAt();
         this.modifiedAt = cmt.getModifiedAt();
         this.nickname = cmt.getNickname();
-        this.likeCount=likeCount;
-        this.isLike=isLike;
-        this.replyList=replyList;
+        this.likeCount = likeCount;
+        this.isLike = isLike;
+        this.replyList = replyList;
     }
 }

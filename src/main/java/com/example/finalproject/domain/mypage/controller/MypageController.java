@@ -34,7 +34,7 @@ public class MypageController {
     }
 
     @GetMapping
-    public ApiResponse<?> getMypage(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ApiResponse<?> getMypage(@AuthenticationPrincipal @Validated(ValidationSequence.class) UserDetailsImpl userDetails) {
         MypageResDto mypageResDto = mypageService.getMypage(userDetails.getUser());
         return ResponseUtils.ok(mypageResDto);
     }
