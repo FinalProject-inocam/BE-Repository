@@ -34,9 +34,6 @@ public class ShopOneResponseDto {
         this.shopId = shop.getShopId();
         this.shopName = shop.getShopName();
         this.address = shop.getAddress();
-//        if (this.address.isEmpty()) {
-//            this.address = itemJson.getString("lnoAdr");
-//        }
         reviewCount = Long.valueOf(reviews.size());
         this.longitude = shop.getLongitude();
         this.latitude = shop.getLatitude();

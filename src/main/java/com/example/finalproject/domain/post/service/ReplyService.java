@@ -7,7 +7,9 @@ import com.example.finalproject.domain.post.entity.Comment;
 import com.example.finalproject.domain.post.entity.Reply;
 import com.example.finalproject.domain.post.entity.ReplyLike;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
-import com.example.finalproject.domain.post.repository.*;
+import com.example.finalproject.domain.post.repository.CommentRepository;
+import com.example.finalproject.domain.post.repository.ReplyLikeRepository;
+import com.example.finalproject.domain.post.repository.ReplyRepository;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.enums.UserRoleEnum;
 import lombok.RequiredArgsConstructor;
@@ -49,10 +51,11 @@ public class ReplyService {
         reply.updateComment(commentRequestDto.getComment());
         return SuccessCode.COMMENT_UPDATE_SUCCESS;
     }
+
     @Transactional
     public SuccessCode deleteReply(Long replyId, User user) {
         Reply reply = validateAuthority(replyId, user.getNickname());
-        replyLikeRepository.deleteByUserUserIdAndReplyId(user.getUserId(),replyId);
+        replyLikeRepository.deleteByUserUserIdAndReplyId(user.getUserId(), replyId);
         replyRepository.delete(reply);
         return SuccessCode.COMMENT_DELETE_SUCCESS;
     }

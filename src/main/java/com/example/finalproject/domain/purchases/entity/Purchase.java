@@ -71,7 +71,7 @@ public class Purchase extends Timestamped {
         this.zoneNo = purchasesRequestDto.getZoneNo();
         this.price = purchasesRequestDto.getPrice();
         this.user = user;
-        this.trim=purchasesRequestDto.getTrim();
+        this.trim = purchasesRequestDto.getTrim();
     }
 
     public void update(Boolean approve, Date deliveryDate) {

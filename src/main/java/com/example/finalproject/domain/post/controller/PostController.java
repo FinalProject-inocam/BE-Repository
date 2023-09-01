@@ -1,7 +1,8 @@
 package com.example.finalproject.domain.post.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
-import com.example.finalproject.domain.post.dto.*;
+import com.example.finalproject.domain.post.dto.PostPageDto;
+import com.example.finalproject.domain.post.dto.SearchPageDto;
 import com.example.finalproject.domain.post.dto.request.PostRequestDto;
 import com.example.finalproject.domain.post.dto.request.PostSelectDelDto;
 import com.example.finalproject.domain.post.dto.response.PostListResponseDto;
