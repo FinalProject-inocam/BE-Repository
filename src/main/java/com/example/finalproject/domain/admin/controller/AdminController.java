@@ -42,21 +42,20 @@ public class AdminController {
     /*---------------------------------------------------------------------------------------------------*/
 
     @GetMapping("/stats/purchases/years")
-    public ApiResponse<?> getStatYears(@RequestParam String startYear,
-                                       @RequestParam String endYear) {
-        Map<String, Object> statMap = adminService.yearsStat(startYear, endYear);
+    public ApiResponse<?> getStatYears(@RequestParam String cal) {
+        Map<String, Object> statMap = adminService.yearsStat(cal);
         return ResponseUtils.ok(statMap);
     }
 
     @GetMapping("/stats/purchases/year")
-    public ApiResponse<?> getStatYear(@RequestParam String year) {
-        Map<String, Object> statMap = adminService.yearStat(year);
+    public ApiResponse<?> getStatYear(@RequestParam String cal) {
+        Map<String, Object> statMap = adminService.yearStat(cal);
         return ResponseUtils.ok(statMap);
     }
 
     @GetMapping("/stats/purchases/month")
-    public ApiResponse<?> getStatMonth(@RequestParam String yearMonth) {
-        Map<String, Object> statMap = adminService.monthStat(yearMonth);
+    public ApiResponse<?> getStatMonth(@RequestParam String cal) {
+        Map<String, Object> statMap = adminService.monthStat(cal);
         return ResponseUtils.ok(statMap);
     }
 
@@ -68,8 +67,8 @@ public class AdminController {
 
     /*----------------------------------------------------------------------------*/
     @GetMapping("/stats/users/year")
-    public ApiResponse<?> getUserYear(@RequestParam String year) {
-        Map<String, Object> statMap = adminService.userStat(year);
+    public ApiResponse<?> getUserYear(@RequestParam String cal) {
+        Map<String, Object> statMap = adminService.userStat(cal);
         return ResponseUtils.ok(statMap);
     }
 }

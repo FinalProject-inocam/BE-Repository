@@ -23,9 +23,10 @@ public class AdminService {
     private final CarService carService;
 
     /* 특정 기간(2020~2023)의 연별 신청, 승인, 거절 건수 */
-    public Map<String, Object> yearsStat(String startYear, String endYear) {
-//        LocalDate startDate = convertStringToLocalDate(startCal);
-//        LocalDate endDate = convertStringToLocalDate(endCal);
+    public Map<String, Object> yearsStat(String startEndYear) {
+        String[] startEndYears = startEndYear.split("-");
+        String startYear = startEndYears[0];
+        String endYear = startEndYears[1];
 
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("total", customYearsStat(startYear, endYear, null));
