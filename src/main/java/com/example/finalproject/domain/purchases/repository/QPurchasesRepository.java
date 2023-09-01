@@ -296,7 +296,7 @@ public class QPurchasesRepository {
 
         Map<String, Object> monthMap = new HashMap<>();
         List<String> weekLabel = new ArrayList<>();
-        List<Long> resultList = new ArrayList<>(Collections.nCopies(6, 0l));
+        List<Long> resultList = new ArrayList<>();
 
         BooleanExpression approveCondition = approveCondition(approve, qPurchase);
 
@@ -320,12 +320,10 @@ public class QPurchasesRepository {
                     )
                     .fetch();
             weekLabel.add(weekNumber + "주차");
-            resultList.set(weekNumber -1, result.get(0));
-
+            resultList.add(result.get(0));
             currentWeekStart = currentWeekStart.plusDays(7);
             weekNumber++;
         }
-        resultList.remove(weekNumber - 2);
 
         monthMap.put("labels", weekLabel);
         monthMap.put("values", resultList);
