@@ -1,8 +1,7 @@
 package com.example.finalproject.domain.sockettest.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,12 +14,13 @@ import lombok.NoArgsConstructor;
 @Builder
 public class Message extends BaseModel {
 
-//    @Enumerated(EnumType.STRING)
-//    private MessageType messageType;
-
+    @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
     private String room;
 
+    @Column(nullable = false)
     private String username;
 
 

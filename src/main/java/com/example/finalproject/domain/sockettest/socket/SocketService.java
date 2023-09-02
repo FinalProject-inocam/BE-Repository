@@ -1,12 +1,17 @@
 package com.example.finalproject.domain.sockettest.socket;
 
 import com.corundumstudio.socketio.SocketIOClient;
+import com.example.finalproject.domain.auth.entity.User;
+import com.example.finalproject.domain.auth.repository.UserRepository;
+import com.example.finalproject.domain.mypage.dto.MypageResDto;
+import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
+import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.domain.sockettest.constants.Constants;
-import com.example.finalproject.domain.sockettest.dto.AnswerRoomDto;
-import com.example.finalproject.domain.sockettest.dto.CandidateRoomDto;
-import com.example.finalproject.domain.sockettest.dto.OfferRoomDto;
-import com.example.finalproject.domain.sockettest.dto.RoomResponseDto;
+import com.example.finalproject.domain.sockettest.dto.*;
+import com.example.finalproject.domain.sockettest.model.Memo;
 import com.example.finalproject.domain.sockettest.model.Message;
+import com.example.finalproject.domain.sockettest.repository.MemoRepository;
+import com.example.finalproject.domain.sockettest.service.MemoService;
 import com.example.finalproject.domain.sockettest.service.MessageService;
 import com.example.finalproject.domain.sockettest.service.RoomService;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +28,14 @@ public class SocketService {
 
     private final MessageService messageService;
     private final RoomService roomService;
+    private final UserRepository userRepository;
+    private final PurchasesRepository purchasesRepository;
+    private final MemoService memoService;
 
 
-    public void sendSocketMessage(SocketIOClient senderClient, Message message, String room) {
-        for (
-                SocketIOClient client : senderClient.getNamespace().getRoomOperations(room).getClients()) {
-            if (!client.getSessionId().equals(senderClient.getSessionId())) {
-                client.sendEvent("readMsg", message);
-            }
+    public void sendSocketMessage(SocketIOClient senderClient, Message message) {
+        for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, message.getRoom())) {
+            client.sendEvent("readMsg", message);
         }
     }
 
@@ -59,20 +64,34 @@ public class SocketService {
         // 방 기록 저장소에서 이전 채팅 기록 가져오기
         List<Message> previousMessage = messageService.getMessages(room);
         senderClient.sendEvent("previousMsg", previousMessage);
-//        log.info(senderClient.toString());
-//        for (SocketIOClient client : senderClient.getNamespace().getRoomOperations(room).getClients()) {
-//            if (client.getSessionId().equals(senderClient.getSessionId())) {
-//                // 클라이언트에 이전 채팅 기록 전송
-//                log.info(client.toString());
-//                client.sendEvent("previousMsg", previousMessage);
-//                return;
-//            }
-//        }
+    }
+
+    public void roomInfo(SocketIOClient senderClient, String room, String username) {
+        log.info("room관련 정보 발송");
+        // admin한테만 어떻게 보내지...?
+        if (!username.equals("admin")) {
+            return;
+        }
+        String targetusername = room.replace("admin", "").replace("!", "");
+        User user = userRepository.findByNickname(targetusername);
+        MypageResDto mypageResDto = new MypageResDto(user);
+        List<PurchasesResponseDto> purchasesResponseDtoList = purchasesRepository.findAllByUser(user)
+                .stream()
+                .map(PurchasesResponseDto::new)
+                .toList();
+        String memoStr = "";
+        Memo memo = memoService.getMemo(room).orElse(null);
+        if (memo != null) {
+            memoStr = memo.getMemo();
+        }
+
+        RoomInfoResponseDto roomInfoResponseDto = new RoomInfoResponseDto(mypageResDto, purchasesResponseDtoList, memoStr);
+
+        senderClient.sendEvent("roomInfo", roomInfoResponseDto);
     }
 
     public void getRoomList(SocketIOClient senderClient, String username) {
         log.info("roomList 준비");
-        // 이제 나간 사람 어떻게 또 조건에 추가하지
         List<RoomResponseDto> roomList = roomService.getRoomListContainUsername(username);
         senderClient.sendEvent("connected", roomList);
     }
@@ -92,20 +111,13 @@ public class SocketService {
         // 전체적으로 room유효검사 부분을 추가해야할듯 하다.
         log.info("방 나가기 처리중");
         roomService.leaveRoom(room, username);
-//        log.info("leave message : " + username + " from " + room);
-//        Message storedMessage = messageService.saveMessage(Message.builder()
-//                .content(String.format(Constants.PEEROUT_MESSAGE, username))
-//                .room(room)
-//                .username(username)
-//                .build());
-//        senderClient.sendEvent("peerOut", storedMessage);
     }
 
     public Message saveLeaveMessage(String room, String username) {
         Message storedMessage = messageService.saveMessage(Message.builder()
                 .content(String.format(Constants.PEEROUT_MESSAGE, username))
                 .room(room)
-                .username(username)
+                .username("server")
                 .build());
         return storedMessage;
     }
@@ -159,4 +171,13 @@ public class SocketService {
         }
     }
 
+    public void saveMemo(Message message) {
+        if(!message.getUsername().equals("admin")) {
+            return;
+        }
+        String room = message.getRoom();
+        String memoText = message.getContent();
+        Memo memo = new Memo(room, memoText);
+        memoService.saveMemo(memo);
+    }
 }
