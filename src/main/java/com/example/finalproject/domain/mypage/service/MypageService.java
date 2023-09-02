@@ -72,32 +72,32 @@ public class MypageService {
         return SuccessCode.MYPAGE_UPDATE_SUCCESS;
     }
 
-    public MyPostPageDto getMyPost(User user, int size, int page){
+    public MyPostPageDto getMyPost(User user, int size, int page) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Post> postList=postRepository.findByUserUserId(user.getUserId(),pageable);
+        Page<Post> postList = postRepository.findByUserUserId(user.getUserId(), pageable);
         long total = postList.getTotalElements();
         List<PostListDto> postListDtos = new ArrayList<>();
-        for(Post post : postList){
-            Long likeCount =postLikeRepository.countByPostId(post.getId());
-            Long commentCount= Long.valueOf(post.getCommentList().size());
-            PostListDto postListDto=new PostListDto(post,likeCount,commentCount);
+        for (Post post : postList) {
+            Long likeCount = postLikeRepository.countByPostId(post.getId());
+            Long commentCount = Long.valueOf(post.getCommentList().size());
+            PostListDto postListDto = new PostListDto(post, likeCount, commentCount);
             postListDtos.add(postListDto);
         }
         PageResponse pageResponse = new PageResponse<>(postListDtos, pageable, total);
         MyPostPageDto myPostPageDto = new MyPostPageDto(pageResponse);
-     return myPostPageDto;
+        return myPostPageDto;
     }
 
     // 글 좋아요
-    public MyPageDto getMylike(User user, int size, int page){
+    public MyPageDto getMylike(User user, int size, int page) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<PostLike> postLike=postLikeRepository.findByUserUserId(user.getUserId(),pageable);
+        Page<PostLike> postLike = postLikeRepository.findByUserUserId(user.getUserId(), pageable);
         long total = postLike.getTotalElements();
         List<ListDto> listDtos = new ArrayList<>();
-        for(PostLike postlike : postLike){
-            Long likeCount =postLikeRepository.countByPostId(postlike.getPost().getId());
-            Long commentCount= Long.valueOf(postlike.getPost().getCommentList().size());
-            ListDto postListDto=new ListDto(postlike.getPost(),likeCount,commentCount);
+        for (PostLike postlike : postLike) {
+            Long likeCount = postLikeRepository.countByPostId(postlike.getPost().getId());
+            Long commentCount = Long.valueOf(postlike.getPost().getCommentList().size());
+            ListDto postListDto = new ListDto(postlike.getPost(), likeCount, commentCount);
             listDtos.add(postListDto);
         }
         PageResponse pageResponse = new PageResponse<>(listDtos, pageable, total);
@@ -108,13 +108,13 @@ public class MypageService {
     // 댓글
     public MyPageDto getMyComment(User user, int size, int page) {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
-        Page<Comment> mycomment=commentRepository.findByUserUserId(user.getUserId(), pageable);
+        Page<Comment> mycomment = commentRepository.findByUserUserId(user.getUserId(), pageable);
         long total = mycomment.getTotalElements();
         List<ListDto> listDtos = new ArrayList<>();
-        for(Comment comment : mycomment){
-            Long likeCount =postLikeRepository.countByPostId(comment.getPost().getId());
-            Long commentCount= Long.valueOf(comment.getPost().getCommentList().size());
-            ListDto postListDto=new ListDto(comment.getPost(),likeCount,commentCount);
+        for (Comment comment : mycomment) {
+            Long likeCount = postLikeRepository.countByPostId(comment.getPost().getId());
+            Long commentCount = Long.valueOf(comment.getPost().getCommentList().size());
+            ListDto postListDto = new ListDto(comment.getPost(), likeCount, commentCount);
             listDtos.add(postListDto);
         }
         PageResponse pageResponse = new PageResponse<>(listDtos, pageable, total);
@@ -125,6 +125,4 @@ public class MypageService {
     public MypageResDto getMypage(User user) {
         return new MypageResDto(user);
     }
-
-
 }

@@ -44,7 +44,7 @@ public class MypageController {
     @GetMapping("/mypost")
     public ApiResponse<?> getMyPost(@RequestParam("size") int size,
                                     @RequestParam("page") int page,
-                                    @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         MyPostPageDto postList = mypageService.getMyPost(userDetails.getUser(), size, page);
         return ResponseUtils.ok(postList);
     }
@@ -52,15 +52,15 @@ public class MypageController {
     @GetMapping("/mylike")
     public ApiResponse<?> getMyLike(@RequestParam("size") int size,
                                     @RequestParam("page") int page,
-                                    @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                    @AuthenticationPrincipal UserDetailsImpl userDetails) {
         MyPageDto myLikePostDto = mypageService.getMylike(userDetails.getUser(), size, page);
         return ResponseUtils.ok(myLikePostDto);
     }
 
     @GetMapping("/mycomment")
     public ApiResponse<?> getMyComment(@RequestParam("size") int size,
-                                    @RequestParam("page") int page,
-                                    @AuthenticationPrincipal UserDetailsImpl userDetails){
+                                       @RequestParam("page") int page,
+                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         MyPageDto myCommentPageDto = mypageService.getMyComment(userDetails.getUser(), size, page);
         return ResponseUtils.ok(myCommentPageDto);
     }
