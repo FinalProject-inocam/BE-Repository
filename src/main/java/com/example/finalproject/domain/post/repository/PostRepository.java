@@ -23,4 +23,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p FROM Post p JOIN FETCH p.postLikes pl GROUP BY p ORDER BY SIZE(pl) DESC LIMIT 5")
     List<Post> findTop5ByOrderByPostLikesSizeDesc();
+
+    Page<Post> findByUserUserId(Long userId,Pageable pageable);
 }

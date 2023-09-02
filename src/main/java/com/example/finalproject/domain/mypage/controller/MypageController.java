@@ -1,6 +1,8 @@
 package com.example.finalproject.domain.mypage.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
+import com.example.finalproject.domain.mypage.dto.MyPageDto;
+import com.example.finalproject.domain.mypage.dto.MyPostPageDto;
 import com.example.finalproject.domain.mypage.dto.MypageRequestDto;
 import com.example.finalproject.domain.mypage.dto.MypageResDto;
 import com.example.finalproject.domain.mypage.service.MypageService;
@@ -37,5 +39,29 @@ public class MypageController {
     public ApiResponse<?> getMypage(@AuthenticationPrincipal @Validated(ValidationSequence.class) UserDetailsImpl userDetails) {
         MypageResDto mypageResDto = mypageService.getMypage(userDetails.getUser());
         return ResponseUtils.ok(mypageResDto);
+    }
+
+    @GetMapping("/mypost")
+    public ApiResponse<?> getMyPost(@RequestParam("size") int size,
+                                    @RequestParam("page") int page,
+                                    @AuthenticationPrincipal UserDetailsImpl userDetails){
+        MyPostPageDto postList = mypageService.getMyPost(userDetails.getUser(), size, page);
+        return ResponseUtils.ok(postList);
+    }
+
+    @GetMapping("/mylike")
+    public ApiResponse<?> getMyLike(@RequestParam("size") int size,
+                                    @RequestParam("page") int page,
+                                    @AuthenticationPrincipal UserDetailsImpl userDetails){
+        MyPageDto myLikePostDto = mypageService.getMylike(userDetails.getUser(), size, page);
+        return ResponseUtils.ok(myLikePostDto);
+    }
+
+    @GetMapping("/mycomment")
+    public ApiResponse<?> getMyComment(@RequestParam("size") int size,
+                                    @RequestParam("page") int page,
+                                    @AuthenticationPrincipal UserDetailsImpl userDetails){
+        MyPageDto myCommentPageDto = mypageService.getMyComment(userDetails.getUser(), size, page);
+        return ResponseUtils.ok(myCommentPageDto);
     }
 }
