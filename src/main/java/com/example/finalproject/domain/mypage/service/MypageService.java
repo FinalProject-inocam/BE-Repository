@@ -66,7 +66,6 @@ public class MypageService {
             redisService.deleteAllRefreshToken(user.getNickname());
             // 새로운 user 정보로 로그인 처리
             redisService.newLogin(newuser, response, request);
-
         } else {
             throw new PurchasesNotFoundException(NO_AUTHORITY_TO_DATA);
         }
@@ -126,4 +125,6 @@ public class MypageService {
     public MypageResDto getMypage(User user) {
         return new MypageResDto(user);
     }
+
+
 }
