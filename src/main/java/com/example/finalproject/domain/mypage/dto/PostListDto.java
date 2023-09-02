@@ -13,11 +13,11 @@ public class PostListDto {
     private String title;
     private LocalDateTime createdAt;
 
-    public PostListDto(Post post,Long likeCount,Long commentCount){
-        this.id= post.getId();
-        this.title= post.getTitle();
-        this.commentCount=commentCount;
-        this.likeCount=likeCount;
-        this.createdAt=post.getCreatedAt();
+    public PostListDto(Post post, Long likeCount, Long commentCount) {
+        this.id = post.getId();
+        this.title = post.getTitle();
+        this.commentCount = commentCount;
+        this.likeCount = likeCount;
+        this.createdAt = post.getCreatedAt();
     }
 }

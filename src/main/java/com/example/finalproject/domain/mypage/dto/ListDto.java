@@ -11,13 +11,15 @@ public class ListDto {
     private Long likeCount;
     private Long commentCount;
     private String title;
+    private String nickname;
     private LocalDateTime createdAt;
 
-    public ListDto(Post post, Long likeCount, Long commentCount){
-        this.id=post.getId();
-        this.createdAt=post.getCreatedAt();
-        this.title= post.getTitle();
-        this.likeCount=likeCount;
-        this.commentCount=commentCount;
+    public ListDto(Post post, Long likeCount, Long commentCount) {
+        this.id = post.getId();
+        this.createdAt = post.getCreatedAt();
+        this.title = post.getTitle();
+        this.nickname = post.getNickname();
+        this.likeCount = likeCount;
+        this.commentCount = commentCount;
     }
 }
