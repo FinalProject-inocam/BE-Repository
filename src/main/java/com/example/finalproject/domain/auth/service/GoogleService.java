@@ -85,7 +85,7 @@ public class GoogleService {
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
         String googleId = userResourceNode.get("id").asText();
-        String profile="https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
+        String profile="https://finalimgbucket.s3.amazonaws.com/057c943e-27ba-4b0c-822d-e9637c2f2aff";
 //                Long.parseLong(userResourceNode.get("googleId").asText());
         User googleUser = userRepository.findByGoogleId(googleId);
 
