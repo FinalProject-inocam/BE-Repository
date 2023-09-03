@@ -17,7 +17,7 @@ public class SignupRequestDto {
     @NotBlank(message = "패스워드는 필수입니다.", groups = NotBlankGroup.class)
     private String password;
 
-    @Pattern(regexp = "^(?!date$|server$)(?!.*!)$", message = "사용 불가능한 단어 혹은 특수문자가 포함되어 있습니다.", groups = PatternGroup.class)
+//    @Pattern(regexp = "^(?!date$|server$)(?!.*!)$", message = "사용 불가능한 단어 혹은 특수문자가 포함되어 있습니다.", groups = PatternGroup.class)
     @NotBlank(message = "닉네임은 필수입니다.", groups = NotBlankGroup.class)
     private String nickname;
 
