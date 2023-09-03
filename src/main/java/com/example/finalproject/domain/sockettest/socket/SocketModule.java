@@ -7,7 +7,7 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import com.example.finalproject.domain.sockettest.dto.AnswerRoomDto;
 import com.example.finalproject.domain.sockettest.dto.CandidateRoomDto;
 import com.example.finalproject.domain.sockettest.dto.OfferRoomDto;
-import com.example.finalproject.domain.sockettest.model.Message;
+import com.example.finalproject.domain.sockettest.entity.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -78,6 +78,10 @@ public class SocketModule {
     private DataListener<Message> onChatReceived() {
         return (senderClient, data, ackSender) -> {
             log.info(data.toString());
+            // 순서상 1 timemessage 저장 + read
+            Message timeMessage = socketService.saveTimeMessage(data);
+            socketService.sendTimeMessage(senderClient, timeMessage);
+            // 2 socketmessage 저장 + read
             Message message = socketService.saveMessage(data);
             socketService.sendSocketMessage(senderClient, message);
         };
@@ -91,6 +95,7 @@ public class SocketModule {
             senderClient.joinRoom(room);
             String username = data.getUsername();
             socketService.checkRoom(room);
+            socketService.joinAdmin(room, username);
             socketService.requestPreviousChat(senderClient, room);
             socketService.roomInfo(senderClient, room, username);
             log.info("previousChat 발송완료");
@@ -99,6 +104,7 @@ public class SocketModule {
 
     private DataListener<Message> connectSocket() {
         return (senderClient, data, ackSender) -> {
+            log.info(senderClient.getHandshakeData().getHttpHeaders().get("Authorization"));
             String username = data.getUsername();
             senderClient.joinRoom(username);
             socketService.getRoomList(senderClient, username);
@@ -114,6 +120,7 @@ public class SocketModule {
             socketService.leaveRoom(room, username);
             Message message = socketService.saveLeaveMessage(room, username);
             socketService.sendLeaveMessage(senderClient, message);
+            socketService.leaveAdmin(room, username);
             socketService.getRoomList(senderClient, username);
             log.info("방나가기 성공");
         };

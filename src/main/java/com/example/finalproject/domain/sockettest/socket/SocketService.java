@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.sockettest.socket;
 
+import com.corundumstudio.socketio.BroadcastOperations;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
@@ -8,16 +9,18 @@ import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseD
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.domain.sockettest.constants.Constants;
 import com.example.finalproject.domain.sockettest.dto.*;
-import com.example.finalproject.domain.sockettest.model.Memo;
-import com.example.finalproject.domain.sockettest.model.Message;
-import com.example.finalproject.domain.sockettest.repository.MemoRepository;
+import com.example.finalproject.domain.sockettest.entity.Memo;
+import com.example.finalproject.domain.sockettest.entity.Message;
 import com.example.finalproject.domain.sockettest.service.MemoService;
 import com.example.finalproject.domain.sockettest.service.MessageService;
 import com.example.finalproject.domain.sockettest.service.RoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -33,15 +36,42 @@ public class SocketService {
     private final MemoService memoService;
 
 
+    public void sendTimeMessage(SocketIOClient senderClient, Message message) {
+        if (message == null) {
+            return;
+        }
+        log.info("time message 전송");
+        BroadcastOperations allClientInRoom = allClientInRoom(senderClient, message.getRoom());
+        allClientInRoom.sendEvent("readMsg", message);
+    }
+
     public void sendSocketMessage(SocketIOClient senderClient, Message message) {
         for (SocketIOClient client : allClientInRoomWithOutSelf(senderClient, message.getRoom())) {
             client.sendEvent("readMsg", message);
         }
     }
 
+    public Message saveTimeMessage(Message message) {
+        Message lastMessage = messageService.getLastMessage(message.getRoom());
+        if (lastMessage == null) {
+            return null;
+        }
+        LocalDate lastMessageTime = lastMessage.getCreatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        ;
+        LocalDate todayStart = LocalDate.now();
+        if (!lastMessageTime.isBefore(todayStart)) {
+            return null;
+        }
+        log.info("time message : " + todayStart);
+        Message timeMessage = messageService.saveMessage(Message.builder()
+                .content(todayStart.toString())
+                .room(message.getRoom())
+                .username("date")
+                .build());
+        return timeMessage;
+    }
+
     public Message saveMessage(Message message) {
-//        var params = senderClient.getHandshakeData().getUrlParams();
-//        log.info("param : " + params.toString());
         log.info("test message : " + message.getRoom() + message.getUsername());
         Message storedMessage = messageService.saveMessage(Message.builder()
                 .content(message.getContent())
@@ -50,14 +80,6 @@ public class SocketService {
                 .build());
         return storedMessage;
     }
-
-//    public void saveInfoMessage(SocketIOClient senderClient, String message, String room) {
-//        Message storedMessage = messageService.saveMessage(Message.builder()
-//                .content(message)
-//                .room(room)
-//                .build());
-//        sendSocketMessage(senderClient, storedMessage, room);
-//    }
 
     public void requestPreviousChat(SocketIOClient senderClient, String room) {
         log.info("previoustMsg 발송");
@@ -91,9 +113,20 @@ public class SocketService {
     }
 
     public void getRoomList(SocketIOClient senderClient, String username) {
+        //진행중은 아래의 피어 확인으로 찾고, 대기는 memo가 생기는 걸로 찾을까, 그럼 대기 말고 완료는 관리자가 나간걸로 찾을까(한달)
         log.info("roomList 준비");
-        List<RoomResponseDto> roomList = roomService.getRoomListContainUsername(username);
-        senderClient.sendEvent("connected", roomList);
+        // 대기중
+        List<RoomResponseDto> waitingList = roomService.getRoomListContainUsername(username, 0);
+        // 진행중
+        List<RoomResponseDto> progressList = roomService.getRoomListContainUsername(username, 1);
+        // 완료
+        List<RoomResponseDto> doneList = roomService.getRoomListContainUsername(username, 2);
+
+        Integer totalCount = waitingList.size() + progressList.size() + doneList.size();
+
+        RoomListResponseDto roomListResponseDto = new RoomListResponseDto(waitingList, progressList, doneList, totalCount);
+
+        senderClient.sendEvent("connected", roomListResponseDto);
     }
 
     public void checkRoom(String room) {
@@ -101,10 +134,14 @@ public class SocketService {
         if (!roomService.isRoom(room)) {
             log.info("새로운 방 생성");
             roomService.createRoom(room);
-        } else {
-            log.info("peer 다시 등록");
-            roomService.rejoinRoom(room);
+            // 빈 메모 등록
+            String memoText = "";
+            Memo memo = new Memo(room, memoText);
+            memoService.saveMemo(memo);
+            return;
         }
+        log.info("peer 다시 등록");
+        roomService.rejoinRoom(room);
     }
 
     public void leaveRoom(String room, String username) {
@@ -155,13 +192,18 @@ public class SocketService {
         }
     }
 
-    public List<SocketIOClient> allClientInRoomWithOutSelf(SocketIOClient senderClient, String room) {
+    private List<SocketIOClient> allClientInRoomWithOutSelf(SocketIOClient senderClient, String room) {
         return senderClient.getNamespace()
                 .getRoomOperations(room)
                 .getClients()
                 .stream()
                 .filter(client -> !client.getSessionId().equals(senderClient.getSessionId()))
                 .toList();
+    }
+
+    private BroadcastOperations allClientInRoom(SocketIOClient senderClient, String room) {
+        return senderClient.getNamespace()
+                .getRoomOperations(room);
     }
 
     public void joinedRTC(SocketIOClient senderClient, Message message) {
@@ -171,13 +213,31 @@ public class SocketService {
         }
     }
 
+    @Transactional
     public void saveMemo(Message message) {
-        if(!message.getUsername().equals("admin")) {
+        if (!message.getUsername().equals("admin")) {
             return;
         }
         String room = message.getRoom();
         String memoText = message.getContent();
-        Memo memo = new Memo(room, memoText);
-        memoService.saveMemo(memo);
+        Memo memo = memoService.getMemo(room).orElseThrow(() ->
+                new NullPointerException("memo가 존재하지 않습니다.")
+        );
+        memo.update(memoText);
     }
+
+    public void joinAdmin(String room, String username) {
+        if (!username.equals("admin")) {
+            return;
+        }
+        roomService.joinAdmin(room);
+    }
+
+    public void leaveAdmin(String room, String username) {
+        if (!username.equals("admin")) {
+            return;
+        }
+        roomService.leaveAdmin(room);
+    }
+
 }

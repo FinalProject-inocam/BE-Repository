@@ -2,7 +2,6 @@ package com.example.finalproject.domain.sockettest.dto;
 
 import com.example.finalproject.domain.mypage.dto.MypageResDto;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
-import com.example.finalproject.domain.sockettest.model.Memo;
 import lombok.Getter;
 
 import java.util.ArrayList;

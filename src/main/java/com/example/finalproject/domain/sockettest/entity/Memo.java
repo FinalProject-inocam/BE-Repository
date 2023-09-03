@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.sockettest.model;
+package com.example.finalproject.domain.sockettest.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -21,5 +21,9 @@ public class Memo {
     public Memo(String room, String memo) {
         this.room = room;
         this.memo = memo;
+    }
+
+    public void update(String memoText) {
+        this.memo = memoText;
     }
 }

@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.sockettest.repository;
 
-import com.example.finalproject.domain.sockettest.model.Memo;
+import com.example.finalproject.domain.sockettest.entity.Memo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

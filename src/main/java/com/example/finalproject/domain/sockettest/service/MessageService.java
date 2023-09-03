@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.sockettest.service;
 
-import com.example.finalproject.domain.sockettest.model.Message;
+import com.example.finalproject.domain.sockettest.entity.Message;
 import com.example.finalproject.domain.sockettest.repository.MessageRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +22,10 @@ public class MessageService {
 
     public Message saveMessage(Message message) {
         return messageRepository.save(message);
+    }
+
+    public Message getLastMessage(String room) {
+        return messageRepository.findTopByRoomOrderByCreatedAtDesc(room).orElse(null);
     }
 
 }
