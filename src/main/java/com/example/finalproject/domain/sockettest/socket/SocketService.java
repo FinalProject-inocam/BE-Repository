@@ -53,15 +53,15 @@ public class SocketService {
 
     public Message saveTimeMessage(Message message) {
         Message lastMessage = messageService.getLastMessage(message.getRoom());
-        if (lastMessage == null) {
-            return null;
-        }
-        LocalDate lastMessageTime = lastMessage.getCreatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        ;
         LocalDate todayStart = LocalDate.now();
-        if (!lastMessageTime.isBefore(todayStart)) {
-            return null;
+        // 이전 메세지가 있고 그 메세지날짜가 오늘과 같은 경우 생성하지 않음
+        if (lastMessage != null) {
+            LocalDate lastMessageTime = lastMessage.getCreatedAt().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            if (!lastMessageTime.isBefore(todayStart)) {
+                return null;
+            }
         }
+
         log.info("time message : " + todayStart);
         Message timeMessage = messageService.saveMessage(Message.builder()
                 .content(todayStart.toString())
