@@ -1,4 +1,4 @@
-package com.example.finalproject.domain.sockettest.model;
+package com.example.finalproject.domain.sockettest.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -16,7 +16,5 @@ public abstract class BaseModel {
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
-    private Date createdDateTime;
-
-
+    private Date createdAt;
 }
