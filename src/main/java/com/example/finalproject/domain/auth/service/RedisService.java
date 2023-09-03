@@ -48,7 +48,7 @@ public class RedisService {
     public void setRefreshToken(String refreshToken, String ipAddress) {
         ValueOperations<String, String> values = redisTemplate.opsForValue();
         Duration expireDuration = Duration.ofSeconds(jwtUtil.REFRESH_TOKEN_TIME / 1000);
-        values.set(refreshToken, String.valueOf(ipAddress), expireDuration);
+        values.set(refreshToken, ipAddress, expireDuration);
     }
 
     public void deleteOldRefreshToken(String nickname) {
