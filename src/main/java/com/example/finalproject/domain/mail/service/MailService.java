@@ -41,9 +41,9 @@ public class MailService {
     private static final String PASSCHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/";
 
     public SuccessCode send(String to) {
-        if (checkEmail(to)) {
-            throw new MailNotFoundException(ErrorCode.DUPLICATE_EMAIL);
-        }
+//        if (checkEmail(to)) {
+//            throw new MailNotFoundException(ErrorCode.DUPLICATE_EMAIL);
+//        }
         try {
             String code = randomcode();
 

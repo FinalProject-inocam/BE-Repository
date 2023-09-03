@@ -148,9 +148,20 @@ public class ReviewService {
 
     private void checkAuthority(Review review, User user) {
         // admin 확인
-        if (!user.getRole().getAuthority().equals("ROLE_ADMIN")) {
+        if (!user.getRole().getAuthority().equals("E001")) {
             // userId 확인
-            if (review.getUser().getUserId() != user.getUserId()) {
+            log.info("게시글 사용자 아이디 : "+review.getUser().getUserId());
+            log.info("현재 유저 아이디 : "+user.getUserId());
+//            if(review.getUser().getUserId() != user.getUserId())
+//            {
+//                throw new ReviewAuthorityException(ErrorCode.NO_AUTHORITY_TO_DATA);
+//            }
+
+            if(review.getUser().getUserId().equals( user.getUserId()))
+            {
+                log.info("동일 인물");
+            }
+            else {
                 throw new ReviewAuthorityException(ErrorCode.NO_AUTHORITY_TO_DATA);
             }
         }
