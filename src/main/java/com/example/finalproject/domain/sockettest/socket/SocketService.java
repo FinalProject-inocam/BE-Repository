@@ -4,8 +4,6 @@ import com.corundumstudio.socketio.BroadcastOperations;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.auth.repository.UserRepository;
-import com.example.finalproject.domain.mypage.dto.MypageResDto;
-import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.domain.sockettest.constants.Constants;
 import com.example.finalproject.domain.sockettest.dto.*;
@@ -90,16 +88,15 @@ public class SocketService {
 
     public void roomInfo(SocketIOClient senderClient, String room, String username) {
         log.info("room관련 정보 발송");
-        // admin한테만 어떻게 보내지...?
         if (!username.equals("admin")) {
             return;
         }
         String targetusername = room.replace("admin", "").replace("!", "");
         User user = userRepository.findByNickname(targetusername);
-        MypageResDto mypageResDto = new MypageResDto(user);
-        List<PurchasesResponseDto> purchasesResponseDtoList = purchasesRepository.findAllByUser(user)
+        UserInfoDto userInfoDto = new UserInfoDto(user);
+        List<PurchaseResponseDtoSocket> purchasesResponseDtoList = purchasesRepository.findAllByUser(user)
                 .stream()
-                .map(PurchasesResponseDto::new)
+                .map(PurchaseResponseDtoSocket::new)
                 .toList();
         String memoStr = "";
         Memo memo = memoService.getMemo(room).orElse(null);
@@ -107,7 +104,7 @@ public class SocketService {
             memoStr = memo.getMemo();
         }
 
-        RoomInfoResponseDto roomInfoResponseDto = new RoomInfoResponseDto(mypageResDto, purchasesResponseDtoList, memoStr);
+        RoomInfoResponseDto roomInfoResponseDto = new RoomInfoResponseDto(userInfoDto, purchasesResponseDtoList, memoStr);
 
         senderClient.sendEvent("roomInfo", roomInfoResponseDto);
     }

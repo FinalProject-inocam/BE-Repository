@@ -105,6 +105,8 @@ public class SocketModule {
     private DataListener<Message> connectSocket() {
         return (senderClient, data, ackSender) -> {
             log.info(senderClient.getHandshakeData().getHttpHeaders().get("Authorization"));
+            log.info(senderClient.getHandshakeData().getAddress().toString());
+            log.info(senderClient.getHandshakeData().getLocal().toString());
             String username = data.getUsername();
             senderClient.joinRoom(username);
             socketService.getRoomList(senderClient, username);

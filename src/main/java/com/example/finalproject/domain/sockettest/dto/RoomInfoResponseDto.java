@@ -9,11 +9,11 @@ import java.util.List;
 
 @Getter
 public class RoomInfoResponseDto {
-    private MypageResDto userInfo;
-    private List<PurchasesResponseDto> userPurchaseList = new ArrayList<>();
+    private UserInfoDto userInfo;
+    private List<PurchaseResponseDtoSocket> userPurchaseList = new ArrayList<>();
     private String memo;
 
-    public RoomInfoResponseDto(MypageResDto userInfo, List<PurchasesResponseDto> userPurchaseList, String memoStr) {
+    public RoomInfoResponseDto(UserInfoDto userInfo, List<PurchaseResponseDtoSocket> userPurchaseList, String memoStr) {
         this.userInfo = userInfo;
         this.userPurchaseList = userPurchaseList;
         this.memo = memoStr;
