@@ -18,29 +18,34 @@ public class PurchaseResponseDtoSocket {
     private String phoneNumber;
     private String addressName;
     private String zoneNo;
-    private Boolean approve;
-    private String denyMessage;
-    private Date deliveryDate;
+    private String deliveryDate;
     private String trim;
     private String createdAt;
     private String modifiedAt;
 
     public PurchaseResponseDtoSocket(Purchase purchase) {
-        this.trim = purchase.getTrim();
         this.purchaseId = purchase.getPurchaseId();
         this.type = purchase.getType();
         this.price = purchase.getPrice();
         this.color = purchase.getColor();
         this.alarm = purchase.getAlarm();
-        this.content = purchase.getContent();
+        this.content = purchase.getContent() != null ? purchase.getContent() : "";
         this.phoneNumber = purchase.getPhoneNumber();
         this.addressName = purchase.getAddressName();
         this.zoneNo = purchase.getZoneNo();
-        this.approve = purchase.getApprove();
-        this.denyMessage = purchase.getDenyMessage();
-        this.deliveryDate = purchase.getDeliveryDate();
-        this.createdAt = String.valueOf(purchase.getCreatedAt());
-        this.modifiedAt = String.valueOf(purchase.getModifiedAt());
+        String deliveryDateStr = "미정";
+        if (purchase.getApprove() != null) {
+            if (purchase.getApprove()) {
+                deliveryDateStr = String.valueOf(purchase.getDeliveryDate());
+            }
+            if (!purchase.getApprove()) {
+                deliveryDateStr = purchase.getDenyMessage();
+            }
+        }
+        this.deliveryDate = deliveryDateStr;
+        this.trim = purchase.getTrim() != null ? purchase.getTrim() : "";
+        this.createdAt = purchase.getCreatedAt() != null ? String.valueOf(purchase.getCreatedAt()) : "";
+        this.modifiedAt = purchase.getModifiedAt() != null ? String.valueOf(purchase.getModifiedAt()) : "";
     }
 
 }
