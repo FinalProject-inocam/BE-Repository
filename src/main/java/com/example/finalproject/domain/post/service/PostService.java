@@ -118,7 +118,7 @@ public class PostService {
                 .mapToObj(index -> new PostListDto(likeList.get(index), index + 1))
                 .toList();
 
-        String imgUrl = "https://finalimgbucket.s3.amazonaws.com/2945e31e-d47d-4c41-9da8-eae9e695fa50";
+        String imgUrl = "https://finalimgbucket.s3.amazonaws.com/057c943e-27ba-4b0c-822d-e9637c2f2aff";
 
         PostListResponseDto postListResponseDto = new PostListResponseDto(recentRankList, likeRankList, imgUrl);
 
