@@ -108,17 +108,23 @@ public class QPurchasesRepository {
         Integer endYear = Integer.valueOf(endYearStr);
 
         BooleanExpression typeCondition = getTypeCondition(type, qPurchase);
+        NumberExpression<Integer> ageExpression = ageExpression(qPurchase);
 
-        List<Integer> result = queryFactory
+        List<Tuple> result = queryFactory
                 .select(
-                        qPurchase.birthYear
+                        ageExpression.as("age_group"),
+                        qPurchase.gender.stringValue(),
+                        qPurchase.gender.stringValue().count()
                 )
                 .from(qPurchase)
                 .where(
                         qPurchase.createdAt.year().between(startYear, endYear),
                         typeCondition
                 )
+                .groupBy(ageExpression, qPurchase.gender.stringValue())
+                .orderBy(ageExpression.asc(), qPurchase.gender.stringValue().asc())
                 .fetch();
+
         return ageMap(result);
     }
 
@@ -217,10 +223,7 @@ public class QPurchasesRepository {
         QPurchase qPurchase = QPurchase.purchase;
 
         BooleanExpression typeCondition = getTypeCondition(type, qPurchase);
-
-        NumberExpression<Integer> ageExpression = Expressions.currentDate().year()
-                .subtract(qPurchase.birthYear)
-                .divide(10).floor().multiply(10);
+        NumberExpression<Integer> ageExpression = ageExpression(qPurchase);
 
         List<Tuple> result = queryFactory
                 .select(
@@ -237,7 +240,7 @@ public class QPurchasesRepository {
                 .orderBy(ageExpression.asc(), qPurchase.gender.stringValue().asc())
                 .fetch();
 
-        return ageMap2(result);
+        return ageMap(result);
     }
 
     public Map<String, Object> countPurchaseByColorForYear(String year, String type) {
@@ -371,10 +374,13 @@ public class QPurchasesRepository {
         Integer month = Integer.valueOf(yearMonth.split("-")[1]);
 
         BooleanExpression typeCondition = getTypeCondition(type, qPurchase);
+        NumberExpression<Integer> ageExpression = ageExpression(qPurchase);
 
-        List<Integer> result = queryFactory
+        List<Tuple> result = queryFactory
                 .select(
-                        qPurchase.birthYear
+                        ageExpression.as("age_group"),
+                        qPurchase.gender.stringValue(),
+                        qPurchase.gender.stringValue().count()
                 )
                 .from(qPurchase)
                 .where(
@@ -382,6 +388,8 @@ public class QPurchasesRepository {
                         qPurchase.createdAt.month().eq(month),
                         typeCondition
                 )
+                .groupBy(ageExpression, qPurchase.gender.stringValue())
+                .orderBy(ageExpression.asc(), qPurchase.gender.stringValue().asc())
                 .fetch();
 
         return ageMap(result);
@@ -527,10 +535,13 @@ public class QPurchasesRepository {
         LocalDate endOfWeek = localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
 
         BooleanExpression typeCondition = getTypeCondition(type, qPurchase);
+        NumberExpression<Integer> ageExpression = ageExpression(qPurchase);
 
-        List<Integer> result = queryFactory
+        List<Tuple> result = queryFactory
                 .select(
-                        qPurchase.birthYear
+                        ageExpression.as("age_group"),
+                        qPurchase.gender.stringValue(),
+                        qPurchase.gender.stringValue().count()
                 )
                 .from(qPurchase)
                 .where(
@@ -538,6 +549,8 @@ public class QPurchasesRepository {
                                 endOfWeek.atTime(23, 59, 59, 999999)),
                         typeCondition
                 )
+                .groupBy(ageExpression, qPurchase.gender.stringValue())
+                .orderBy(ageExpression.asc(), qPurchase.gender.stringValue().asc())
                 .fetch();
 
         return ageMap(result);
@@ -615,6 +628,15 @@ public class QPurchasesRepository {
         return typeCondition;
     }
 
+    private static NumberExpression<Integer> ageExpression(QPurchase qPurchase) {
+        NumberExpression<Integer> ageExpression = Expressions.currentDate().year()
+                .subtract(qPurchase.birthYear)
+                .divide(10).floor().multiply(10);
+        return ageExpression;
+    }
+
+    /*-----------------------------------------------------------------------*/
+
     private static Map<String, Object> genderMap(QPurchase qPurchase, List<Tuple> result) {
         Map<String, Object> genderMap = new HashMap<>();
         List<String> genderLabel = new ArrayList<>();
@@ -646,7 +668,7 @@ public class QPurchasesRepository {
         return genderMap;
     }
 
-    private static Map<String, Object> ageMap2(List<Tuple> result) {
+    private static Map<String, Object> ageMap(List<Tuple> result) {
         Map<String, Object> ageMap = new HashMap<>();
         List<String> ageLabel = new ArrayList<>();
         ageLabel.add("10~20대");
@@ -655,23 +677,35 @@ public class QPurchasesRepository {
         }
         ageLabel.add("70대 이상");
 
-        List<List<Long>> resultList = new ArrayList<>(Collections.nCopies(ageLabel.size(), new ArrayList<>()));
-        List<Double> ratioList = new ArrayList<>(Collections.nCopies(ageLabel.size(), 0.0));
+        List<String> genderLabel = new ArrayList<>();
+        genderLabel.add("MALE");
+        genderLabel.add("FEMALE");
+        genderLabel.add("COMPANY");
+
+        //동일 객체 참조 문제가 생겨서 for문 사용
+
+        List<List<Long>> resultList = new ArrayList<>();
+        for (int i = 0; i < ageLabel.size(); i++) {
+            List<Long> innerList = new ArrayList<>(Collections.nCopies(3, 0L));
+            resultList.add(innerList);
+        }
+        List<List<Double>> ratioList = new ArrayList<>();
+        for (int i = 0; i < ageLabel.size(); i++) {
+            List<Double> innerList = new ArrayList<>(Collections.nCopies(3, 0.0));
+            ratioList.add(innerList);
+        }
 
         Float sum = 0f;
 
         Integer over70 = ageLabel.indexOf("70대 이상");
         Integer under20 = ageLabel.indexOf("10~20대");
-//        for (int i = 0; i < ; i++) {
-//            resultList.get()
-//        }
 
 
         // 결과를 맵에 저장
         for (Tuple group : result) { // 사실 별로 안좋은 해결책인것 같은데...
             log.info(group.toString());
-            Integer age = (LocalDate.now().getYear() - group.get(0, Integer.class)) / 10 * 10;
-            Long count = group.get(3, Long.class);
+            Integer age = group.get(0, Integer.class);
+            Long count = group.get(2, Long.class);
             if (age > 60) {
                 genderList(resultList, over70, group, count);
                 sum += count;
@@ -689,10 +723,11 @@ public class QPurchasesRepository {
 
         for (int i = 0; i < resultList.size(); i++) {
             for (int j = 0; j < 3; j++) {
-                ratioList.set(i, Math.floor(resultList.get(i).get(j) * 1000 / sum) / 10.0);
+                ratioList.get(i).set(j, Math.floor(resultList.get(i).get(j) * 1000 / sum) / 10.0);
             }
         }
         ageMap.put("labels", ageLabel);
+        ageMap.put("innerLabels", genderLabel);
         ageMap.put("values", resultList);
         ageMap.put("ratios", ratioList);
 
@@ -707,51 +742,6 @@ public class QPurchasesRepository {
             resultList.get(ageIndex).set(1, resultList.get(ageIndex).get(1) + count);
         }
         resultList.get(ageIndex).set(2, resultList.get(ageIndex).get(2) + count);
-    }
-
-    private static Map<String, Object> ageMap(List<Integer> result) {
-        Map<String, Object> ageMap = new HashMap<>();
-        List<String> ageLabel = new ArrayList<>();
-        ageLabel.add("10~20대");
-        for (int i = 30; i < 70; i += 10) {
-            ageLabel.add(i + "대");
-        }
-        ageLabel.add("70대 이상");
-
-        List<Long> resultList = new ArrayList<>(Collections.nCopies(ageLabel.size(), 0l));
-        List<Double> ratioList = new ArrayList<>(Collections.nCopies(ageLabel.size(), 0.0));
-
-        Float sum = 0f;
-
-        Integer over70 = ageLabel.indexOf("70대 이상");
-        Integer under20 = ageLabel.indexOf("10~20대");
-
-        // 결과를 맵에 저장
-        for (Integer birthYear : result) { // 사실 별로 안좋은 해결책인것 같은데...
-            Integer age = (LocalDate.now().getYear() - birthYear) / 10 * 10;
-            if (age > 60) {
-                resultList.set(over70, resultList.get(over70) + 1);
-                sum++;
-                continue;
-            }
-            if (age < 30) {
-                resultList.set(0, resultList.get(under20) + 1);
-                sum++;
-                continue;
-            }
-            Integer ageLabelIndex = ageLabel.indexOf(age + "대");
-            resultList.set(ageLabelIndex, resultList.get(ageLabelIndex) + 1);
-            sum++;
-        }
-
-        for (int i = 0; i < resultList.size(); i++) {
-            ratioList.set(i, Math.floor(resultList.get(i) * 1000 / sum) / 10.0);
-        }
-        ageMap.put("labels", ageLabel);
-        ageMap.put("values", resultList);
-        ageMap.put("ratios", ratioList);
-
-        return ageMap;
     }
 
     private static Map<String, Object> colorMap(QPurchase qPurchase, List<Tuple> result) {
