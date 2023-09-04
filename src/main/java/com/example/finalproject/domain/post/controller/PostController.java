@@ -5,6 +5,7 @@ import com.example.finalproject.domain.post.dto.PostPageDto;
 import com.example.finalproject.domain.post.dto.SearchPageDto;
 import com.example.finalproject.domain.post.dto.request.PostRequestDto;
 import com.example.finalproject.domain.post.dto.request.PostSelectDelDto;
+import com.example.finalproject.domain.post.dto.response.PostIdDto;
 import com.example.finalproject.domain.post.dto.response.PostListResponseDto;
 import com.example.finalproject.domain.post.dto.response.PostOneResponseDto;
 import com.example.finalproject.domain.post.service.PostService;
@@ -56,8 +57,8 @@ public class PostController {
     public ApiResponse<?> createPost(@RequestPart(value = "images", required = false) List<MultipartFile> multipartFile,
                                      @RequestPart(value = "data") PostRequestDto postRequestDto,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        SuccessCode successCode = postService.createPost(postRequestDto, userDetails.getUser(), multipartFile);
-        return ResponseUtils.ok(successCode);
+        PostIdDto postId = postService.createPost(postRequestDto, userDetails.getUser(), multipartFile);
+        return ResponseUtils.ok(postId);
     }
 
     // 게시글 수정
