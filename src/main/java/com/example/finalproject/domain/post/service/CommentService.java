@@ -46,10 +46,10 @@ public class CommentService {
 
     @Transactional
     public CommentPageDto getComment(Long postId, UserDetailsImpl userDetails,int size,int page) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+//        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(0, size * page, Sort.by(Sort.Direction.DESC, "id"));
         Page<Comment> commentList = commentRepository.findByPostId(postId, pageable);
         long total = commentList.getTotalElements();
-
         List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         for (Comment cmt : commentList) {
             List<ReplyResponseDto> replyList = new ArrayList<>();
@@ -65,7 +65,7 @@ public class CommentService {
             commentResponseDtoList.add(commentResponseDto);
         }
         PageResponse pageResponse = new PageResponse<>(commentResponseDtoList, pageable, total);
-        CommentPageDto commentPageDto = new CommentPageDto(pageResponse);
+        CommentPageDto commentPageDto = new CommentPageDto(pageResponse,page,size);
         return commentPageDto;
     }
 

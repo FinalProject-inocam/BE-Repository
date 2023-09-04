@@ -18,11 +18,23 @@ public class CommentPageDto {
 
     public CommentPageDto(PageResponse pageResponse) {
         this.content = pageResponse.getContent();
-        this.currentPage = pageResponse.getNumber() + 1;
-        this.totalPages = pageResponse.getTotalPages();
+        this.currentPage = page;
+        this.totalPages = (int)pageResponse.getTotalElements()/size;
         this.size = pageResponse.getSize();
         this.totalElements = pageResponse.getTotalElements();
-        this.last = pageResponse.isLast();
-        this.first = pageResponse.isFirst();
+        if(totalPages == page)
+        {
+            this.last = true;
+        }
+        else {
+            this.last = false;
+        }
+
+        if(page == 1) {
+            this.first = true;
+        }
+        else {
+            this.first = false;
+        }
     }
 }
