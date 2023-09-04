@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.post.dto.response;
 
 import com.example.finalproject.domain.post.entity.Post;
+import com.example.finalproject.global.enums.UserRoleEnum;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -19,7 +20,7 @@ public class PostAllResponseDto {
     private LocalDateTime createAt;
     private String nickname;
     private String url;
-    private String isAdmin;
+    private Boolean isAdmin;
 
     public PostAllResponseDto(Post post, Long comment_count, Long like_count, Boolean is_like) {
         this.content = post.getContent();
@@ -38,6 +39,6 @@ public class PostAllResponseDto {
         this.nickname = post.getNickname();
         this.view = post.getView();
         this.url = "community/review/" + post.getId();
-        this.isAdmin = post.getUser().getRole().getAuthority();
+        this.isAdmin = post.getUser().getRole() == UserRoleEnum.ADMIN;
     }
 }
