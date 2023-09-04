@@ -16,7 +16,7 @@ public class CommentPageDto {
     private int currentPage;
     private List<CommentResponseDto> content;
 
-    public CommentPageDto(PageResponse pageResponse) {
+    public CommentPageDto(PageResponse pageResponse, int page, int size) {
         this.content = pageResponse.getContent();
         this.currentPage = page;
         this.totalPages = (int)pageResponse.getTotalElements()/size;
