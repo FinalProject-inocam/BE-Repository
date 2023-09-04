@@ -121,7 +121,9 @@ public class ReviewService {
     }
 
     public ReviewpageResponseDto reviewList(int size, int page, UserDetailsImpl userDetails, String shopId) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+        // 요청된 페이지까지의 모든 데이터를 가져오도록 수정
+//        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(0, size * page, Sort.by(Sort.Direction.DESC, "id"));
         Page<Review> reviewPage = reviewRepository.findByShopIdUsingQuery(shopId, pageable);
 
         List<Review> banner = reviewRepository.findAllByShopId(shopId);
