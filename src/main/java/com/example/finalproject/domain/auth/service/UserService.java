@@ -50,10 +50,10 @@ public class UserService {
             role = UserRoleEnum.ADMIN;
         }
         UserGenderEnum genderEnum = null;
-        if (requestDto.getGender().equals("male")){
+        if (requestDto.getGender().equals("MALE")){
             genderEnum = UserGenderEnum.MALE;
         }
-        if (requestDto.getGender().equals("female")) {
+        if (requestDto.getGender().equals("FEMALE")) {
             genderEnum = UserGenderEnum.FEMALE;
         }
 
