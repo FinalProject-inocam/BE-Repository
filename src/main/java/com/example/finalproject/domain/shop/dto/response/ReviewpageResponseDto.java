@@ -18,14 +18,26 @@ public class ReviewpageResponseDto {
     private Double avgStar;
     private Long reviewCount;
 //배너 ,별점, 리뷰 갯수
-    public ReviewpageResponseDto(PageResponse pageResponse, List<String> bannerList, Double avgStar, int reviewCount) {
+    public ReviewpageResponseDto(PageResponse pageResponse, List<String> bannerList, Double avgStar, int reviewCount,int page,int size) {
         this.content = pageResponse.getContent();
         this.size = pageResponse.getSize();
-        this.totalPages = pageResponse.getTotalPages();
+        this.totalPages = (int)pageResponse.getTotalElements()/size;
         this.totalElements = pageResponse.getTotalElements();
-        this.last = pageResponse.isLast();
-        this.first = pageResponse.isFirst();
-        this.currentPage = pageResponse.getNumber() + 1;
+        if(totalPages==page)
+        {
+            this.last = true;
+        }
+        else{
+            this.last=false;
+        }
+
+        if(page==1) {
+            this.first = true;
+        }
+        else{
+            this.first=false;
+        }
+        this.currentPage = page;
         this.bannerList = bannerList;
         this.avgStar = avgStar;
         this.reviewCount=Long.valueOf(reviewCount);
