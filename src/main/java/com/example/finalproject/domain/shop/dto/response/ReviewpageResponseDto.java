@@ -21,7 +21,7 @@ public class ReviewpageResponseDto {
     public ReviewpageResponseDto(PageResponse pageResponse, List<String> bannerList, Double avgStar, int reviewCount,int page,int size) {
         this.content = pageResponse.getContent();
         this.size = pageResponse.getSize();
-        this.totalPages = (int)pageResponse.getTotalElements()/size;
+        this.totalPages = (int) Math.ceil((double) pageResponse.getTotalElements() / size);
         this.totalElements = pageResponse.getTotalElements();
         if(totalPages==page)
         {

@@ -19,7 +19,7 @@ public class CommentPageDto {
     public CommentPageDto(PageResponse pageResponse, int page, int size) {
         this.content = pageResponse.getContent();
         this.currentPage = page;
-        this.totalPages = (int)pageResponse.getTotalElements()/size;
+        this.totalPages = (int) Math.ceil((double) pageResponse.getTotalElements() / size);
         this.size = pageResponse.getSize();
         this.totalElements = pageResponse.getTotalElements();
         if(totalPages == page)
