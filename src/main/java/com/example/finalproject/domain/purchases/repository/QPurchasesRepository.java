@@ -218,17 +218,26 @@ public class QPurchasesRepository {
 
         BooleanExpression typeCondition = getTypeCondition(type, qPurchase);
 
-        List<Integer> result = queryFactory
+        NumberExpression<Integer> ageExpression = Expressions.currentDate().year()
+                .subtract(qPurchase.birthYear)
+                .divide(10).floor().multiply(10);
+
+        List<Tuple> result = queryFactory
                 .select(
-                        qPurchase.birthYear
+                        ageExpression.as("age_group"),
+                        qPurchase.gender.stringValue(),
+                        qPurchase.gender.stringValue().count()
                 )
                 .from(qPurchase)
                 .where(
                         qPurchase.createdAt.year().eq(Integer.valueOf(year)),
                         typeCondition
                 )
+                .groupBy(ageExpression, qPurchase.gender.stringValue())
+                .orderBy(ageExpression.asc(), qPurchase.gender.stringValue().asc())
                 .fetch();
-        return ageMap(result);
+
+        return ageMap2(result);
     }
 
     public Map<String, Object> countPurchaseByColorForYear(String year, String type) {
@@ -635,6 +644,69 @@ public class QPurchasesRepository {
         genderMap.put("ratios", ratioList);
 
         return genderMap;
+    }
+
+    private static Map<String, Object> ageMap2(List<Tuple> result) {
+        Map<String, Object> ageMap = new HashMap<>();
+        List<String> ageLabel = new ArrayList<>();
+        ageLabel.add("10~20대");
+        for (int i = 30; i < 70; i += 10) {
+            ageLabel.add(i + "대");
+        }
+        ageLabel.add("70대 이상");
+
+        List<List<Long>> resultList = new ArrayList<>(Collections.nCopies(ageLabel.size(), new ArrayList<>()));
+        List<Double> ratioList = new ArrayList<>(Collections.nCopies(ageLabel.size(), 0.0));
+
+        Float sum = 0f;
+
+        Integer over70 = ageLabel.indexOf("70대 이상");
+        Integer under20 = ageLabel.indexOf("10~20대");
+//        for (int i = 0; i < ; i++) {
+//            resultList.get()
+//        }
+
+
+        // 결과를 맵에 저장
+        for (Tuple group : result) { // 사실 별로 안좋은 해결책인것 같은데...
+            log.info(group.toString());
+            Integer age = (LocalDate.now().getYear() - group.get(0, Integer.class)) / 10 * 10;
+            Long count = group.get(3, Long.class);
+            if (age > 60) {
+                genderList(resultList, over70, group, count);
+                sum += count;
+                continue;
+            }
+            if (age < 30) {
+                genderList(resultList, under20, group, count);
+                sum += count;
+                continue;
+            }
+            Integer ageLabelIndex = ageLabel.indexOf(age + "대");
+            genderList(resultList, ageLabelIndex, group, count);
+            sum += count;
+        }
+
+        for (int i = 0; i < resultList.size(); i++) {
+            for (int j = 0; j < 3; j++) {
+                ratioList.set(i, Math.floor(resultList.get(i).get(j) * 1000 / sum) / 10.0);
+            }
+        }
+        ageMap.put("labels", ageLabel);
+        ageMap.put("values", resultList);
+        ageMap.put("ratios", ratioList);
+
+        return ageMap;
+    }
+
+    private static void genderList(List<List<Long>> resultList, Integer ageIndex, Tuple group, Long count) {
+        if (group.get(1, String.class).equals("MALE")) {
+            resultList.get(ageIndex).set(0, resultList.get(ageIndex).get(0) + count);
+        }
+        if (group.get(1, String.class).equals("FEMALE")) {
+            resultList.get(ageIndex).set(1, resultList.get(ageIndex).get(1) + count);
+        }
+        resultList.get(ageIndex).set(2, resultList.get(ageIndex).get(2) + count);
     }
 
     private static Map<String, Object> ageMap(List<Integer> result) {

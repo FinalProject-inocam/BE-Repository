@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.post.dto.response;
 
 import com.example.finalproject.domain.post.entity.Comment;
+import com.example.finalproject.global.enums.UserRoleEnum;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class CommentResponseDto {
     private Long likeCount;
     private Boolean isLike;
     private List<ReplyResponseDto> replyList;
-    private String isAdmin;
+    private Boolean isAdmin;
 
     public CommentResponseDto(Comment cmt, Long likeCount, Boolean isLike, List<ReplyResponseDto> replyList) {
         this.commentId = cmt.getId();
@@ -28,6 +29,6 @@ public class CommentResponseDto {
         this.likeCount = likeCount;
         this.isLike = isLike;
         this.replyList = replyList;
-        this.isAdmin = cmt.getUser().getRole().getAuthority();
+        this.isAdmin = cmt.getUser().getRole() == UserRoleEnum.ADMIN;
     }
 }
