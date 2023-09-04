@@ -19,6 +19,7 @@ public class PostOneResponseDto {
     private LocalDateTime createAt;
     private List<String> imageUrls; // Image URL 목록을 저장
     private List<CommentResponseDto> commentsList;
+    private String isAdmin;
 
     public PostOneResponseDto(Post post, List<CommentResponseDto> commentResponseDtoList, Long like_count, Boolean is_like) {
         this.postId = post.getId();
@@ -32,6 +33,7 @@ public class PostOneResponseDto {
         this.likeCount = like_count;
         this.isLike = is_like;
         this.createAt = post.getCreatedAt();
+        this.isAdmin = post.getUser().getRole().getAuthority();
     }
 }
 

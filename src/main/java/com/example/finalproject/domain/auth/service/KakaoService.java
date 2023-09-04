@@ -46,7 +46,7 @@ public class KakaoService {
 //    @Value("${security.oauth2.client.registration.kakao.client-secret}")
 //    private String kakaoClientSecret;
 
-    @Value("${security.oauth2.client.registration.kakao.redirect-uri2}")
+    @Value("${security.oauth2.client.registration.kakao.redirect-uri}")
     private String kakaoRedirectUri;
 
     public ApiResponse<?> kakaoLogin(String code, HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {

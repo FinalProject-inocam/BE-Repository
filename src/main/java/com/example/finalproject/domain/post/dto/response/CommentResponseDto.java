@@ -17,6 +17,7 @@ public class CommentResponseDto {
     private Long likeCount;
     private Boolean isLike;
     private List<ReplyResponseDto> replyList;
+    private String isAdmin;
 
     public CommentResponseDto(Comment cmt, Long likeCount, Boolean isLike, List<ReplyResponseDto> replyList) {
         this.commentId = cmt.getId();
@@ -27,5 +28,6 @@ public class CommentResponseDto {
         this.likeCount = likeCount;
         this.isLike = isLike;
         this.replyList = replyList;
+        this.isAdmin = cmt.getUser().getRole().getAuthority();
     }
 }

@@ -218,10 +218,6 @@ public class QPurchasesRepository {
 
         BooleanExpression typeCondition = getTypeCondition(type, qPurchase);
 
-        NumberExpression<Integer> ageExpression = Expressions.currentDate().year()
-                .subtract(qPurchase.birthYear)
-                .divide(10).floor().multiply(10);
-
         List<Integer> result = queryFactory
                 .select(
                         qPurchase.birthYear
