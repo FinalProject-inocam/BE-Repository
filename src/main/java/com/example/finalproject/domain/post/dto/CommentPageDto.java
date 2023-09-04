@@ -16,13 +16,25 @@ public class CommentPageDto {
     private int currentPage;
     private List<CommentResponseDto> content;
 
-    public CommentPageDto(PageResponse pageResponse) {
+    public CommentPageDto(PageResponse pageResponse, int page, int size) {
         this.content = pageResponse.getContent();
-        this.currentPage = pageResponse.getNumber() + 1;
-        this.totalPages = pageResponse.getTotalPages();
+        this.currentPage = page;
+        this.totalPages = (int)pageResponse.getTotalElements()/size;
         this.size = pageResponse.getSize();
         this.totalElements = pageResponse.getTotalElements();
-        this.last = pageResponse.isLast();
-        this.first = pageResponse.isFirst();
+        if(totalPages == page)
+        {
+            this.last = true;
+        }
+        else {
+            this.last = false;
+        }
+
+        if(page == 1) {
+            this.first = true;
+        }
+        else {
+            this.first = false;
+        }
     }
 }

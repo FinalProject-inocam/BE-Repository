@@ -125,7 +125,6 @@ public class ReviewService {
 //        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
         Pageable pageable = PageRequest.of(0, size * page, Sort.by(Sort.Direction.DESC, "id"));
         Page<Review> reviewPage = reviewRepository.findByShopIdUsingQuery(shopId, pageable);
-
         List<Review> banner = reviewRepository.findAllByShopId(shopId);
         List<String> bannerList = shopService.getBanner(banner);
         Double avgStar = banner.stream()

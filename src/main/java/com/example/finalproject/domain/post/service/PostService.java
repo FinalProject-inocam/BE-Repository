@@ -157,12 +157,12 @@ public class PostService {
     }
 
     @Transactional
-    public SuccessCode createPost(PostRequestDto postRequestDto, User user, List<MultipartFile> multipartFile) {
+    public PostIdDto createPost(PostRequestDto postRequestDto, User user, List<MultipartFile> multipartFile) {
         Post post = new Post(postRequestDto, user);
         validateMultipartFile(multipartFile, post);
         savePost(post);
-        postRepository.save(post);
-        return POST_CREATE_SUCCESS;
+        Post savePost=postRepository.save(post);
+        return new PostIdDto(savePost.getId());
     }
 
     @Transactional
