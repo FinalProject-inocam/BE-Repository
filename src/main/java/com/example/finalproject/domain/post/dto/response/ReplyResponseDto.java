@@ -14,6 +14,7 @@ public class ReplyResponseDto {
     private LocalDateTime modifiedAt;
     private Boolean isLike;
     private Long likeCount;
+    private String isAdmin;
 
     public ReplyResponseDto(Reply reply, Long likeCount, Boolean isLike) {
         this.replyId = reply.getId();
@@ -23,5 +24,6 @@ public class ReplyResponseDto {
         this.modifiedAt = reply.getModifiedAt();
         this.likeCount = likeCount;
         this.isLike = isLike;
+        this.isAdmin = reply.getUser().getRole().getAuthority();
     }
 }
