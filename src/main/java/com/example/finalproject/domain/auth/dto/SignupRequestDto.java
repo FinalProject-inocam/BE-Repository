@@ -1,5 +1,7 @@
 package com.example.finalproject.domain.auth.dto;
 
+import com.example.finalproject.global.validation.CustomConstraint.ProhibitValidation;
+import com.example.finalproject.global.validation.ValidationGroups;
 import com.example.finalproject.global.validation.ValidationGroups.NotBlankGroup;
 import com.example.finalproject.global.validation.ValidationGroups.PatternGroup;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +19,7 @@ public class SignupRequestDto {
     @NotBlank(message = "패스워드는 필수입니다.", groups = NotBlankGroup.class)
     private String password;
 
-//    @Pattern(regexp = "^(?!date$|server$)(?!.*!)$", message = "사용 불가능한 단어 혹은 특수문자가 포함되어 있습니다.", groups = PatternGroup.class)
+    @ProhibitValidation(groups = ValidationGroups.ProhibitValidationGroup.class)
     @NotBlank(message = "닉네임은 필수입니다.", groups = NotBlankGroup.class)
     private String nickname;
 
