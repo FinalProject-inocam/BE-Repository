@@ -1,6 +1,6 @@
 package com.example.finalproject.domain.sockettest.controller;
 
-import com.example.finalproject.domain.sockettest.model.Message;
+import com.example.finalproject.domain.sockettest.entity.Message;
 import com.example.finalproject.domain.sockettest.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

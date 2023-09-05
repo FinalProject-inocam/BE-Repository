@@ -3,7 +3,6 @@ package com.example.finalproject.domain.admin.service;
 import com.example.finalproject.domain.auth.repository.QUserRepository;
 import com.example.finalproject.domain.car.entity.Car;
 import com.example.finalproject.domain.car.service.CarService;
-import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.domain.purchases.repository.QPurchasesRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +22,10 @@ public class AdminService {
     private final CarService carService;
 
     /* 특정 기간(2020~2023)의 연별 신청, 승인, 거절 건수 */
-    public Map<String, Object> yearsStat(String startYear, String endYear) {
-//        LocalDate startDate = convertStringToLocalDate(startCal);
-//        LocalDate endDate = convertStringToLocalDate(endCal);
+    public Map<String, Object> yearsStat(String startEndYear) {
+        String[] startEndYears = startEndYear.split("-");
+        String startYear = startEndYears[0];
+        String endYear = startEndYears[1];
 
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("total", customYearsStat(startYear, endYear, null));
@@ -84,10 +84,6 @@ public class AdminService {
 
     /* 1달간 매주의 신청, 승인 거절 건수 */
     public Map<String, Object> monthStat(String yearMonth) {
-//        Integer year = Integer.valueOf(month.split("-")[0]);
-//        Integer month = Integer.valueOf(month.split("-")[1]);
-//        LocalDate localDate = convertStringToLocalDate(cal);
-
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("total", customMonthStat(yearMonth, null));
         carService.getCarList()

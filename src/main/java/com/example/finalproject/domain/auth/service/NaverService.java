@@ -44,7 +44,7 @@ public class NaverService {
     @Value("${security.oauth2.naver.client-secret}")
     private String naverClientSecret;
 
-    @Value("${security.oauth2.naver.resource-uri2}")
+    @Value("${security.oauth2.naver.resource-uri}")
     private String naverRedirectUri;
 
     public ApiResponse<?> naverLogin(String code, String state, HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
@@ -146,6 +146,7 @@ public class NaverService {
         String nickname = jsonNode.get("response").get("nickname").asText();// 중복 nickname을 막기위해 고유 값인 userid를 추가로 붙여서 사용
         String email = jsonNode.get("response").get("email").asText();
         String naverId = id; // naver.com
+        String profile="https://finalimgbucket.s3.amazonaws.com/057c943e-27ba-4b0c-822d-e9637c2f2aff";
 
         User naverUser = userRepository.findByNaverId(naverId);
 
@@ -165,10 +166,13 @@ public class NaverService {
                 String encodedPassword = passwordEncoder.encode(password);
 
                 String name = nickname;                // 닉네임이 중복 될 시 닉네임 옆에 숫자 붙여주기
+                if (name.equals("E001") || name.equals("sever") || name.equals("date") || name.contains("!")) {
+                    name = UUID.randomUUID().toString();
+                }
                 int num = 1;
                 while (true) {
                     if (userRepository.existsByNickname(name)) {
-                        name = nickname + String.valueOf(num);
+                        name = name + String.valueOf(num);
                         num++;
                     } else {
                         break;
@@ -176,7 +180,7 @@ public class NaverService {
                 }
 
                 NaverUserInfoDto naverUserInfoDto = new NaverUserInfoDto(id, name, email);
-                naverUser = new User(naverUserInfoDto, encodedPassword, UserRoleEnum.USER);
+                naverUser = new User(naverUserInfoDto, encodedPassword, UserRoleEnum.USER,profile);
             }
             userRepository.save(naverUser);
         }

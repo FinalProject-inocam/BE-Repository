@@ -39,6 +39,9 @@ public class Purchase extends Timestamped {
     private String content;
 
     @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column(nullable = false)
     private String addressName;
 
     @Column(nullable = false)
@@ -50,21 +53,25 @@ public class Purchase extends Timestamped {
 
     private Date deliveryDate;
 
+    private String trim;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Purchase(PurchasesRequestDto purchasesRequestDto, User user, Long price) {
+    public Purchase(PurchasesRequestDto purchasesRequestDto, User user) {
         this.type = purchasesRequestDto.getType();
         this.color = purchasesRequestDto.getColor();
         this.gender = genderEnumCheck(purchasesRequestDto.getGender());
         this.birthYear = purchasesRequestDto.getBirthYear();
         this.alarm = purchasesRequestDto.getAlarm();
+        this.phoneNumber = purchasesRequestDto.getPhoneNumber();
         this.content = purchasesRequestDto.getContent();
         this.addressName = purchasesRequestDto.getAddressName();
         this.zoneNo = purchasesRequestDto.getZoneNo();
-        this.price = price;
+        this.price = purchasesRequestDto.getPrice();
         this.user = user;
+        this.trim = purchasesRequestDto.getTrim();
     }
 
     public void update(Boolean approve, Date deliveryDate) {

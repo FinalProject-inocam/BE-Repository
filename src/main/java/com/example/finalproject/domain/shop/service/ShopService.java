@@ -8,10 +8,7 @@ import com.example.finalproject.domain.shop.entity.Review;
 import com.example.finalproject.domain.shop.entity.ReviewImage;
 import com.example.finalproject.domain.shop.entity.Shop;
 import com.example.finalproject.domain.shop.entity.ShopLike;
-import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
-import com.example.finalproject.domain.shop.repository.ReviewRepository;
-import com.example.finalproject.domain.shop.repository.ShopLikeRepository;
-import com.example.finalproject.domain.shop.repository.ShopRepository;
+import com.example.finalproject.domain.shop.repository.*;
 import com.example.finalproject.global.enums.SuccessCode;
 import com.example.finalproject.global.utils.GuestUtil;
 import lombok.RequiredArgsConstructor;
@@ -103,8 +100,8 @@ public class ShopService {
     }
 
     public List<String> getBanner(List<Review> reviews) {
-        int imageSize = 4;
-        String defaultImageUrl = "https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
+        int imageSize = 5;
+        String defaultImageUrl = "https://finalimgbucket.s3.amazonaws.com/057c943e-27ba-4b0c-822d-e9637c2f2aff";
 
         List<ShopBannerDto> bannerList = new ArrayList<>();
 
@@ -143,9 +140,16 @@ public class ShopService {
         Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.ASC, "id"));
         Page<Shop> shopPage = shopRepository.searchByCondition(myLongitude, myLatitude, 2000, pageable);
 
-        List<ShopPageDto> shopPageDtoList = shopPage.get()
-                .map(shop -> new ShopPageDto(shop, reviewRepository.findAllByShopId(shop.getShopId()),
-                        shopLikeRepository.findAllByShopId(shop.getShopId()), user)).toList();
+        List<ShopPageDto> shopPageDtoList = shopPage.stream()
+                .map(shop -> {
+                    List<Review> reviews = reviewRepository.findAllByShopId(shop.getShopId());
+                    List<ShopLike> shopLikes = shopLikeRepository.findAllByShopId(shop.getShopId());
+                    String reviewImage = getBanner(reviews).get(0);
+
+                    return new ShopPageDto(shop, reviews, shopLikes, reviewImage, user);
+                })
+                .toList();
+
         ShopsPageResponseDto shopsResponseDto = new ShopsPageResponseDto(shopPage, shopPageDtoList);
         return shopsResponseDto;
     }

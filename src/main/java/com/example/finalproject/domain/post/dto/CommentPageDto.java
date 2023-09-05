@@ -1,7 +1,6 @@
 package com.example.finalproject.domain.post.dto;
 
 import com.example.finalproject.domain.post.dto.response.CommentResponseDto;
-import com.example.finalproject.domain.post.dto.response.PostAllResponseDto;
 import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.Getter;
 
@@ -17,13 +16,25 @@ public class CommentPageDto {
     private int currentPage;
     private List<CommentResponseDto> content;
 
-    public CommentPageDto(PageResponse pageResponse){
-        this.content=pageResponse.getContent();
-        this.currentPage=pageResponse.getNumber()+1;
-        this.totalPages=pageResponse.getTotalPages();
-        this.size=pageResponse.getSize();
-        this.totalElements=pageResponse.getTotalElements();
-        this.last=pageResponse.isLast();
-        this.first=pageResponse.isFirst();
+    public CommentPageDto(PageResponse pageResponse, int page, int size) {
+        this.content = pageResponse.getContent();
+        this.currentPage = page;
+        this.totalPages = (int) Math.ceil((double) pageResponse.getTotalElements() / size);
+        this.size = pageResponse.getSize();
+        this.totalElements = pageResponse.getTotalElements();
+        if(totalPages == page)
+        {
+            this.last = true;
+        }
+        else {
+            this.last = false;
+        }
+
+        if(page == 1) {
+            this.first = true;
+        }
+        else {
+            this.first = false;
+        }
     }
 }

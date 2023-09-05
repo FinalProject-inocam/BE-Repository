@@ -12,6 +12,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -40,25 +41,26 @@ public class MailService {
     private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final String PASSCHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:'\",.<>?/";
 
-    private static final String FROM_ADDRESS = "helper@innomotors.shop";
+    @Value("${spring.mail.username}")
+    private String address;
+
 
     public SuccessCode send(String to) {
-        if (checkEmail(to)) {
-            throw new MailNotFoundException(ErrorCode.DUPLICATE_EMAIL);
-        }
+//        if (checkEmail(to)) {
+//            throw new MailNotFoundException(ErrorCode.DUPLICATE_EMAIL);
+//        }
         try {
             String code = randomcode();
 
-            redisUtil.setDataExpire(code, to, 60 * 5L);
+            redisUtil.setDataExpire(code, to, 60 * 3L);
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
-            helper.setFrom(new InternetAddress("helper@innomotors.shop", "이노모터서비스"));
+            helper.setFrom(new InternetAddress(address, "이노모터서비스"));
             //메일 제목 설정
             helper.setSubject("[이노모터스] 인증코드입니다");
 
             //수신자 설정
             helper.setTo(to);
-
             //템플릿에 전달할 데이터 설정
             Context context = new Context();
             context.setVariable("name", code);
@@ -74,6 +76,7 @@ public class MailService {
 
             return SuccessCode.MAIL_SUCCESS;
         } catch (Exception e) {
+            log.info(e.getMessage());
             e.printStackTrace();
             throw new MailNotFoundException(ErrorCode.DUPLICATE_EMAIL);
         }
@@ -130,7 +133,7 @@ public class MailService {
             throw new MailNotFoundException(ErrorCode.NOT_FOUND_EMAIL);
         }
     }
-//--------------------------------------------------------------------------------------------
+
     public String randomcode() {
         StringBuilder code = new StringBuilder(6);
         int charactersLength = CHARACTERS.length();

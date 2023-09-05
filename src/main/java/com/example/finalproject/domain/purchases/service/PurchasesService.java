@@ -1,8 +1,6 @@
 package com.example.finalproject.domain.purchases.service;
 
 import com.example.finalproject.domain.auth.entity.User;
-import com.example.finalproject.domain.car.entity.Car;
-import com.example.finalproject.domain.car.repository.CarRepository;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesPatchResponseDto;
@@ -11,12 +9,7 @@ import com.example.finalproject.domain.purchases.entity.Purchase;
 import com.example.finalproject.domain.purchases.exception.PurchasesNotFoundException;
 import com.example.finalproject.domain.purchases.repository.PurchasesRepository;
 import com.example.finalproject.global.enums.SuccessCode;
-import com.example.finalproject.global.responsedto.PageResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,30 +25,24 @@ import static com.example.finalproject.global.enums.SuccessCode.PURCHASES_DELETE
 @RequiredArgsConstructor
 public class PurchasesService {
     private final PurchasesRepository purchasesRepository;
-    private final CarRepository carRepository;
+
 
     // 차량 신청 내역 조회 (마이페이지)
-    public Page<PurchasesResponseDto> findAllPurchases(int page, int size, User user) {
-        // 사용자별 구매 목록 조회
-        purchasesRepository.findAllByUser(user);
-
-        // 페이지 나누기
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "purchaseId"));
-        Page<Purchase> purchasesPage = purchasesRepository.findAll(pageable);
-
+    public List<PurchasesResponseDto> findAllPurchases(User user) {
+        List<Purchase> purchasesList = purchasesRepository.findAllByUser(user);
         List<PurchasesResponseDto> purchasesResponseDtoList = new ArrayList<>();
 
-        for (Purchase purchase : purchasesPage) {
+        for (int i = purchasesList.size() - 1; i >= 0; i--) {
+            Purchase purchase = purchasesList.get(i);
             PurchasesResponseDto purchasesResponseDto = new PurchasesResponseDto(purchase);
             purchasesResponseDtoList.add(purchasesResponseDto);
         }
-        return new PageResponse<>(purchasesResponseDtoList, pageable, purchasesPage.getTotalElements());
+        return purchasesResponseDtoList;
     }
 
     // 차량 출고 신청
     public SuccessCode createPurchases(PurchasesRequestDto purchasesRequestDto, User user) {
-        Car car = carRepository.findByType(purchasesRequestDto.getType());
-        Purchase purchase = new Purchase(purchasesRequestDto, user, car.getPrice());
+        Purchase purchase = new Purchase(purchasesRequestDto, user);
         purchasesRepository.save(purchase);
         return PURCHASES_CREATE_SUCCESS;
     }

@@ -19,7 +19,9 @@ public class ShopPageDto {
     private Integer likeCount;
     private Double avgStar;
     private Long reviewCount;
-    public ShopPageDto(Shop shop, List<Review> reviews, List<ShopLike> shopLikes, User user) {
+    private String reviewImage;
+
+    public ShopPageDto(Shop shop, List<Review> reviews, List<ShopLike> shopLikes, String reviewImage, User user) {
         this.shopId = shop.getShopId();
         this.shopName = shop.getShopName();
         this.rdnmAdr = shop.getAddress();
@@ -39,5 +41,6 @@ public class ShopPageDto {
                 .mapToInt(Integer::intValue)
                 .average().orElse(0);
         this.reviewCount=Long.valueOf(reviews.size());
+        this.reviewImage = reviewImage;
     }
 }

@@ -20,6 +20,7 @@ public class SocketIOConfig {
 //        config.setHostname(host);
         config.setPort(port);
         config.setOrigin(origin);
+//        config.setAuthorizationListener();
         //  config.setContext("/socket.io");
         return new SocketIOServer(config);
     }

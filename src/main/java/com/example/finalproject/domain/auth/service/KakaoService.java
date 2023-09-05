@@ -46,7 +46,7 @@ public class KakaoService {
 //    @Value("${security.oauth2.client.registration.kakao.client-secret}")
 //    private String kakaoClientSecret;
 
-    @Value("${security.oauth2.client.registration.kakao.redirect-uri2}")
+    @Value("${security.oauth2.client.registration.kakao.redirect-uri}")
     private String kakaoRedirectUri;
 
     public ApiResponse<?> kakaoLogin(String code, HttpServletResponse response, HttpServletRequest request) throws JsonProcessingException {
@@ -190,6 +190,7 @@ public class KakaoService {
         // DB 에 중복된 Kakao Id 가 있는지 확인 // 이미 가입했는지 - 처음인지
         Long kakaoId = kakaoUserInfo.getId(); // @kakao.com // naver.com
         User kakaoUser = userRepository.findByKakaoId(kakaoId);
+        String profile="https://finalimgbucket.s3.amazonaws.com/057c943e-27ba-4b0c-822d-e9637c2f2aff";
 
         if (kakaoUser == null) {
             // 카카오 사용자 email 동일한 email 가진 회원이 있는지 확인 // 이미 가입 email == kakao login email // @kakao, naver
@@ -207,16 +208,19 @@ public class KakaoService {
                 String encodedPassword = passwordEncoder.encode(password);
                 String name = kakaoUserInfo.getNickname();
                 int num = 1;
+                if (name.equals("E001") || name.equals("sever") || name.equals("date") || name.contains("!")) {
+                    name = UUID.randomUUID().toString();
+                }
                 while (true) {
                     if (userRepository.existsByNickname(name)) {
-                        name = kakaoUserInfo.getNickname() + String.valueOf(num);
+                        name = name + String.valueOf(num);
                         num++;
                     } else {
                         break;
                     }
                 }
                 kakaoUserInfo.updateNickname(name);
-                kakaoUser = new User(kakaoUserInfo, encodedPassword, UserRoleEnum.USER);
+                kakaoUser = new User(kakaoUserInfo, encodedPassword, UserRoleEnum.USER,profile);
             }
 
             userRepository.save(kakaoUser);

@@ -74,30 +74,33 @@ public class User extends Timestamped {
     }
 
     // 카카오
-    public User(KakaoUserInfoDto kakaoUserInfo, String password, UserRoleEnum role) {
+    public User(KakaoUserInfoDto kakaoUserInfo, String password, UserRoleEnum role,String profileImg) {
         this.kakaoId = kakaoUserInfo.getId();
         this.email = kakaoUserInfo.getEmail();
         this.password = password;
         this.nickname = kakaoUserInfo.getNickname();
         this.role = role;
+        this.profileImg=profileImg;
     }
 
     // 구글
-    public User(String googleId, String email, String nickname, String password, UserRoleEnum role) {
+    public User(String googleId, String email, String nickname, String password, UserRoleEnum role,String profileImg) {
         this.googleId = googleId;
         this.email = email;
         this.password = password;
         this.nickname = nickname;
         this.role = role;
+        this.profileImg=profileImg;
     }
 
     // 네이버
-    public User(NaverUserInfoDto naverUserInfoDto, String password, UserRoleEnum role) {
+    public User(NaverUserInfoDto naverUserInfoDto, String password, UserRoleEnum role,String profileImg) {
         this.naverId = naverUserInfoDto.getId();
         this.email = naverUserInfoDto.getEmail();
         this.password = password;
         this.nickname = naverUserInfoDto.getNickname();
         this.role = role;
+        this.profileImg=profileImg;
     }
 
 

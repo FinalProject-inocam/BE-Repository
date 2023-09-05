@@ -50,14 +50,14 @@ public class UserService {
             role = UserRoleEnum.ADMIN;
         }
         UserGenderEnum genderEnum = null;
-        if (requestDto.getGender().equals("male")){
+        if (requestDto.getGender().equals("MALE")){
             genderEnum = UserGenderEnum.MALE;
         }
-        if (requestDto.getGender().equals("female")) {
+        if (requestDto.getGender().equals("FEMALE")) {
             genderEnum = UserGenderEnum.FEMALE;
         }
 
-        String IMAGE_URL = "https://finalimgbucket.s3.ap-northeast-2.amazonaws.com/63db46a0-b705-4af5-9e39-6cb56bbfe842";
+        String IMAGE_URL = "https://finalimgbucket.s3.amazonaws.com/057c943e-27ba-4b0c-822d-e9637c2f2aff";
         User user = new User(requestDto, password, role, genderEnum, IMAGE_URL);
         userRepository.save(user);
         return SuccessCode.USER_SIGNUP_SUCCESS;
@@ -88,6 +88,9 @@ public class UserService {
     }
 
     private Boolean validateNickname(String nickname) {
+        if (nickname.equals("E001") || nickname.equals("sever") || nickname.equals("date") || nickname.contains("!")) {
+            return false;
+        }
         return userRepository.existsByNickname(nickname);
     }
 }

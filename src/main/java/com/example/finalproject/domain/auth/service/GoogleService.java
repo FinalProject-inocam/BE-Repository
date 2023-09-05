@@ -38,7 +38,7 @@ public class GoogleService {
     private String clientId;
     @Value("${security.oauth2.google.client-secret}")
     private String clientSecret;
-    @Value("${security.oauth2.google.redirect-uri2}")
+    @Value("${security.oauth2.google.redirect-uri}")
     private String redirectUri;
     @Value("${security.oauth2.google.token-uri}")
     String tokenUri;
@@ -85,6 +85,7 @@ public class GoogleService {
         String email = userResourceNode.get("email").asText();
         String nickname = userResourceNode.get("name").asText();
         String googleId = userResourceNode.get("id").asText();
+        String profile="https://finalimgbucket.s3.amazonaws.com/057c943e-27ba-4b0c-822d-e9637c2f2aff";
 //                Long.parseLong(userResourceNode.get("googleId").asText());
         User googleUser = userRepository.findByGoogleId(googleId);
 
@@ -103,16 +104,19 @@ public class GoogleService {
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
                 String name = nickname;
+                if (name.equals("E001") || name.equals("sever") || name.equals("date") || name.contains("!")) {
+                    name = UUID.randomUUID().toString();
+                }
                 int num = 1;
                 while (true) {
                     if (userRepository.existsByNickname(name)) {
-                        name = nickname + String.valueOf(num);
+                        name = name + String.valueOf(num);
                         num++;
                     } else {
                         break;
                     }
                 }
-                googleUser = new User(googleId, email, name, encodedPassword, UserRoleEnum.USER);
+                googleUser = new User(googleId, email, name, encodedPassword, UserRoleEnum.USER,profile);
             }
 
             userRepository.save(googleUser);

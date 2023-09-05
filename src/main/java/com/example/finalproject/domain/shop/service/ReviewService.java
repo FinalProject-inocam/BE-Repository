@@ -17,6 +17,7 @@ import com.example.finalproject.domain.shop.repository.ReviewLikeRepository;
 import com.example.finalproject.domain.shop.repository.ReviewRepository;
 import com.example.finalproject.global.enums.ErrorCode;
 import com.example.finalproject.global.enums.SuccessCode;
+import com.example.finalproject.global.enums.UserRoleEnum;
 import com.example.finalproject.global.responsedto.PageResponse;
 import com.example.finalproject.global.utils.S3Utils;
 import lombok.RequiredArgsConstructor;
@@ -120,9 +121,10 @@ public class ReviewService {
     }
 
     public ReviewpageResponseDto reviewList(int size, int page, UserDetailsImpl userDetails, String shopId) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+        // 요청된 페이지까지의 모든 데이터를 가져오도록 수정
+//        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "id"));
+        Pageable pageable = PageRequest.of(0, size * page, Sort.by(Sort.Direction.DESC, "id"));
         Page<Review> reviewPage = reviewRepository.findByShopIdUsingQuery(shopId, pageable);
-
         List<Review> banner = reviewRepository.findAllByShopId(shopId);
         List<String> bannerList = shopService.getBanner(banner);
         Double avgStar = banner.stream()
@@ -141,16 +143,15 @@ public class ReviewService {
         }
 
         PageResponse pageResponse = new PageResponse<>(reviewList, pageable, total);
-        return new ReviewpageResponseDto(pageResponse, bannerList, avgStar, banner.size());
+        return new ReviewpageResponseDto(pageResponse, bannerList, avgStar, banner.size(),page,size);
     }
 
     /*------------------------------------------------------------------------------------------------------*/
 
     private void checkAuthority(Review review, User user) {
         // admin 확인
-        if (!user.getRole().getAuthority().equals("ROLE_ADMIN")) {
-            // userId 확인
-            if (review.getUser().getUserId() != user.getUserId()) {
+        if (!user.getRole().equals(UserRoleEnum.ADMIN)) {
+            if(!review.getUser().getUserId().equals( user.getUserId())) {
                 throw new ReviewAuthorityException(ErrorCode.NO_AUTHORITY_TO_DATA);
             }
         }

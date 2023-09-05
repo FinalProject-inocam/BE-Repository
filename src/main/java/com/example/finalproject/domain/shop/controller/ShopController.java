@@ -22,15 +22,6 @@ public class ShopController {
     private final ShopService shopService;
     private final ShopdbService shopdbService;
 
-//    @GetMapping
-//    public ApiResponse<?> getShops(String longitude, String latitude,
-//                                   Integer page, Integer size,
-//                                   @AuthenticationPrincipal UserDetailsImpl userDetails) {
-//        ShopsResponseDto shopsResponseDtos = shopService.getShopList(longitude, latitude, userDetails, page, size);
-//        return ResponseUtils.pageOk(shopsResponseDtos.getSize(), shopsResponseDtos.getPage(),
-//                shopsResponseDtos.getTotalCount(), shopsResponseDtos.getTotalPages(), shopsResponseDtos.getShopList());
-//    }
-
     @GetMapping("/db")
     public ApiResponse<?> shopdb() {
         return ResponseUtils.ok(shopdbService.getSelectedShop());

@@ -16,5 +16,7 @@ public class ValidationGroups {
     public interface PastGroup {}
 
     public interface BirthYearLimitGroup {}
+
+    public interface ProhibitValidationGroup {}
 }
 

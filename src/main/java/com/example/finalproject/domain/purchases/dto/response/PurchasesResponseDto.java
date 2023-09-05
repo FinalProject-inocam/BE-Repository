@@ -16,21 +16,25 @@ public class PurchasesResponseDto {
     private String color;
     private Boolean alarm;
     private String content;
+    private String phoneNumber;
     private String addressName;
     private String zoneNo;
     private Boolean approve;
     private String denyMessage;
     private Date deliveryDate;
+    private String trim;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
     public PurchasesResponseDto(Purchase purchase) {
+        this.trim = purchase.getTrim();
         this.purchaseId = purchase.getPurchaseId();
         this.type = purchase.getType();
         this.price = purchase.getPrice();
         this.color = purchase.getColor();
         this.alarm = purchase.getAlarm();
         this.content = purchase.getContent();
+        this.phoneNumber = purchase.getPhoneNumber();
         this.addressName = purchase.getAddressName();
         this.zoneNo = purchase.getZoneNo();
         this.approve = purchase.getApprove();

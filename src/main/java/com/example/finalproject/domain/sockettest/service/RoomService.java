@@ -1,7 +1,8 @@
 package com.example.finalproject.domain.sockettest.service;
 
 import com.example.finalproject.domain.sockettest.dto.RoomResponseDto;
-import com.example.finalproject.domain.sockettest.model.Room;
+import com.example.finalproject.domain.sockettest.entity.Message;
+import com.example.finalproject.domain.sockettest.entity.Room;
 import com.example.finalproject.domain.sockettest.repository.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import java.util.List;
 public class RoomService {
 
     private final RoomRepository roomRepository;
+    private final MessageService messageService;
 
     public void createRoom(String roomName) {
         Room room = new Room(roomName);
@@ -23,14 +25,10 @@ public class RoomService {
         roomRepository.save(room);
     }
 
-    public List<RoomResponseDto> getRoomListContainUsername(String username) {
-        // 생각해본결과 username에 현재 특수 문자 !를 사용가능하여 문제가 있을것 같음 해결책 1 특수문자 사용 금지하기, 2 username이 아닌 id로 방이름 만들기
-        String usernameStart = username + "!";
-        String usernameEnd = "!" + username;
-        List<Room> roomList = roomRepository.findAllByPeer1OrPeer2(username, username);
-//        List<Room> roomList = roomRepository.findAllByRoomNameStartsWithOrRoomNameEndsWith(usernameStart, usernameEnd);
+    public List<RoomResponseDto> getRoomListContainUsername(String username, Integer status) {
+        List<Room> roomList = roomRepository.findAllByRoomNameContainingAndStatus(username, status);
         List<RoomResponseDto> responseDtos = roomList.stream()
-                .map((room) -> new RoomResponseDto(room, username))
+                .map((room) -> new RoomResponseDto(room, username, lastMessage(room)))
                 .toList();
         return responseDtos;
     }
@@ -44,24 +42,44 @@ public class RoomService {
         }
     }
 
-    @Transactional
-    public void leaveRoom(String roomName, String username) {
-        Room room = validateRoom(roomName);
-        room.leavePeer(username);
-    }
-
-    @Transactional
-    public void rejoinRoom(String roomName) {
-        Room room = validateRoom(roomName);
-        room.rejoinPeer(roomName);
-    }
+//    @Transactional
+//    public void leaveRoom(String roomName, String username) {
+//        Room room = validateRoom(roomName);
+//        room.leavePeer(username);
+//    }
+//
+//    @Transactional
+//    public void rejoinRoom(String roomName) {
+//        Room room = validateRoom(roomName);
+//
+//        room.rejoinPeer(roomName);
+//    }
 
     private Room validateRoom(String roomName) {
         Room room = roomRepository.findByRoomName(roomName).orElseThrow(() ->
-                new NullPointerException("존재하지 않는 후기입니다.")
+                new NullPointerException("존재하지 않는 방입니다.")
         );
         return room;
     }
 
+    @Transactional
+    public void joinAdmin(String roomName) {
+        Room room = validateRoom(roomName);
+        room.joinAdmin();
+    }
+
+    @Transactional
+    public void leaveAdmin(String roomName) {
+        Room room = validateRoom(roomName);
+        room.leaveAdmin();
+    }
+
+    private String lastMessage(Room room) {
+        Message message = messageService.getLastMessage(room.getRoomName());
+        if (message == null) {
+            return "";
+        }
+        return message.getContent();
+    }
 
 }
