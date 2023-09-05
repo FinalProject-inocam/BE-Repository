@@ -166,10 +166,13 @@ public class NaverService {
                 String encodedPassword = passwordEncoder.encode(password);
 
                 String name = nickname;                // 닉네임이 중복 될 시 닉네임 옆에 숫자 붙여주기
+                if (name.equals("E001") || name.equals("sever") || name.equals("date") || name.contains("!")) {
+                    name = UUID.randomUUID().toString();
+                }
                 int num = 1;
                 while (true) {
                     if (userRepository.existsByNickname(name)) {
-                        name = nickname + String.valueOf(num);
+                        name = name + String.valueOf(num);
                         num++;
                     } else {
                         break;

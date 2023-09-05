@@ -104,10 +104,13 @@ public class GoogleService {
                 String password = UUID.randomUUID().toString(); // 랜덤, 사용자가 알 수 없게
                 String encodedPassword = passwordEncoder.encode(password);
                 String name = nickname;
+                if (name.equals("E001") || name.equals("sever") || name.equals("date") || name.contains("!")) {
+                    name = UUID.randomUUID().toString();
+                }
                 int num = 1;
                 while (true) {
                     if (userRepository.existsByNickname(name)) {
-                        name = nickname + String.valueOf(num);
+                        name = name + String.valueOf(num);
                         num++;
                     } else {
                         break;

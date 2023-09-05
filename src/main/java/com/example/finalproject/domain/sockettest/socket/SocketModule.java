@@ -119,7 +119,7 @@ public class SocketModule {
             log.info("방 나가기 시도 : " + data.getUsername() + " from " + data.getRoom());
             String room = data.getRoom();
             String username = data.getUsername();
-            socketService.leaveRoom(room, username);
+//            socketService.leaveRoom(room, username);
             Message message = socketService.saveLeaveMessage(room, username);
             socketService.sendLeaveMessage(senderClient, message);
             socketService.leaveAdmin(room, username);

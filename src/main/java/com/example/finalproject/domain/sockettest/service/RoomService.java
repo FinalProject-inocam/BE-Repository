@@ -42,18 +42,18 @@ public class RoomService {
         }
     }
 
-    @Transactional
-    public void leaveRoom(String roomName, String username) {
-        Room room = validateRoom(roomName);
-        room.leavePeer(username);
-    }
-
-    @Transactional
-    public void rejoinRoom(String roomName) {
-        Room room = validateRoom(roomName);
-
-        room.rejoinPeer(roomName);
-    }
+//    @Transactional
+//    public void leaveRoom(String roomName, String username) {
+//        Room room = validateRoom(roomName);
+//        room.leavePeer(username);
+//    }
+//
+//    @Transactional
+//    public void rejoinRoom(String roomName) {
+//        Room room = validateRoom(roomName);
+//
+//        room.rejoinPeer(roomName);
+//    }
 
     private Room validateRoom(String roomName) {
         Room room = roomRepository.findByRoomName(roomName).orElseThrow(() ->

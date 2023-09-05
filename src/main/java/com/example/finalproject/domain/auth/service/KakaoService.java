@@ -208,9 +208,12 @@ public class KakaoService {
                 String encodedPassword = passwordEncoder.encode(password);
                 String name = kakaoUserInfo.getNickname();
                 int num = 1;
+                if (name.equals("E001") || name.equals("sever") || name.equals("date") || name.contains("!")) {
+                    name = UUID.randomUUID().toString();
+                }
                 while (true) {
                     if (userRepository.existsByNickname(name)) {
-                        name = kakaoUserInfo.getNickname() + String.valueOf(num);
+                        name = name + String.valueOf(num);
                         num++;
                     } else {
                         break;

@@ -33,7 +33,7 @@ public class PurchaseResponseDtoSocket {
         this.phoneNumber = purchase.getPhoneNumber();
         this.addressName = purchase.getAddressName();
         this.zoneNo = purchase.getZoneNo();
-        String deliveryDateStr = "미정";
+        String deliveryDateStr = "";
         if (purchase.getApprove() != null) {
             if (purchase.getApprove()) {
                 deliveryDateStr = String.valueOf(purchase.getDeliveryDate());

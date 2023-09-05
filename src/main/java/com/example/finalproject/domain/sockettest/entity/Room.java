@@ -14,10 +14,10 @@ public class Room {
     private Long id;
     @Column(nullable = false)
     private String roomName;
-    @Column
-    private String peer1;
-    @Column
-    private String peer2;
+//    @Column
+//    private String peer1;
+//    @Column
+//    private String peer2;
     @Column(nullable = false)
     private Integer status = 0;
     // 0 대기중, 1 진행중, 2 완료
@@ -25,8 +25,8 @@ public class Room {
     public Room(String roomName) {
         this.roomName = roomName;
         String[] peerList = roomName.split("!");
-        this.peer1 = peerList[0];
-        this.peer2 = peerList[1];
+//        this.peer1 = peerList[0];
+//        this.peer2 = peerList[1];
     }
 
     public void joinAdmin() {
@@ -37,14 +37,14 @@ public class Room {
         this.status = 2;
     }
 
-    public void leavePeer(String username) {
-        this.peer1 = username.equals(peer1) ? null : peer1;
-        this.peer2 = username.equals(peer2) ? null : peer2;
-    }
+//    public void leavePeer(String username) {
+//        this.peer1 = username.equals(peer1) ? null : peer1;
+//        this.peer2 = username.equals(peer2) ? null : peer2;
+//    }
 
-    public void rejoinPeer(String roomName) {
-        String[] peerList = roomName.split("!");
-        this.peer1 = peerList[0];
-        this.peer2 = peerList[1];
-    }
+//    public void rejoinPeer(String roomName) {
+//        String[] peerList = roomName.split("!");
+//        this.peer1 = peerList[0];
+//        this.peer2 = peerList[1];
+//    }
 }

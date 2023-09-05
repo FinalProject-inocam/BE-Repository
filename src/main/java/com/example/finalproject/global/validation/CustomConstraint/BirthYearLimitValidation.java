@@ -1,4 +1,4 @@
-package com.example.finalproject.global.CustomConstraint;
+package com.example.finalproject.global.validation.CustomConstraint;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
@@ -15,10 +15,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Constraint(validatedBy = BirthYearLimitValidator.class)
 @Documented
-@Repeatable(BirthYearLimit.List.class)
-public @interface BirthYearLimit {
+@Repeatable(BirthYearLimitValidation.List.class)
+public @interface BirthYearLimitValidation {
 
-    String message() default "test case validation 통과 실패";
+    String message() default "18세 미만은 차량신청이 불가능합니다.";
 
     Class<?>[] groups() default {};
 
@@ -28,6 +28,6 @@ public @interface BirthYearLimit {
     @Retention(RUNTIME)
     @Documented
     @interface List {
-        BirthYearLimit[] value();
+        BirthYearLimitValidation[] value();
     }
 }

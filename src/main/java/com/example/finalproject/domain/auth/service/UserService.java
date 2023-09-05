@@ -88,6 +88,9 @@ public class UserService {
     }
 
     private Boolean validateNickname(String nickname) {
+        if (nickname.equals("E001") || nickname.equals("sever") || nickname.equals("date") || nickname.contains("!")) {
+            return false;
+        }
         return userRepository.existsByNickname(nickname);
     }
 }
