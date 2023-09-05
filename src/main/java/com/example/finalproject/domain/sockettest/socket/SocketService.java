@@ -88,10 +88,11 @@ public class SocketService {
 
     public void roomInfo(SocketIOClient senderClient, String room, String username) {
         log.info("room관련 정보 발송");
-        if (!username.equals("admin")) {
+        if (!username.equals("E001")) {
             return;
         }
-        String targetusername = room.replace("admin", "").replace("!", "");
+        String[] nameArray = room.split("!");
+        String targetusername = nameArray[1].equals(username) ? nameArray[0] : nameArray[1];
         User user = userRepository.findByNickname(targetusername);
         UserInfoDto userInfoDto = new UserInfoDto(user);
         List<PurchaseResponseDtoSocket> purchasesResponseDtoList = purchasesRepository.findAllByUser(user)
@@ -137,17 +138,18 @@ public class SocketService {
             memoService.saveMemo(memo);
             return;
         }
-        log.info("peer 다시 등록");
-        roomService.rejoinRoom(room);
+//        log.info("peer 다시 등록");
+//        roomService.rejoinRoom(room);
     }
 
-    public void leaveRoom(String room, String username) {
-        // 전체적으로 room유효검사 부분을 추가해야할듯 하다.
-        log.info("방 나가기 처리중");
-        roomService.leaveRoom(room, username);
-    }
+//    public void leaveRoom(String room, String username) {
+//        // 전체적으로 room유효검사 부분을 추가해야할듯 하다.
+//        log.info("방 나가기 처리중");
+//        roomService.leaveRoom(room, username);
+//    }
 
     public Message saveLeaveMessage(String room, String username) {
+        username = username.equals("E001") ? "관리자" : username;
         Message storedMessage = messageService.saveMessage(Message.builder()
                 .content(String.format(Constants.PEEROUT_MESSAGE, username))
                 .room(room)
@@ -212,7 +214,7 @@ public class SocketService {
 
     @Transactional
     public void saveMemo(Message message) {
-        if (!message.getUsername().equals("admin")) {
+        if (!message.getUsername().equals("E001")) {
             return;
         }
         String room = message.getRoom();
@@ -224,14 +226,14 @@ public class SocketService {
     }
 
     public void joinAdmin(String room, String username) {
-        if (!username.equals("admin")) {
+        if (!username.equals("E001")) {
             return;
         }
         roomService.joinAdmin(room);
     }
 
     public void leaveAdmin(String room, String username) {
-        if (!username.equals("admin")) {
+        if (!username.equals("E001")) {
             return;
         }
         roomService.leaveAdmin(room);

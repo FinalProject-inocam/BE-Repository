@@ -33,11 +33,11 @@ public class RedisService {
         String accessToken = jwtUtil.createAccessToken(email, nickname, role);
         response.addHeader(JwtUtil.ACCESS_TOKEN, accessToken);
 
-        // 중복 로그인 가능한 계정 수를 제한시키기
-        if (limitAccess(nickname)) {
-            log.info("접속수 제한 초과");
-            deleteOldRefreshToken(nickname);
-        }
+//        // 중복 로그인 가능한 계정 수를 제한시키기 테스트 중에는 무제한으로 해제
+//        if (limitAccess(nickname)) {
+//            log.info("접속수 제한 초과");
+//            deleteOldRefreshToken(nickname);
+//        }
         String newRefreshToken = jwtUtil.createRefreshToken(email, nickname, role);
         response.addHeader(JwtUtil.REFRESH_TOKEN, newRefreshToken);
         // redis에 저장
