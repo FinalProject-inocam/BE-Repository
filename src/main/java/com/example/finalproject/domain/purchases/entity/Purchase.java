@@ -114,4 +114,14 @@ public class Purchase extends Timestamped {
         }
         throw new IllegalArgumentException("성별값이 옳지 않습니다.");
     }
+
+    private UsageEnum usageEnumCheck(String usageStr) {
+        if (usageStr.equals("PERSONAL")) {
+            return UsageEnum.PERSONAL;
+        }
+        if (usageStr.equals("COMPANY")) {
+            return UsageEnum.COMPANY;
+        }
+        throw new IllegalArgumentException("값이 옳지 않습니다.");
+    }
 }
