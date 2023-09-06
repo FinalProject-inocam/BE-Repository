@@ -2,6 +2,8 @@ package com.example.finalproject.domain.purchases.entity;
 
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
+import com.example.finalproject.domain.purchases.dto.request.PurchasesUpdateRequestDto;
+import com.example.finalproject.global.enums.UsageEnum;
 import com.example.finalproject.global.enums.UserGenderEnum;
 import com.example.finalproject.global.utils.Timestamped;
 import jakarta.persistence.*;
@@ -55,6 +57,13 @@ public class Purchase extends Timestamped {
 
     private String trim;
 
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UsageEnum usageEnum;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
@@ -71,7 +80,9 @@ public class Purchase extends Timestamped {
         this.zoneNo = purchasesRequestDto.getZoneNo();
         this.price = purchasesRequestDto.getPrice();
         this.user = user;
+        this.usageEnum = usageEnumCheck(purchasesRequestDto.getUsage());
         this.trim = purchasesRequestDto.getTrim();
+        this.name = purchasesRequestDto.getName();
     }
 
     public void update(Boolean approve, Date deliveryDate) {
@@ -84,27 +95,23 @@ public class Purchase extends Timestamped {
         this.denyMessage = denyMessage;
     }
 
-    public void update(PurchasesRequestDto purchasesRequestDto) {
-        this.type = purchasesRequestDto.getType();
+    public void update(PurchasesUpdateRequestDto purchasesRequestDto) {
         this.color = purchasesRequestDto.getColor();
-        this.gender = genderEnumCheck(purchasesRequestDto.getGender());
-        this.birthYear = purchasesRequestDto.getBirthYear();
-        this.alarm = purchasesRequestDto.getAlarm();
         this.content = purchasesRequestDto.getContent();
+        this.name = purchasesRequestDto.getName();
+        this.phoneNumber = purchasesRequestDto.getPhoneNumber();
         this.addressName = purchasesRequestDto.getAddressName();
         this.zoneNo = purchasesRequestDto.getZoneNo();
+        this.alarm = purchasesRequestDto.getAlarm();
     }
 
     private UserGenderEnum genderEnumCheck(String genderStr) {
-        if (genderStr.equals("male")) {
+        if (genderStr.equals("MALE")) {
             return UserGenderEnum.MALE;
         }
-        if (genderStr.equals("female")) {
+        if (genderStr.equals("FEMALE")) {
             return UserGenderEnum.FEMALE;
         }
-        if (genderStr.equals("company")) {
-            return UserGenderEnum.COMPANY;
-        }
-        return null;
+        throw new IllegalArgumentException("성별값이 옳지 않습니다.");
     }
 }

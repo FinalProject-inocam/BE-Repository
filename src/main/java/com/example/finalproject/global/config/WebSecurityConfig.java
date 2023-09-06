@@ -74,11 +74,12 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                        .requestMatchers("/**").permitAll() // 임시 전부 허용
+//                        .requestMatchers("/**").permitAll() // 임시 전부 허용
                         .requestMatchers("/api/auth/**").permitAll() // '/api/auth/'로 시작하는 요청 모두 접근 허가
                         .requestMatchers(HttpMethod.GET, "/api/communities/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/shops/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/admin/**").permitAll()
+//                        .requestMatchers("/api/admin/**").permitAll()
+//                        .requestMatchers("/api/mypage/**").permitAll()
                         .requestMatchers("api/admin/**").hasAuthority(UserRoleEnum.ADMIN.getAuthority())
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );

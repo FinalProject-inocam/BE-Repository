@@ -3,6 +3,7 @@ package com.example.finalproject.domain.purchases.controller;
 
 import com.example.finalproject.domain.auth.security.UserDetailsImpl;
 import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
+import com.example.finalproject.domain.purchases.dto.request.PurchasesUpdateRequestDto;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesPatchResponseDto;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.service.PurchasesService;
@@ -42,7 +43,7 @@ public class PurchasesController {
     // 차량 신청 내역 수정
     @PatchMapping("/{purchaseId}")
     public ApiResponse<?> updatePurchases(@PathVariable Long purchaseId,
-                                          @RequestBody @Validated(ValidationSequence.class) PurchasesRequestDto purchasesRequestDto,
+                                          @RequestBody @Validated(ValidationSequence.class) PurchasesUpdateRequestDto purchasesRequestDto,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         PurchasesPatchResponseDto purchasesPatchResponseDto = purchasesService.updatePurchases(purchaseId, purchasesRequestDto, userDetails.getUser());
         return ResponseUtils.ok(purchasesPatchResponseDto);

@@ -1,6 +1,7 @@
 package com.example.finalproject.domain.purchases.dto.response;
 
 import com.example.finalproject.domain.purchases.entity.Purchase;
+import com.example.finalproject.global.enums.UsageEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,11 +23,15 @@ public class PurchasesResponseDto {
     private Boolean approve;
     private String denyMessage;
     private Date deliveryDate;
+    private String name;
+    private UsageEnum usage;
     private String trim;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 
     public PurchasesResponseDto(Purchase purchase) {
+        this.name = purchase.getName();
+        this.usage = purchase.getUsageEnum();
         this.trim = purchase.getTrim();
         this.purchaseId = purchase.getPurchaseId();
         this.type = purchase.getType();

@@ -46,7 +46,7 @@ public class AdminService {
         // gender, age, color
         resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForYears(startYear, endYear, type));
         resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForYears(startYear, endYear, type));
-        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYears(startYear, endYear, type));
+//        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYears(startYear, endYear, type));
 
         return resultMap;
     }
@@ -73,7 +73,7 @@ public class AdminService {
         // gender, age, color
         resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForYear(year, type));
         resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForYear(year, type));
-        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYear(year, type));
+//        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForYear(year, type));
         // pre
         resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreYear(year, null, type));
         resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreYear(year, true, type));
@@ -103,7 +103,7 @@ public class AdminService {
         // gender, age, color
         resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForMonth(yearMonth, type));
         resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForMonth(yearMonth, type));
-        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForMonth(yearMonth, type));
+//        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForMonth(yearMonth, type));
         // pre
         resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreMonth(yearMonth, null, type));
         resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreMonth(yearMonth, true, type));
@@ -135,7 +135,7 @@ public class AdminService {
         // gender, age, color
         resultMap.put("gender", qPurchasesRepository.countPurchaseByGenderForWeek(localDate, type));
         resultMap.put("age", qPurchasesRepository.countPurchaseByAgeForWeek(localDate, type));
-        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForWeek(localDate, type));
+//        resultMap.put("color", qPurchasesRepository.countPurchaseByColorForWeek(localDate, type));
         // pre
         resultMap.put("prePurchase", qPurchasesRepository.countPurchaseForPreWeek(localDate, null, type));
         resultMap.put("preApprove", qPurchasesRepository.countPurchaseForPreWeek(localDate, true, type));
