@@ -47,4 +47,11 @@ public interface PurchasesRepository extends JpaRepository<Purchase, Long> {
             "GROUP BY MONTH(p.createdAt) " +
             "ORDER BY MONTH(p.createdAt)")
     List<Map<String, Object>> countPurchaseByYearAndTypeAndApprove(int year, String type, Boolean approve);
+    /* -------------------------------------------------------------------------------------------------------------- */
+
+    List<Purchase> findTop2ByUserOrderByCreatedAtDesc(User user);
+
+    List<Purchase> findAllByUserOrderByCreatedAtDesc(User user);
+
+    List<Purchase> findTop2ByUserOrderByCreatedAt(User user);
 }
