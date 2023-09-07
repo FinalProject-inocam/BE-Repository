@@ -27,10 +27,20 @@ public class PurchasesService {
     private final PurchasesRepository purchasesRepository;
 
 
+    // '테스트 계정'만 차량 출고 신청 조회 최근 2건 조회하는 방법
+    // 1. 디비에 유저아이디가 '2번'을 찾는다.  why? 2번은 테스트 계정이다.
+    // 2. 조건을 돌린다. 만약에 2번이면 최근 2건을 찾고, 아니면 전체를 보여줘라.
+
     // 차량 신청 내역 조회 (마이페이지)
     public List<PurchasesResponseDto> findAllPurchases(User user) {
-        List<Purchase> purchasesList = purchasesRepository.findAllByUser(user);
+        List<Purchase> purchasesList;
         List<PurchasesResponseDto> purchasesResponseDtoList = new ArrayList<>();
+
+        if ("test@final.com".equals(user.getEmail())) {
+            purchasesList = purchasesRepository.findTop2ByUserOrderByCreatedAtDesc(user);
+        } else {
+            purchasesList = purchasesRepository.findAllByUserOrderByCreatedAtDesc(user);
+        }
 
         for (int i = purchasesList.size() - 1; i >= 0; i--) {
             Purchase purchase = purchasesList.get(i);
