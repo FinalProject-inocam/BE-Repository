@@ -36,14 +36,12 @@ public class PurchasesService {
         List<Purchase> purchasesList;
         List<PurchasesResponseDto> purchasesResponseDtoList = new ArrayList<>();
 
-        if ("test@final.com".equals(user.getEmail())) {
+        if ("minji11@test.com".equals(user.getEmail())) {
             purchasesList = purchasesRepository.findTop2ByUserOrderByCreatedAtDesc(user);
         } else {
             purchasesList = purchasesRepository.findAllByUserOrderByCreatedAtDesc(user);
         }
-
-        for (int i = purchasesList.size() - 1; i >= 0; i--) {
-            Purchase purchase = purchasesList.get(i);
+        for (Purchase purchase : purchasesList) {
             PurchasesResponseDto purchasesResponseDto = new PurchasesResponseDto(purchase);
             purchasesResponseDtoList.add(purchasesResponseDto);
         }
