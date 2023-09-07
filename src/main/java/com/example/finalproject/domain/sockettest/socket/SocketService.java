@@ -80,14 +80,13 @@ public class SocketService {
     }
 
     public void requestPreviousChat(SocketIOClient senderClient, String room) {
-        log.info("previoustMsg 발송");
         // 방 기록 저장소에서 이전 채팅 기록 가져오기
         List<Message> previousMessage = messageService.getMessages(room);
         senderClient.sendEvent("previousMsg", previousMessage);
+        log.info("previoustMsg 발송");
     }
 
     public void roomInfo(SocketIOClient senderClient, String room, String username) {
-        log.info("room관련 정보 발송");
         if (!username.equals("E001")) {
             return;
         }
@@ -99,20 +98,19 @@ public class SocketService {
                 .stream()
                 .map(PurchaseResponseDtoSocket::new)
                 .toList();
-        String memoStr = "";
-        Memo memo = memoService.getMemo(room).orElse(null);
-        if (memo != null) {
-            memoStr = memo.getMemo();
-        }
+
+        Memo memo = memoService.getMemo(room).orElseThrow(()
+                -> new NullPointerException("memo가 없습니다."));
+        String memoStr = memo.getMemo();
 
         RoomInfoResponseDto roomInfoResponseDto = new RoomInfoResponseDto(userInfoDto, purchasesResponseDtoList, memoStr);
 
         senderClient.sendEvent("roomInfo", roomInfoResponseDto);
+        log.info("room관련 정보 발송" + roomInfoResponseDto.getUserInfo().getNickname());
     }
 
     public void getRoomList(SocketIOClient senderClient, String username) {
         //진행중은 아래의 피어 확인으로 찾고, 대기는 memo가 생기는 걸로 찾을까, 그럼 대기 말고 완료는 관리자가 나간걸로 찾을까(한달)
-        log.info("roomList 준비");
         // 대기중
         List<RoomResponseDto> waitingList = roomService.getRoomListContainUsername(username, 0);
         // 진행중
@@ -125,6 +123,7 @@ public class SocketService {
         RoomListResponseDto roomListResponseDto = new RoomListResponseDto(waitingList, progressList, doneList, totalCount);
 
         senderClient.sendEvent("connected", roomListResponseDto);
+        log.info("roomList 발송");
     }
 
     public void checkRoom(String room) {
@@ -136,7 +135,6 @@ public class SocketService {
             String memoText = "";
             Memo memo = new Memo(room, memoText);
             memoService.saveMemo(memo);
-            return;
         }
 //        log.info("peer 다시 등록");
 //        roomService.rejoinRoom(room);

@@ -98,19 +98,16 @@ public class SocketModule {
             socketService.joinAdmin(room, username);
             socketService.requestPreviousChat(senderClient, room);
             socketService.roomInfo(senderClient, room, username);
-            log.info("previousChat 발송완료");
         };
     }
 
     private DataListener<Message> connectSocket() {
         return (senderClient, data, ackSender) -> {
-            log.info(senderClient.getHandshakeData().getHttpHeaders().get("Authorization"));
-            log.info(senderClient.getHandshakeData().getAddress().toString());
-            log.info(senderClient.getHandshakeData().getLocal().toString());
+//            log.info(senderClient.getHandshakeData().getHttpHeaders().get("Authorization"));
+//            log.info(senderClient.getHandshakeData().getAddress().toString());
             String username = data.getUsername();
-            senderClient.joinRoom(username);
+//            senderClient.joinRoom(username);
             socketService.getRoomList(senderClient, username);
-            log.info("roomList 발송완료");
         };
     }
 
