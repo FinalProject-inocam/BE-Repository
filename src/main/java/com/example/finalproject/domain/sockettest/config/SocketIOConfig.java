@@ -21,7 +21,7 @@ public class SocketIOConfig {
         config.setPort(port);
         config.setOrigin(origin);
 //        config.setAuthorizationListener();
-        //  config.setContext("/socket.io");
+//          config.setContext("/socket.io");
         return new SocketIOServer(config);
     }
 

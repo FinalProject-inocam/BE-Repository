@@ -11,6 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class PurchasesPatchResponseDto {
     private Long purchaseId;
+    private String name;
     private String type;
     private String color;
     private Boolean alarm;
@@ -25,6 +26,7 @@ public class PurchasesPatchResponseDto {
 
     public PurchasesPatchResponseDto(Purchase purchase) {
         this.purchaseId = purchase.getPurchaseId();
+        this.name = purchase.getName();
         this.type = purchase.getType();
         this.color = purchase.getColor();
         this.alarm = purchase.getAlarm();

@@ -1,5 +1,6 @@
 package com.example.finalproject.domain.purchases.dto.request;
 
+import com.example.finalproject.global.enums.UsageEnum;
 import com.example.finalproject.global.validation.CustomConstraint.BirthYearLimitValidation;
 import com.example.finalproject.global.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
@@ -22,6 +23,12 @@ public class PurchasesRequestDto {
     @BirthYearLimitValidation(groups = ValidationGroups.BirthYearLimitGroup.class)
     @NotNull(message = "출생년도는 필수입니다.", groups = ValidationGroups.NotNullGroup.class)
     private Integer birthYear;
+
+    @NotNull(message = "이름은 필수입니다.", groups = ValidationGroups.NotNullGroup.class)
+    private String name;
+
+    @NotBlank(message = "사용목적은 필수입니다.", groups = ValidationGroups.NotBlankGroup.class)
+    private String usage;
 
     private Boolean alarm = false;
 

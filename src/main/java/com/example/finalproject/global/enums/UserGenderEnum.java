@@ -11,20 +11,7 @@ public enum UserGenderEnum {
 
     private final String gender;
 
-//    UserGenderEnum(String gender) {
-//        this.gender = gender;
-//    }
-//
-//    public String getGender() {
-//        return this.gender;
-//    }
-
     UserGenderEnum(String gender){
         this.gender = gender;
     }
-
-//    public static class Gender {
-//        public static final String MALE = "male";
-//        public static final String FEMALE = "female";
-//    }
 }

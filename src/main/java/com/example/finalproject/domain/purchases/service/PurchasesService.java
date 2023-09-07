@@ -3,6 +3,7 @@ package com.example.finalproject.domain.purchases.service;
 import com.example.finalproject.domain.auth.entity.User;
 import com.example.finalproject.domain.post.exception.PostsNotFoundException;
 import com.example.finalproject.domain.purchases.dto.request.PurchasesRequestDto;
+import com.example.finalproject.domain.purchases.dto.request.PurchasesUpdateRequestDto;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesPatchResponseDto;
 import com.example.finalproject.domain.purchases.dto.response.PurchasesResponseDto;
 import com.example.finalproject.domain.purchases.entity.Purchase;
@@ -57,7 +58,7 @@ public class PurchasesService {
 
     // 차량 신청 내역 수정
     @Transactional
-    public PurchasesPatchResponseDto updatePurchases(Long purchaseId, PurchasesRequestDto purchasesRequestDto, User user) {
+    public PurchasesPatchResponseDto updatePurchases(Long purchaseId, PurchasesUpdateRequestDto purchasesRequestDto, User user) {
         Purchase purchase = findPurchases(purchaseId);
         checkUsername(purchaseId, user);
         purchase.update(purchasesRequestDto);
