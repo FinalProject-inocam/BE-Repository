@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class MypageResDto {
+    private String email;
     private String profileImg;
     private String nickname;
     private String phoneNumber;
@@ -15,6 +16,7 @@ public class MypageResDto {
     private Integer birthYear;
 
     public MypageResDto(User user) {
+        this.email = user.getEmail();
         this.profileImg = user.getProfileImg();
         this.nickname = user.getNickname();
         this.phoneNumber = user.getPhoneNumber();
