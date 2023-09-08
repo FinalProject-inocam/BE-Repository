@@ -695,7 +695,7 @@ public class QPurchasesRepository {
             ratioList.add(innerList);
         }
 
-        Float sum = 0f;
+        Double sum = 0.0;
 
         Integer over70 = ageLabel.indexOf("70대 이상");
         Integer under20 = ageLabel.indexOf("10~20대");
@@ -706,20 +706,20 @@ public class QPurchasesRepository {
             log.info(group.toString());
             Integer age = group.get(0, Integer.class);
             Long count = group.get(2, Long.class);
+            sum += count;
             if (age > 60) {
                 genderList(resultList, over70, group, count);
-                sum += count;
                 continue;
             }
             if (age < 30) {
                 genderList(resultList, under20, group, count);
-                sum += count;
                 continue;
             }
             Integer ageLabelIndex = ageLabel.indexOf(age + "대");
             genderList(resultList, ageLabelIndex, group, count);
-            sum += count;
+            log.info(sum.toString());
         }
+        log.info(sum.toString());
 
         for (int i = 0; i < resultList.size(); i++) {
             for (int j = 0; j < 3; j++) {
@@ -737,9 +737,11 @@ public class QPurchasesRepository {
     private static void genderList(List<List<Long>> resultList, Integer ageIndex, Tuple group, Long count) {
         if (group.get(1, String.class).equals("MALE")) {
             resultList.get(ageIndex).set(0, resultList.get(ageIndex).get(0) + count);
+            return;
         }
         if (group.get(1, String.class).equals("FEMALE")) {
             resultList.get(ageIndex).set(1, resultList.get(ageIndex).get(1) + count);
+            return;
         }
         resultList.get(ageIndex).set(2, resultList.get(ageIndex).get(2) + count);
     }
